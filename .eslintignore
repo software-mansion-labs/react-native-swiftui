@@ -1,0 +1,13 @@
+# node_modules ignored by default
+
+**/main.js
+**/staticBundle.js
+bots/node_modules
+docs/generatedComponentApiDocs.js
+flow/
+Libraries/Renderer/*
+Libraries/vendor/**/*
+packages/*/node_modules
+pr-inactivity-bookmarklet.js
+question-bookmarklet.js
+packages/react-native-codegen/lib
