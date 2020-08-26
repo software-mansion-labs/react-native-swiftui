@@ -56,9 +56,7 @@ static Class<RCTComponentViewProtocol> RCTComponentViewClassWithName(const char 
   [componentViewFactory registerComponentViewClass:[RCTViewComponentView class]];
   [componentViewFactory registerComponentViewClass:[RCTParagraphComponentView class]];
   [componentViewFactory registerComponentViewClass:[RCTTextInputComponentView class]];
-
-  Class<RCTComponentViewProtocol> imageClass = RCTComponentViewClassWithName("Image");
-  [componentViewFactory registerComponentViewClass:imageClass];
+  [componentViewFactory registerComponentViewClass:[RCTImageComponentView class]];
 
   auto providerRegistry = &componentViewFactory->_providerRegistry;
 

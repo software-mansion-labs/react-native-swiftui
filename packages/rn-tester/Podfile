@@ -2,6 +2,7 @@ require_relative '../../scripts/react_native_pods'
 
 source 'https://cdn.cocoapods.org/'
 platform :ios, '10.0'
+install! 'cocoapods', :deterministic_uuids => false
 
 if ENV['USE_FRAMEWORKS'] == '1'
   puts "Installing pods with use_frameworks!"
@@ -13,7 +14,7 @@ def pods()
 
   # Enable TurboModule
   prefix_path = "../.."
-  use_react_native!(path:prefix_path)
+  use_react_native!(path:prefix_path, fabric_enabled: true)
   pod 'ReactCommon/turbomodule/samples', :path => "#{prefix_path}/ReactCommon"
 
   # Additional Pods which aren't included in the default Podfile
