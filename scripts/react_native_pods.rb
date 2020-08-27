@@ -51,7 +51,7 @@ def use_react_native! (options={})
   pod 'Folly', :podspec => "#{prefix}/third-party-podspecs/Folly.podspec"
 
   if fabric_enabled
-    pod 'React-Fabric', :path => "#{prefix}/ReactCommon"
+    pod 'React-Fabric', :path => "#{prefix}/ReactCommon", :modular_headers => true
     pod 'React-graphics', :path => "#{prefix}/ReactCommon/react/renderer/graphics"
     pod 'React-jsi/Fabric', :path => "#{prefix}/ReactCommon/jsi"
     pod 'React-RCTFabric', :path => "#{prefix}/React"
