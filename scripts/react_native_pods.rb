@@ -44,14 +44,14 @@ def use_react_native! (options={})
   pod 'React-runtimeexecutor', :path => "#{prefix}/ReactCommon/runtimeexecutor"
   pod 'React-perflogger', :path => "#{prefix}/ReactCommon/reactperflogger"
   pod 'ReactCommon/turbomodule/core', :path => "#{prefix}/ReactCommon"
-  pod 'Yoga', :path => "#{prefix}/ReactCommon/yoga", :modular_headers => true
+  pod 'Yoga', :path => "#{prefix}/ReactCommon/yoga"
 
   pod 'DoubleConversion', :podspec => "#{prefix}/third-party-podspecs/DoubleConversion.podspec"
   pod 'glog', :podspec => "#{prefix}/third-party-podspecs/glog.podspec"
   pod 'Folly', :podspec => "#{prefix}/third-party-podspecs/Folly.podspec"
 
   if fabric_enabled
-    pod 'React-Fabric', :path => "#{prefix}/ReactCommon", :modular_headers => true
+    pod 'React-Fabric', :path => "#{prefix}/ReactCommon"
     pod 'React-graphics', :path => "#{prefix}/ReactCommon/react/renderer/graphics"
     pod 'React-jsi/Fabric', :path => "#{prefix}/ReactCommon/jsi"
     pod 'React-RCTFabric', :path => "#{prefix}/React"

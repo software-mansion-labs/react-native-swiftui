@@ -34,6 +34,7 @@ Pod::Spec.new do |s|
   s.source_files           = "dummyFile.cpp"
   s.library                = "stdc++"
   s.pod_target_xcconfig = { "USE_HEADERMAP" => "YES",
+                            "DEFINES_MODULE" => "YES",
                             "CLANG_CXX_LANGUAGE_STANDARD" => "c++14" }
 
   s.dependency folly_dep_name, folly_version

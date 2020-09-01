@@ -53,10 +53,11 @@ static Class<RCTComponentViewProtocol> RCTComponentViewClassWithName(const char 
   RCTComponentViewFactory *componentViewFactory = [[RCTComponentViewFactory alloc] init];
 
   [componentViewFactory registerComponentViewClass:[RCTRootComponentView class]];
-  [componentViewFactory registerComponentViewClass:[RCTViewComponentView class]];
-  [componentViewFactory registerComponentViewClass:[RCTParagraphComponentView class]];
-  [componentViewFactory registerComponentViewClass:[RCTTextInputComponentView class]];
-  [componentViewFactory registerComponentViewClass:[RCTImageComponentView class]];
+  [componentViewFactory registerComponentViewClass:RCTComponentViewClassWithName("View")];
+//  [componentViewFactory registerComponentViewClass:[RCTViewComponentView class]];
+//  [componentViewFactory registerComponentViewClass:[RCTParagraphComponentView class]];
+//  [componentViewFactory registerComponentViewClass:[RCTTextInputComponentView class]];
+//  [componentViewFactory registerComponentViewClass:[RCTImageComponentView class]];
 
   auto providerRegistry = &componentViewFactory->_providerRegistry;
 

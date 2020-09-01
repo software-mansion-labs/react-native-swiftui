@@ -28,7 +28,8 @@ Class<RCTComponentViewProtocol> RCTFabricComponentsProvider(const char *name) {
     {"Paragraph", RCTParagraphCls},
     {"TextInput", RCTTextInputCls},
     {"InputAccessoryView", RCTInputAccessoryCls},
-    {"View", RCTViewCls},
+//    {"View", RCTViewCls},
+    {"View", RSUIViewCls},
     {"Image",RCTImageCls},
   };
 
