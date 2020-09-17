@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Surface object which is currently using to power the view.
  * Read-only.
  */
-@property (nonatomic, strong, readonly) id<RCTSurfaceProtocol> surface;
+@property (nonatomic, strong, readwrite) id<RCTSurfaceProtocol> surface;
 
 /**
  * Size measure mode which are defining relationship between UIKit and ReactNative

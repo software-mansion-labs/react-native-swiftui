@@ -1,21 +1,19 @@
 
 import SwiftUI
 
-@objc(RSUIComponentView)
-open class RSUIComponentView: RSUIComponentViewObjC {
+@objc
+public class RSUISurfaceContentView: UIView {
+  var viewRegistry: RSUIViewRegistry?
 
-  lazy var hostingController: UIHostingController<AnyView> = {
-    let contentView = RSUIView()
-    return UIHostingController(rootView: AnyView(contentView.environmentObject(props)))
-  }()
+  lazy var hostingController = UIHostingController(rootView: AnyView(createHostingRootView()))
 
-  var props: RSUIViewProps = RSUIViewProps()
-
-  public override init(frame: CGRect) {
-    super.init(frame: frame)
+  @objc
+  public init(viewRegistry: RSUIViewRegistry) {
+    super.init(frame: .zero)
+    self.viewRegistry = viewRegistry
   }
 
-  required public init?(coder: NSCoder) {
+  required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
 
@@ -26,10 +24,18 @@ open class RSUIComponentView: RSUIComponentViewObjC {
   open override func didMoveToSuperview() {
     if let parentViewController = parentViewController() {
       hostingController.view.backgroundColor = .clear
+      hostingController.view.translatesAutoresizingMaskIntoConstraints = false
 
       parentViewController.addChild(hostingController)
       addSubview(hostingController.view)
       hostingController.didMove(toParent: parentViewController)
+
+      NSLayoutConstraint.activate([
+        hostingController.view.widthAnchor.constraint(equalTo: self.widthAnchor),
+        hostingController.view.heightAnchor.constraint(equalTo: self.heightAnchor),
+        hostingController.view.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+        hostingController.view.centerYAnchor.constraint(equalTo: self.centerYAnchor)
+      ])
     }
   }
 
@@ -38,21 +44,6 @@ open class RSUIComponentView: RSUIComponentViewObjC {
       hostingController.removeFromParent()
       hostingController.view.removeFromSuperview()
       hostingController.didMove(toParent: nil)
-    }
-  }
-
-  open override func layoutSubviews() {
-    hostingController.view.frame.size = frame.size
-  }
-
-  // MARK: RSUIComponentViewProtocol
-
-  open override func updateProps(_ propsDict: [AnyHashable : Any]!) {
-    if let text = propsDict["text"] as? String {
-      props.text = text
-    }
-    if let backgroundColor = propsDict["backgroundColor"] as? String {
-      props.backgroundColor = backgroundColor
     }
   }
 
@@ -73,5 +64,11 @@ open class RSUIComponentView: RSUIComponentViewObjC {
       }
     }
     return responder as? UIViewController
+  }
+
+  private func createHostingRootView() -> some View {
+    return RSUIHostingView(viewRegistry: viewRegistry!)
+      .background(Color.blue)
+      .edgesIgnoringSafeArea(.all)
   }
 }

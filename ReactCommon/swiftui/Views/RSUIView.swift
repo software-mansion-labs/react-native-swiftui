@@ -1,52 +1,24 @@
 
 import SwiftUI
 
-let colors: [String: Color] = [
-  "black": Color.black,
-  "blue": Color.blue,
-  "orange": Color.orange,
-  "green": Color.green,
-  "pink": Color.pink,
-  "yellow": Color.yellow,
-  "purple": Color.purple,
-  "red": Color.red,
-  "transparent": Color.clear
-]
+open class RSUIView: RSUIViewProtocol {
+  public class var viewName: String { "View" }
 
-class RSUIViewProps: ObservableObject {
-  @Published
-  var text: String = ""
+  required public init() {}
 
-  @Published
-  var backgroundColor: String = "transparent"
-}
-
-struct RSUIView: View {
-  @EnvironmentObject
-  var props: RSUIViewProps
-
-  @State
-  var enabled: Bool = false
-
-  var body: some View {
-    Button(action: onPress) {
-      ZStack {
-        stringToColor(props.backgroundColor)
-        Text(props.text)
-      }
-    }
-    .alert(isPresented: $enabled) {
-      Alert(title: Text("Hey, you've just pressed the button!"))
+  func Children(_ children: [RSUIViewWrapper]) -> some View {
+    return ZStack(alignment: .topLeading) {
+      ForEach(children) { $0 }
     }
   }
 
-  // MARK: private
-
-  private func onPress() -> Void {
-    enabled = !enabled
+  internal func castView<ViewType: RSUIView>(to type: ViewType.Type) -> ViewType {
+    return self as! ViewType
   }
 
-  private func stringToColor(_ colorString: String) -> Color {
-    return colors[colorString] ?? Color.clear
+  public func render(props: RSUIViewProps) -> AnyView {
+    print(Self.self, props.viewTag, props.dictionary())
+
+    return AnyView(Children(props.children))
   }
 }

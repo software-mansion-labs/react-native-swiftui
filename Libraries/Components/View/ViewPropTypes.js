@@ -463,6 +463,8 @@ export type ViewProps = $ReadOnly<{|
    */
   nativeID?: ?string,
 
+  dupa?: ?string,
+
   /**
    * This defines how far a touch event can start away from the view.
    * Typical interface guidelines recommend touch targets that are at least

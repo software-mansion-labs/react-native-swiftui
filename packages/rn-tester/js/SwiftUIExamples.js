@@ -9,10 +9,10 @@ class SwiftUIExamples extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => {
-      const colorIndex = (this.state.colorIndex + 1) % colors.length;
-      this.setState({ colorIndex });
-    }, 500);
+    // this.interval = setInterval(() => {
+    //   const colorIndex = (this.state.colorIndex + 1) % colors.length;
+    //   this.setState({ colorIndex });
+    // }, 500);
   }
 
   componentWillUnmount() {
@@ -21,12 +21,36 @@ class SwiftUIExamples extends React.PureComponent {
 
   render() {
     return (
-      <View
-        style={{ width: 300, height: 400, backgroundColor: 'blue', alignSelf: 'center', marginTop: 100  }}
-        accessibilityLabel="test"
-        accessibilityHint={colors[this.state.colorIndex]}
-      >
-        <Text>SwiftUIExamples</Text>
+      <View style={{ flex: 1 }}>
+        <View
+          style={{
+            width: 200,
+            height: 200,
+            borderLeftWidth: 30,
+            borderColor: 'white',
+            backgroundColor: '#fa5637',
+            marginLeft: 0,
+            marginTop: 44,
+          }}
+        />
+
+        <View
+          style={{
+            width: 250,
+            height: 300,
+            backgroundColor: 'pink',
+            borderLeftWidth: 50,
+            borderColor: 'green',
+            marginTop: 50,
+            marginLeft: 30,
+          }}
+          accessibilityHint="hint"
+          accessibilityLabel="label"
+          dupa="dupa"
+          >
+            <View style={{ width: 50, height: 50, marginTop: 50, backgroundColor: 'blue' }} />
+            <Text style={{ color: 'yellow' }}>test</Text>
+        </View>
       </View>
     );
   }

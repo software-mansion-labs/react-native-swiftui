@@ -1,2 +1,3 @@
 
-#import "RSUIComponentViewObjC.h"
+#import "RSUIComponentViewFactory.h"
+#import "RSUIViewPropsObjC.h"

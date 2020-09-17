@@ -26,6 +26,7 @@ Class<RCTComponentViewProtocol> RCTFabricComponentsProvider(const char *name) {
     {"Switch", RCTSwitchCls},
     {"UnimplementedNativeView", RCTUnimplementedNativeViewCls},
     {"Paragraph", RCTParagraphCls},
+//    {"Paragraph", RSUIViewCls},
     {"TextInput", RCTTextInputCls},
     {"InputAccessoryView", RCTInputAccessoryCls},
 //    {"View", RCTViewCls},

@@ -26,12 +26,12 @@ void ComponentDescriptorRegistry::add(
       {parameters_.eventDispatcher,
        parameters_.contextContainer,
        componentDescriptorProvider.flavor});
-  assert(
-      componentDescriptor->getComponentHandle() ==
-      componentDescriptorProvider.handle);
-  assert(
-      componentDescriptor->getComponentName() ==
-      componentDescriptorProvider.name);
+//  assert(
+//      componentDescriptor->getComponentHandle() ==
+//      componentDescriptorProvider.handle);
+//  assert(
+//      componentDescriptor->getComponentName() ==
+//      componentDescriptorProvider.name);
 
   auto sharedComponentDescriptor = std::shared_ptr<ComponentDescriptor const>(
       std::move(componentDescriptor));

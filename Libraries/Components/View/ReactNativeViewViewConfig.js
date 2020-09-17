@@ -126,6 +126,7 @@ const ReactNativeViewConfig = {
     accessibilityState: true,
     accessibilityValue: true,
     accessibilityViewIsModal: true,
+    dupa: true,
     accessible: true,
     alignContent: true,
     alignItems: true,

@@ -53,6 +53,9 @@
 
 #import "RNTesterTurboModuleProvider.h"
 
+// SwiftUI
+#import <ReactSwiftUI/RSUIRootView.h>
+
 @interface AppDelegate() <RCTCxxBridgeDelegate, RCTTurboModuleManagerDelegate>{
 
 #ifdef RN_FABRIC_ENABLED
@@ -82,17 +85,18 @@
   }
 
 #ifdef RN_FABRIC_ENABLED
-  _contextContainer = std::make_shared<facebook::react::ContextContainer const>();
-  _reactNativeConfig = std::make_shared<facebook::react::EmptyReactNativeConfig const>();
-
-  _contextContainer->insert("ReactNativeConfig", _reactNativeConfig);
-
-  _bridgeAdapter = [[RCTSurfacePresenterBridgeAdapter alloc] initWithBridge:_bridge
-                                                           contextContainer:_contextContainer];
-
-  _bridge.surfacePresenter = _bridgeAdapter.surfacePresenter;
-
-  UIView *rootView = [[RCTFabricSurfaceHostingProxyRootView alloc] initWithBridge:_bridge moduleName:@"RNTesterApp" initialProperties:initProps];
+//  _contextContainer = std::make_shared<facebook::react::ContextContainer const>();
+//  _reactNativeConfig = std::make_shared<facebook::react::EmptyReactNativeConfig const>();
+//
+//  _contextContainer->insert("ReactNativeConfig", _reactNativeConfig);
+//
+//  _bridgeAdapter = [[RCTSurfacePresenterBridgeAdapter alloc] initWithBridge:_bridge
+//                                                           contextContainer:_contextContainer];
+//
+//  _bridge.surfacePresenter = _bridgeAdapter.surfacePresenter;
+//
+//  UIView *rootView = [[RCTFabricSurfaceHostingProxyRootView alloc] initWithBridge:_bridge moduleName:@"RNTesterApp" initialProperties:initProps];
+  UIView *rootView = [[RSUIRootView alloc] initWithBridge:_bridge moduleName:@"RNTesterApp" initialProperties:initProps];
 #else
   UIView *rootView = [[RCTRootView alloc] initWithBridge:_bridge moduleName:@"RNTesterApp" initialProperties:initProps];
 #endif
