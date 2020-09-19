@@ -35,12 +35,26 @@ public class RSUIViewDescriptor: NSObject, ObservableObject {
 
   // MARK: Children management
 
+  /**
+   * Inserts view with given tag as a child at specified index. Change is committed automatically.
+   * TODO: Throw an exception if given view is already a child.
+   */
   func insertChild(_ tag: ViewTag, atIndex index: Int) {
-    children.insert(tag, at: index)
+    if !children.contains(tag) {
+      children.insert(tag, at: index)
+      commitUpdates()
+    }
   }
 
+  /**
+   * Removes child with given tag. Change is committed automatically.
+   * TODO: Throw an exception if given view is not a child.
+   */
   func removeChild(_ tag: ViewTag) {
-    children.removeAll { $0 == tag }
+    if let index = children.firstIndex(of: tag) {
+      children.remove(at: index)
+      commitUpdates()
+    }
   }
 
   // MARK: Layout management
@@ -91,7 +105,7 @@ public class RSUIViewRegistry: NSObject, ObservableObject {
   // MARK: View management
 
   @objc
-  public func createView(withTag tag: ViewTag, name: ViewName) -> RSUIViewDescriptor? {
+  public func create(_ tag: ViewTag, name: ViewName) -> RSUIViewDescriptor? {
     if let viewType = viewTypes[name] {
       let view = viewType.init()
 
@@ -106,7 +120,7 @@ public class RSUIViewRegistry: NSObject, ObservableObject {
   }
 
   @objc
-  public func insertView(withTag tag: ViewTag, toParent parentTag: ViewTag, atIndex index: Int) {
+  public func insert(_ tag: ViewTag, toParent parentTag: ViewTag, atIndex index: Int) {
     if let descriptor = descriptors[parentTag], index <= descriptor.children.count {
       descriptor.insertChild(tag, atIndex: index)
     }
@@ -116,19 +130,19 @@ public class RSUIViewRegistry: NSObject, ObservableObject {
   }
 
   @objc
-  public func deleteView(_ tag: ViewTag) {
+  public func delete(_ tag: ViewTag) {
     descriptors.removeValue(forKey: tag)
   }
 
   @objc
-  public func removeView(_ tag: ViewTag, fromParent parentTag: ViewTag) {
+  public func remove(_ tag: ViewTag, fromParent parentTag: ViewTag) {
     if let descriptor = descriptors[parentTag] {
       descriptor.removeChild(tag)
     }
   }
 
   @objc
-  public func hasView(withTag tag: ViewTag) -> Bool {
+  public func has(_ tag: ViewTag) -> Bool {
     return descriptors[tag] != nil
   }
 

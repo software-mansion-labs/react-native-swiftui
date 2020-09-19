@@ -42,18 +42,12 @@ static void RCTPerformMountInstructions(
     switch (mutation.type) {
       case ShadowViewMutation::Create: {
         auto &newChildShadowView = mutation.newChildShadowView;
-//        auto &newChildViewDescriptor =
-//            [registry dequeueComponentViewWithComponentHandle:newChildShadowView.componentHandle
-//                                                          tag:newChildShadowView.tag];
-//        observerCoordinator.registerViewComponentDescriptor(newChildViewDescriptor, surfaceId);
+        auto &layoutMetrics = newChildShadowView.layoutMetrics;
 
-        RSUIViewDescriptor *viewDescriptor = [registry createViewWithTag:newChildShadowView.tag
-                                                                    name:@(newChildShadowView.componentName)];
+        RSUIViewDescriptor *viewDescriptor = [registry create:newChildShadowView.tag name:@(newChildShadowView.componentName)];
 
         folly::dynamic const &newProps = [RSUIComponentViewFactory dynamicPropsValueForProps:newChildShadowView.props];
         [viewDescriptor.props updateDynamicProps:newProps];
-
-        auto const &layoutMetrics = newChildShadowView.layoutMetrics;
 
         [viewDescriptor updateLayoutMetricsWithX:layoutMetrics.frame.origin.x
                                                y:layoutMetrics.frame.origin.y
@@ -66,37 +60,16 @@ static void RCTPerformMountInstructions(
 
       case ShadowViewMutation::Delete: {
         auto &oldChildShadowView = mutation.oldChildShadowView;
-//        auto &oldChildViewDescriptor = [registry componentViewDescriptorWithTag:oldChildShadowView.tag];
 
-//        observerCoordinator.unregisterViewComponentDescriptor(oldChildViewDescriptor, surfaceId);
-
-//        [registry enqueueComponentViewWithComponentHandle:oldChildShadowView.componentHandle
-//                                                      tag:oldChildShadowView.tag
-//                                  componentViewDescriptor:oldChildViewDescriptor];
-
-        [registry deleteView:oldChildShadowView.tag];
+        [registry delete:oldChildShadowView.tag];
         break;
       }
 
       case ShadowViewMutation::Insert: {
-//        auto &oldChildShadowView = mutation.oldChildShadowView;
         auto &newChildShadowView = mutation.newChildShadowView;
         auto &parentShadowView = mutation.parentShadowView;
-//        auto &newChildViewDescriptor = [registry componentViewDescriptorWithTag:newChildShadowView.tag];
-//        auto &parentViewDescriptor = [registry componentViewDescriptorWithTag:parentShadowView.tag];
 
-//        UIView<RCTComponentViewProtocol> *newChildComponentView = newChildViewDescriptor.view;
-//
-//        [newChildComponentView updateProps:newChildShadowView.props oldProps:oldChildShadowView.props];
-//        [newChildComponentView updateEventEmitter:newChildShadowView.eventEmitter];
-//        [newChildComponentView updateState:newChildShadowView.state oldState:oldChildShadowView.state];
-//        [newChildComponentView updateLayoutMetrics:newChildShadowView.layoutMetrics
-//                                  oldLayoutMetrics:oldChildShadowView.layoutMetrics];
-//        [newChildComponentView finalizeUpdates:RNComponentViewUpdateMaskAll];
-//
-//        [parentViewDescriptor.view mountChildComponentView:newChildComponentView index:mutation.index];
-
-        [registry insertViewWithTag:newChildShadowView.tag toParent:parentShadowView.tag atIndex:mutation.index];
+        [registry insert:newChildShadowView.tag toParent:parentShadowView.tag atIndex:mutation.index];
         break;
       }
 
@@ -104,10 +77,7 @@ static void RCTPerformMountInstructions(
         auto &oldChildShadowView = mutation.oldChildShadowView;
         auto &parentShadowView = mutation.parentShadowView;
 
-//        auto &oldChildViewDescriptor = [registry componentViewDescriptorWithTag:oldChildShadowView.tag];
-//        auto &parentViewDescriptor = [registry componentViewDescriptorWithTag:parentShadowView.tag];
-//        [parentViewDescriptor.view unmountChildComponentView:oldChildViewDescriptor.view index:mutation.index];
-        [registry removeView:oldChildShadowView.tag fromParent:parentShadowView.tag];
+        [registry remove:oldChildShadowView.tag fromParent:parentShadowView.tag];
         break;
       }
 
@@ -116,29 +86,13 @@ static void RCTPerformMountInstructions(
         auto &newChildShadowView = mutation.newChildShadowView;
         RSUIViewDescriptor *viewDescriptor = [registry viewDescriptorForTag:newChildShadowView.tag];
 
-//        auto &newChildViewDescriptor = [registry componentViewDescriptorWithTag:newChildShadowView.tag];
-//        UIView<RCTComponentViewProtocol> *newChildComponentView = newChildViewDescriptor.view;
-
         auto mask = RNComponentViewUpdateMask{};
 
         if (oldChildShadowView.props != newChildShadowView.props) {
           folly::dynamic const &newProps = [RSUIComponentViewFactory dynamicPropsValueForProps:newChildShadowView.props];
           [viewDescriptor.props updateDynamicProps:newProps];
-
-//          [newChildComponentView updateProps:newChildShadowView.props oldProps:oldChildShadowView.props];
           mask |= RNComponentViewUpdateMaskProps;
         }
-
-//        if (oldChildShadowView.eventEmitter != newChildShadowView.eventEmitter) {
-//          [newChildComponentView updateEventEmitter:newChildShadowView.eventEmitter];
-//          mask |= RNComponentViewUpdateMaskEventEmitter;
-//        }
-//
-//        if (oldChildShadowView.state != newChildShadowView.state) {
-//          [newChildComponentView updateState:newChildShadowView.state oldState:oldChildShadowView.state];
-//          mask |= RNComponentViewUpdateMaskState;
-//        }
-
         if (oldChildShadowView.layoutMetrics != newChildShadowView.layoutMetrics) {
           auto const &layoutMetrics = newChildShadowView.layoutMetrics;
 
@@ -146,15 +100,10 @@ static void RCTPerformMountInstructions(
                                                  y:layoutMetrics.frame.origin.y
                                              width:layoutMetrics.frame.size.width
                                             height:layoutMetrics.frame.size.height];
-
-//          [newChildComponentView updateLayoutMetrics:newChildShadowView.layoutMetrics
-//                                    oldLayoutMetrics:oldChildShadowView.layoutMetrics];
           mask |= RNComponentViewUpdateMaskLayoutMetrics;
         }
-
         if (mask != RNComponentViewUpdateMaskNone) {
           [viewDescriptor commitUpdates];
-//          [newChildComponentView finalizeUpdates:mask];
         }
         break;
       }
