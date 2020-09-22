@@ -419,7 +419,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
 {
   RSUIMountingManager *mountingManager = _mountingManager;
   RCTExecuteOnMainQueue(^{
-    [mountingManager.viewRegistry createViewWithTag:surface.rootTag name:@"RootView"];
+    [mountingManager.viewRegistry create:surface.rootTag name:@"RootView"];
   });
 
   LayoutContext layoutContext = RCTGetLayoutContext(surface.viewportOffset);

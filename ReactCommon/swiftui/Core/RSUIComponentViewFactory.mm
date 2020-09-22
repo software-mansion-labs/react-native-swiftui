@@ -1,72 +1,37 @@
 
+#import <better/better.h>
+
 #import <React/RCTComponentViewProtocol.h>
 #import <React/RCTFabricComponentsPlugins.h>
 #import <React/UIView+ComponentViewProtocol.h>
 #import <React/RCTFollyConvert.h>
 
-#import <react/renderer/components/view/ViewComponentDescriptor.h>
 #import <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
 
 #import "RSUIComponentViewFactory.h"
 
+#import "RSUIParagraphDescriptor.h"
+#import "RSUIRawTextDescriptor.h"
+#import "RSUITextDescriptor.h"
+#import "RSUIComponentDescriptor.h"
+
 using namespace facebook::react;
-
-#pragma mark - C++ things needed to construct RSUIComponentDescriptor
-
-// Those things cannot be declared in a header because we need to import C++ libs that if imported from the bridging header would cause compilation to fail. We can do this as we don't use them anywhere outside this file.
-
-// `View` is temporary to override standard view. See also `RCTFabricComponentsPlugins`, those values must match.
-char const RSUIComponentName[] = "RSUIView";
-
-class RSUIComponentProps final : public ViewProps {
-public:
-  RSUIComponentProps() {}
-
-  RSUIComponentProps(const RSUIComponentProps &sourceProps, const RawProps &rawProps)
-    : ViewProps(sourceProps, rawProps),
-      dynamicProps((folly::dynamic)rawProps) {}
-
-  folly::dynamic dynamicProps;
-};
-
-class RSUIComponentEventEmitter : public ViewEventEmitter {
-public:
-  using ViewEventEmitter::ViewEventEmitter;
-
-  void dispatchEvent(std::string const &type, folly::dynamic const &payload) const {}
-};
-
-class RSUIComponentState final {
-public:
-  std::shared_ptr<void> coordinator;
-};
-
-using RSUIComponentShadowNode = ConcreteViewShadowNode<RSUIComponentName, RSUIComponentProps, RSUIComponentEventEmitter, RSUIComponentState>;
-
-class RSUIComponentDescriptor final : public ConcreteComponentDescriptor<RSUIComponentShadowNode> {
-public:
-  RSUIComponentDescriptor(ComponentDescriptorParameters const &parameters) : ConcreteComponentDescriptor(parameters) {}
-
-  ComponentHandle getComponentHandle() const override {
-    return reinterpret_cast<ComponentHandle>(getComponentName());
-  }
-
-  ComponentName getComponentName() const override {
-    return std::static_pointer_cast<std::string const>(this->flavor_)->c_str();
-  }
-};
-
-#pragma mark - Objective-C wrapper
 
 @implementation RSUIComponentViewFactory {
   ComponentDescriptorProviderRegistry _providerRegistry;
   better::shared_mutex _mutex;
 }
 
-+ (folly::dynamic)dynamicPropsValueForProps:(Props::Shared const &)props
++ (const folly::dynamic)dynamicPropsValueForProps:(Props::Shared const &)props
 {
-  auto const &castedProps = *std::static_pointer_cast<const RSUIComponentProps>(props);
-  return castedProps.dynamicProps;
+  auto const dynamicProps = std::dynamic_pointer_cast<const RSUIDynamicProps>(props);
+  return dynamicProps == nullptr ? folly::dynamic::object() : dynamicProps->getProps();
+}
+
++ (const folly::dynamic)dynamicStateForState:(State::Shared const &)state
+{
+  auto const concreteState = std::dynamic_pointer_cast<const ConcreteState<RSUIParagraphState>>(state->getMostRecentState());
+  return concreteState == nullptr ? folly::dynamic::object() : concreteState->getData().getDynamic();
 }
 
 + (RSUIComponentViewFactory *)standardComponentViewFactory
@@ -80,11 +45,23 @@ public:
     auto componentName = ComponentName{ flavor->c_str() };
     auto componentHandle = reinterpret_cast<ComponentHandle>(componentName);
 
+    static std::unordered_map<std::string, ComponentDescriptorConstructor *> componentsDescriptors = {
+      {"Paragraph", concreteComponentDescriptorConstructor<RSUIParagraphDescriptor>},
+      {"RawText", concreteComponentDescriptorConstructor<RSUIRawTextDescriptor>},
+      {"Text", concreteComponentDescriptorConstructor<RSUITextDescriptor>},
+      {"View", concreteComponentDescriptorConstructor<RSUIComponentDescriptor<RSUIComponentShadowNode>>},
+    };
+
+    NSLog(@"Requested for component %s", requestedComponentName);
+
+    auto p = componentsDescriptors.find(requestedComponentName);
+    auto componentConstructor = p != componentsDescriptors.end() ? p->second : concreteComponentDescriptorConstructor<RSUIComponentDescriptor<RSUIComponentShadowNode>>;
+
     providerRegistry->add(ComponentDescriptorProvider{
       componentHandle,
       componentName,
       flavor,
-      &concreteComponentDescriptorConstructor<RSUIComponentDescriptor>
+      componentConstructor
     });
   });
   return factory;

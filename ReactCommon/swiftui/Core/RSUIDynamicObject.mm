@@ -7,32 +7,32 @@
 
 #import <React/RCTFollyConvert.h>
 
-#import "RSUIViewPropsObjC.h"
+#import "RSUIDynamicObject.h"
 
 using namespace facebook::react;
 
-@implementation RSUIViewPropsObjC {
-  folly::dynamic _dynamicProps;
+@implementation RSUIDynamicObject {
+  folly::dynamic _object;
 }
 
 - (instancetype)init
 {
   if (self = [super init]) {
-    _dynamicProps = folly::dynamic::object();
+    _object = folly::dynamic::object();
   }
   return self;
 }
 
-- (void)updateDynamicProps:(folly::dynamic)propsPatch
+- (void)updateObject:(folly::dynamic)patch
 {
   // We expect the patch to be of nonnull object type.
-  if (!propsPatch.isObject()) {
+  if (!patch.isObject()) {
     return;
   }
-  _dynamicProps = folly::dynamic::merge(_dynamicProps, propsPatch);
+  _object = folly::dynamic::merge(_object, patch);
 }
 
-#pragma mark - public getter
+#pragma mark - public getters
 
 - (nullable id)rawValue:(NSString *)key
 {
@@ -41,7 +41,7 @@ using namespace facebook::react;
 
 - (nonnull NSDictionary<NSString *, id> *)dictionary
 {
-  return convertFollyDynamicToId(_dynamicProps) ?: @{};
+  return convertFollyDynamicToId(_object) ?: @{};
 }
 
 - (BOOL)bool:(NSString *)key
@@ -59,19 +59,24 @@ using namespace facebook::react;
   }
 }
 
-- (nullable NSNumber *)integer:(NSString *)key
+- (NSInteger)int:(NSString *)key
 {
   folly::dynamic value = [self get:key];
   if (value.isNumber()) {
-    return @(value.asInt());
+    return value.asInt();
   } else {
-    return @0;
+    return 0;
   }
 }
 
-- (nullable NSNumber *)double:(NSString *)key
+- (double)double:(NSString *)key
 {
-  return @([self get:key].asDouble());
+  folly::dynamic value = [self get:key];
+  if (value.isDouble()) {
+    return value.asDouble();
+  } else {
+    return 0;
+  }
 }
 
 - (nullable NSString *)string:(NSString *)key
@@ -99,6 +104,9 @@ using namespace facebook::react;
 
 - (nullable NSDictionary<NSString *, id> *)dictionary:(NSString *)key
 {
+  if (!_object.isObject()) {
+    return nil;
+  }
   folly::dynamic value = [self get:key];
   NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithCapacity:value.size()];
   for (auto &item : value.items()) {
@@ -111,12 +119,12 @@ using namespace facebook::react;
 
 - (folly::dynamic)get:(NSString *)key
 {
-  if (_dynamicProps == nil) {
+  if (_object == nil) {
     return folly::dynamic();
   }
   std::string keyString(key.UTF8String);
 
-  for (auto &item : _dynamicProps.items()) {
+  for (auto &item : _object.items()) {
     if (item.first.asString() == keyString) {
       return folly::dynamic(item.second);
     }

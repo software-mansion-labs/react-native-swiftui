@@ -1,3 +1,3 @@
 
 #import "RSUIComponentViewFactory.h"
-#import "RSUIViewPropsObjC.h"
+#import "RSUIDynamicObject.h"

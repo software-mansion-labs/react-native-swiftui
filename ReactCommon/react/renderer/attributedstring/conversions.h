@@ -649,7 +649,7 @@ inline std::string toString(AttributedString::Range const &range) {
       ", length: " + folly::to<std::string>(range.length) + "}";
 }
 
-#ifdef ANDROID
+//#ifdef ANDROID
 
 inline folly::dynamic toDynamic(
     const ParagraphAttributes &paragraphAttributes) {
@@ -804,7 +804,7 @@ inline folly::dynamic toDynamic(AttributedString::Range const &range) {
   return dynamicValue;
 }
 
-#endif
+//#endif
 
 } // namespace react
 } // namespace facebook

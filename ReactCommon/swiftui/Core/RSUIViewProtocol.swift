@@ -1,8 +1,12 @@
 
+import SwiftUI
+
 public protocol RSUIViewProtocol {
-  associatedtype ReturnViewType
+  associatedtype RenderReturnType: View
 
   static var viewName: String { get }
 
-  func render(props: RSUIViewProps) -> ReturnViewType
+  init(state: RSUIViewProps)
+
+  func render(props: RSUIViewProps) -> Self.RenderReturnType
 }

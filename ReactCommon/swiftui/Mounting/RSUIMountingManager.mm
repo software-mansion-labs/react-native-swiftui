@@ -22,10 +22,11 @@ using namespace facebook::react;
 
 @interface RSUIComponentViewFactory ()
 + (folly::dynamic)dynamicPropsValueForProps:(Props::Shared const &)props;
++ (folly::dynamic)dynamicStateForState:(State::Shared const &)state;
 @end
 
-@interface RSUIViewPropsObjC ()
-- (void)updateDynamicProps:(folly::dynamic)dynamicProps;
+@interface RSUIDynamicObject ()
+- (void)updateObject:(folly::dynamic)patch;
 @end
 
 static void RCTPerformMountInstructions(
@@ -44,10 +45,14 @@ static void RCTPerformMountInstructions(
         auto &newChildShadowView = mutation.newChildShadowView;
         auto &layoutMetrics = newChildShadowView.layoutMetrics;
 
+        NSLog(@"Create %s with tag %d", newChildShadowView.componentName, newChildShadowView.tag);
         RSUIViewDescriptor *viewDescriptor = [registry create:newChildShadowView.tag name:@(newChildShadowView.componentName)];
 
         folly::dynamic const &newProps = [RSUIComponentViewFactory dynamicPropsValueForProps:newChildShadowView.props];
-        [viewDescriptor.props updateDynamicProps:newProps];
+        [viewDescriptor.props updateObject:newProps];
+
+        folly::dynamic const &newState = [RSUIComponentViewFactory dynamicStateForState:newChildShadowView.state];
+        [viewDescriptor.state updateObject:newState];
 
         [viewDescriptor updateLayoutMetricsWithX:layoutMetrics.frame.origin.x
                                                y:layoutMetrics.frame.origin.y
@@ -61,6 +66,7 @@ static void RCTPerformMountInstructions(
       case ShadowViewMutation::Delete: {
         auto &oldChildShadowView = mutation.oldChildShadowView;
 
+        NSLog(@"Delete %s with tag %d", oldChildShadowView.componentName, oldChildShadowView.tag);
         [registry delete:oldChildShadowView.tag];
         break;
       }
@@ -69,6 +75,7 @@ static void RCTPerformMountInstructions(
         auto &newChildShadowView = mutation.newChildShadowView;
         auto &parentShadowView = mutation.parentShadowView;
 
+        NSLog(@"Insert %s with tag %d", newChildShadowView.componentName, newChildShadowView.tag);
         [registry insert:newChildShadowView.tag toParent:parentShadowView.tag atIndex:mutation.index];
         break;
       }
@@ -77,6 +84,7 @@ static void RCTPerformMountInstructions(
         auto &oldChildShadowView = mutation.oldChildShadowView;
         auto &parentShadowView = mutation.parentShadowView;
 
+        NSLog(@"Remove %s with tag %d", oldChildShadowView.componentName, oldChildShadowView.tag);
         [registry remove:oldChildShadowView.tag fromParent:parentShadowView.tag];
         break;
       }
@@ -90,9 +98,16 @@ static void RCTPerformMountInstructions(
 
         if (oldChildShadowView.props != newChildShadowView.props) {
           folly::dynamic const &newProps = [RSUIComponentViewFactory dynamicPropsValueForProps:newChildShadowView.props];
-          [viewDescriptor.props updateDynamicProps:newProps];
+          [viewDescriptor.props updateObject:newProps];
           mask |= RNComponentViewUpdateMaskProps;
         }
+
+        if (oldChildShadowView.state != newChildShadowView.state) {
+          folly::dynamic const &newState = [RSUIComponentViewFactory dynamicStateForState:newChildShadowView.state];
+          [viewDescriptor.state updateObject:newState];
+          mask |= RNComponentViewUpdateMaskState;
+        }
+
         if (oldChildShadowView.layoutMetrics != newChildShadowView.layoutMetrics) {
           auto const &layoutMetrics = newChildShadowView.layoutMetrics;
 

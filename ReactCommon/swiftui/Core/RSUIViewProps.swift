@@ -2,7 +2,7 @@
 import SwiftUI
 
 @objc
-public class RSUIViewProps: RSUIViewPropsObjC {
+public class RSUIViewProps: RSUIDynamicObject {
   public let viewTag: ViewTag
   private let viewRegistry: RSUIViewRegistry
 
@@ -18,7 +18,7 @@ public class RSUIViewProps: RSUIViewPropsObjC {
   // MARK: value getters
 
   public func color(_ key: String) -> Color {
-    let colorInt = integer(key)?.intValue ?? 0
+    let colorInt = int(key)
     let ratio = 256.0
     let red = Double((colorInt >> 16) & 0xff) / ratio
     let green = Double((colorInt >> 8) & 0xff) / ratio

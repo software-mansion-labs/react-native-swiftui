@@ -53,7 +53,7 @@ static Class<RCTComponentViewProtocol> RCTComponentViewClassWithName(const char 
   RCTComponentViewFactory *componentViewFactory = [[RCTComponentViewFactory alloc] init];
 
   [componentViewFactory registerComponentViewClass:[RCTRootComponentView class]];
-  [componentViewFactory registerComponentViewClass:RCTComponentViewClassWithName("View")];
+//  [componentViewFactory registerComponentViewClass:RCTComponentViewClassWithName("View")];
 //  [componentViewFactory registerComponentViewClass:[RCTViewComponentView class]];
 //  [componentViewFactory registerComponentViewClass:[RCTParagraphComponentView class]];
 //  [componentViewFactory registerComponentViewClass:[RCTTextInputComponentView class]];
@@ -63,6 +63,7 @@ static Class<RCTComponentViewProtocol> RCTComponentViewClassWithName(const char 
 
   providerRegistry->setComponentDescriptorProviderRequest(
       [providerRegistry, componentViewFactory](ComponentName requestedComponentName) {
+    NSLog(@"Requested for component %s", requestedComponentName);
         // Fallback 1: Call provider function for component view class.
         Class<RCTComponentViewProtocol> klass = RCTComponentViewClassWithName(requestedComponentName);
         if (klass) {

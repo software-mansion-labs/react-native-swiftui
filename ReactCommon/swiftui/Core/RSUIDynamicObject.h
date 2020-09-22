@@ -1,7 +1,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RSUIViewPropsObjC : NSObject
+@interface RSUIDynamicObject : NSObject
 
 #pragma mark - public getters
 
@@ -13,9 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (CGFloat)float:(NSString *)key;
 
-- (nullable NSNumber *)integer:(NSString *)key;
+- (NSInteger)int:(NSString *)key;
 
-- (nullable NSNumber *)double:(NSString *)key;
+- (double)double:(NSString *)key;
 
 - (nullable NSString *)string:(NSString *)key;
 

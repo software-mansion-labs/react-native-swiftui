@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.swift_version        = '5.2'
   s.source_files         = 'swiftui/**/*.{m,mm,h,cpp,swift}'
   s.preserve_paths       = 'swiftui/**/*.{m,mm,h,cpp,swift}'
-  s.private_header_files = 'swiftui/**/{RSUISurface,RSUISurfacePresenter}.h'
+  s.private_header_files = ['swiftui/**/{RSUISurface,RSUISurfacePresenter}.h', 'swiftui/ComponentDescriptors/**']
   s.pod_target_xcconfig  = {
     'DEFINES_MODULE' => 'YES',
     'HEADER_SEARCH_PATHS' => "\"$(PODS_TARGET_SRCROOT)/ReactCommon\" \"$(PODS_ROOT)/boost-for-react-native\" \"$(PODS_ROOT)/DoubleConversion\" \"$(PODS_ROOT)/Folly\" \"$(PODS_ROOT)/Headers/Private/React-Core\""

@@ -42,6 +42,7 @@ static void RCTPerformMountInstructions(
             [registry dequeueComponentViewWithComponentHandle:newChildShadowView.componentHandle
                                                           tag:newChildShadowView.tag];
         observerCoordinator.registerViewComponentDescriptor(newChildViewDescriptor, surfaceId);
+        NSLog(@"Create %s with tag %d", newChildShadowView.componentName, newChildShadowView.tag);
         break;
       }
 
@@ -63,6 +64,8 @@ static void RCTPerformMountInstructions(
         auto &parentShadowView = mutation.parentShadowView;
         auto &newChildViewDescriptor = [registry componentViewDescriptorWithTag:newChildShadowView.tag];
         auto &parentViewDescriptor = [registry componentViewDescriptorWithTag:parentShadowView.tag];
+
+        NSLog(@"Insert %s with tag %d", newChildShadowView.componentName, newChildShadowView.tag);
 
         UIView<RCTComponentViewProtocol> *newChildComponentView = newChildViewDescriptor.view;
 
@@ -105,6 +108,7 @@ static void RCTPerformMountInstructions(
         }
 
         if (oldChildShadowView.state != newChildShadowView.state) {
+          NSLog(@"Update state %s with tag %d", newChildShadowView.componentName, newChildShadowView.tag);
           [newChildComponentView updateState:newChildShadowView.state oldState:oldChildShadowView.state];
           mask |= RNComponentViewUpdateMaskState;
         }

@@ -21,13 +21,13 @@ class SwiftUIExamples extends React.PureComponent {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
-        <View
+      <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+            {/*<View
           style={{
             width: 200,
             height: 200,
             borderLeftWidth: 30,
-            borderColor: 'white',
+            borderLeftColor: 'white',
             backgroundColor: '#fa5637',
             marginLeft: 0,
             marginTop: 44,
@@ -36,21 +36,25 @@ class SwiftUIExamples extends React.PureComponent {
 
         <View
           style={{
+            flexDirection: 'row',
+            alignItems: 'center',
             width: 250,
             height: 300,
             backgroundColor: 'pink',
             borderLeftWidth: 50,
-            borderColor: 'green',
+            borderLeftColor: 'green',
             marginTop: 50,
             marginLeft: 30,
           }}
-          accessibilityHint="hint"
-          accessibilityLabel="label"
-          dupa="dupa"
           >
-            <View style={{ width: 50, height: 50, marginTop: 50, backgroundColor: 'blue' }} />
-            <Text style={{ color: 'yellow' }}>test</Text>
-        </View>
+
+            <Text style={{ flex: 1, marginLeft: 50, marginRight: 50, backgroundColor: 'blue', color: 'black' }} numberOfLines={3}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </Text>
+              </View>*/}
+        <Text style={{ marginLeft: 50, marginRight: 50, backgroundColor: 'orange', color: 'white' }} numberOfLines={6}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </Text>
       </View>
     );
   }

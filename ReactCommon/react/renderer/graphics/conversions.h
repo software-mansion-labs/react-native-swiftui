@@ -45,7 +45,7 @@ inline void fromRawValue(const RawValue &value, SharedColor &result) {
   result = colorFromComponents({red, green, blue, alpha});
 }
 
-#ifdef ANDROID
+//#ifdef ANDROID
 
 inline folly::dynamic toDynamic(const SharedColor &color) {
   ColorComponents components = colorComponentsFromColor(color);
@@ -57,7 +57,7 @@ inline folly::dynamic toDynamic(const SharedColor &color) {
       ((int)(components.blue * ratio) & 0xff));
 }
 
-#endif
+//#endif
 
 inline std::string toString(const SharedColor &value) {
   ColorComponents components = colorComponentsFromColor(value);

@@ -8,10 +8,13 @@ public typealias ViewName = String
 public class RSUIViewDescriptor: NSObject, ObservableObject {
   let tag: ViewTag
   let name: ViewName
-  let view: RSUIAnyView
+  let view: RSUIView
 
   @objc
   public let props: RSUIViewProps
+
+  @objc
+  public let state: RSUIViewProps
 
   // Is SwiftUI layout engine broken? If initial width or height
   // multiplied by device's scale factor is less than 0.5
@@ -22,11 +25,12 @@ public class RSUIViewDescriptor: NSObject, ObservableObject {
   @Published
   var revision: UInt = 0
 
-  init(tag: ViewTag, name: ViewName, view: RSUIAnyView, props: RSUIViewProps) {
+  init(tag: ViewTag, name: ViewName, view: RSUIView, props: RSUIViewProps, state: RSUIViewProps) {
     self.tag = tag
     self.name = name
     self.view = view
     self.props = props
+    self.state = state
   }
 
   func createView() -> RSUIViewWrapper {
@@ -73,6 +77,20 @@ public class RSUIViewDescriptor: NSObject, ObservableObject {
   public func commitUpdates() {
     revision += 1
   }
+
+  // MARK: CustomStringConvertible
+
+  public override var description: String {
+    return """
+\(type(of: view))(
+  tag: \(tag),
+  name: \(name),
+  children: \(children),
+  props: \(props.dictionary()),
+  revision: \(revision),
+)
+"""
+  }
 }
 
 @objc
@@ -107,13 +125,14 @@ public class RSUIViewRegistry: NSObject, ObservableObject {
   @objc
   public func create(_ tag: ViewTag, name: ViewName) -> RSUIViewDescriptor? {
     if let viewType = viewTypes[name] {
-      let view = viewType.init()
+      let state = RSUIViewProps(viewRegistry: self, tag: tag)
 
       descriptors[tag] = RSUIViewDescriptor(
         tag: tag,
         name: name,
-        view: RSUIAnyView(view.castView(to: type(of: view))),
-        props: RSUIViewProps(viewRegistry: self, tag: tag)
+        view: viewType.init(state: state),
+        props: RSUIViewProps(viewRegistry: self, tag: tag),
+        state: state
       )
     }
     return viewDescriptor(forTag: tag)
