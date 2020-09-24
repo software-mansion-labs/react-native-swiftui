@@ -16,12 +16,9 @@ public struct RSUIViewWrapper: View, Identifiable {
   @ObservedObject
   var descriptor: RSUIViewDescriptor
 
-
-
   public var body: some View {
     let props = descriptor.props
     let layoutMetrics = descriptor.layoutMetrics
-    let renderer = descriptor.view
 
     let backgroundColor = props.color("backgroundColor")
     let foregroundColor = props.color("color")
@@ -29,9 +26,9 @@ public struct RSUIViewWrapper: View, Identifiable {
     let borderLeftColor = props.color("borderLeftColor")
     let borderLeftWidth = props.float("borderLeftWidth")
 
-    print(descriptor.name, layoutMetrics, props.dictionary())
+    print(descriptor.name, props.dictionary())
 
-    return renderer.render(props: descriptor.props)
+    return descriptor.view?.render()
       .frame(width: layoutMetrics.width, height: layoutMetrics.height, alignment: .topLeading)
       .background(backgroundColor)
       .foregroundColor(foregroundColor)

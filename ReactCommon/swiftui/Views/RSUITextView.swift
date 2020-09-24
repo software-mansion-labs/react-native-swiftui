@@ -18,10 +18,10 @@ open class RSUITextView: RSUIView {
     }
   }
 
-  public override func render(props: RSUIViewProps) -> AnyView {
+  public override func render() -> AnyView {
     let numberOfLines = props.int("numberOfLines")
     let ellipsizeMode = props.string("ellipsizeMode")
-    let attributedString = self.state.dictionary("attributedString") ?? [:]
+    let attributedString = self.descriptor.state.dictionary("attributedString") ?? [:]
     let fragments = attributedString["fragments"] as! Array<Dictionary<String, Any>>
 
     return AnyView(

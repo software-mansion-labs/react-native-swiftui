@@ -37,8 +37,14 @@ public:
 class RSUIComponentEventEmitter : public ViewEventEmitter {
 public:
   using ViewEventEmitter::ViewEventEmitter;
-
-  void dispatchEvent(std::string const &type, folly::dynamic const &payload) const {}
+  // EventEmitter::dispatchEvent is declared as protected,
+  // so we add our own public method with different signature (C-style string).
+  void dispatchEvent(
+                     const char* type,
+                     const folly::dynamic &payload,
+                     const EventPriority &priority = EventPriority::AsynchronousBatched) const {
+    EventEmitter::dispatchEvent(std::string(type), payload, priority);
+  }
 };
 
 class RSUIComponentState {

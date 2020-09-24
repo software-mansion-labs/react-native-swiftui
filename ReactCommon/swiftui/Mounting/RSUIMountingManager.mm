@@ -59,6 +59,8 @@ static void RCTPerformMountInstructions(
                                            width:layoutMetrics.frame.size.width
                                           height:layoutMetrics.frame.size.height];
 
+        [viewDescriptor.eventEmitter setInternalEventEmitter:newChildShadowView.eventEmitter.get()];
+
         [viewDescriptor commitUpdates];
         break;
       }
@@ -106,6 +108,11 @@ static void RCTPerformMountInstructions(
           folly::dynamic const &newState = [RSUIComponentViewFactory dynamicStateForState:newChildShadowView.state];
           [viewDescriptor.state updateObject:newState];
           mask |= RNComponentViewUpdateMaskState;
+        }
+
+        if (oldChildShadowView.eventEmitter != newChildShadowView.eventEmitter) {
+          [viewDescriptor.eventEmitter setInternalEventEmitter:newChildShadowView.eventEmitter.get()];
+          mask |= RNComponentViewUpdateMaskEventEmitter;
         }
 
         if (oldChildShadowView.layoutMetrics != newChildShadowView.layoutMetrics) {

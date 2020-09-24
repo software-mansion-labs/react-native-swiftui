@@ -112,6 +112,12 @@ const ReactNativeViewConfig = {
     onGestureHandlerStateChange: {
       registrationName: 'onGestureHandlerStateChange',
     },
+    topTap: {
+      registrationName: 'onTap',
+    },
+    topLongPress: {
+      registrationName: 'onLongPress',
+    },
   },
   validAttributes: {
     ...ReactNativeViewViewConfigAndroid.validAttributes,

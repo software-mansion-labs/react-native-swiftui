@@ -6,7 +6,7 @@ public protocol RSUIViewProtocol {
 
   static var viewName: String { get }
 
-  init(state: RSUIViewProps)
+  init(_ descriptor: RSUIViewDescriptor)
 
-  func render(props: RSUIViewProps) -> Self.RenderReturnType
+  func render() -> Self.RenderReturnType
 }
