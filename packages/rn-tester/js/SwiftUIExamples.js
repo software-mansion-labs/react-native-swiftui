@@ -1,11 +1,14 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Button, UIManager, NativeModules } from 'react-native';
+import { View, Text, TouchableOpacity, UIManager, NativeModules } from 'react-native';
+
+import Button from './swiftui/Button';
 
 const colors = ['black', 'blue', 'orange', 'green', 'pink', 'yellow', 'purple', 'red', 'transparent'];
 
 class SwiftUIExamples extends React.PureComponent {
   state = {
     colorIndex: 0,
+    isButtonPressed: false,
   }
 
   componentDidMount() {
@@ -20,19 +23,12 @@ class SwiftUIExamples extends React.PureComponent {
   }
 
   onPress = () => {
-    alert('pressed!');
+    this.setState({ isButtonPressed: false });
   }
 
-  onLongPress = () => {
-    alert('long pressed');
-  }
-
-  tapGreen = () => {
-    alert('green tapped');
-  }
-
-  tapBlue = () => {
-    alert('blue tapped');
+  onActiveStateChange = ({ nativeEvent }) => {
+    this.setState({ isButtonPressed: nativeEvent.state });
+    // console.log('active state change:', nativeEvent.state);
   }
 
   render() {
@@ -77,9 +73,15 @@ class SwiftUIExamples extends React.PureComponent {
           <View style={{ width: 50, height: 50, backgroundColor: 'yellow' }} />
         </View> */}
         <View style={{ backgroundColor: 'orange', alignItems: 'center' }}>
-          <View onTap={this.onPress} onLongPress={this.onLongPress}>
-            <Text style={{ margin: 10, color: 'white', fontSize: 20 }}>Press me!</Text>
-          </View>
+          <Button style={{ backgroundColor: 'green' }} onPress={this.onPress} onActiveStateChange={this.onActiveStateChange}>
+            <Text style={{
+              margin: 15,
+              color: this.state.isButtonPressed ? 'black' : 'white',
+              fontSize: 20,
+            }}>
+              Press me!
+            </Text>
+          </Button>
         </View>
       </View>
     );

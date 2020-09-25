@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSInteger)int:(NSString *)key;
 
-- (double)double:(NSString *)key;
+- (double)double:(NSString *)key default:(double)defaultValue;
 
 - (nullable NSString *)string:(NSString *)key;
 

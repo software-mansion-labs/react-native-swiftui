@@ -29,6 +29,10 @@ open class RSUIView: RSUIViewProtocol {
     )
   }
 
+  internal func update() {
+    descriptor.commitUpdates()
+  }
+
   // MARK: View helpers
 
   func Children(_ children: [RSUIViewWrapper]) -> some View {

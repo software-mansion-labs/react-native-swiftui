@@ -24,6 +24,7 @@ public class RSUIViewRegistry: NSObject, ObservableObject {
     register(viewType: RSUIView.self)
     register(viewType: RSUITextView.self)
     register(viewType: RSUIRawTextView.self)
+    register(viewType: RSUIButton.self)
   }
 
   @objc

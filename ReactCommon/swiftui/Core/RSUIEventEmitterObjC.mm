@@ -13,10 +13,12 @@
   _internalEventEmitter = (RSUIComponentEventEmitter *)internalEventEmitter;
 }
 
-- (void)dispatchEvent:(NSString *)eventName payload:(NSDictionary *)payload
+- (void)dispatchEvent:(NSString *)eventName
+              payload:(NSDictionary *)payload
+             priority:(const int)priority
 {
   const folly::dynamic dynamicPayload = convertIdToFollyDynamic(payload);
-  _internalEventEmitter->dispatchEvent(eventName.UTF8String, dynamicPayload);
+  _internalEventEmitter->dispatchEvent(eventName.UTF8String, dynamicPayload, (const facebook::react::EventPriority)priority);
 }
 
 @end

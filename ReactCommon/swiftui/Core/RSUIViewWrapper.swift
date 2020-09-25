@@ -26,7 +26,9 @@ public struct RSUIViewWrapper: View, Identifiable {
     let borderLeftColor = props.color("borderLeftColor")
     let borderLeftWidth = props.float("borderLeftWidth")
 
-    print(descriptor.name, props.dictionary())
+    let opacity = props.double("opacity", default: 1.0)
+
+//    print(descriptor.name, props.dictionary())
 
     return descriptor.view?.render()
       .frame(width: layoutMetrics.width, height: layoutMetrics.height, alignment: .topLeading)
@@ -39,5 +41,6 @@ public struct RSUIViewWrapper: View, Identifiable {
         alignment: .leading
       )
       .offset(x: layoutMetrics.x, y: layoutMetrics.y)
+      .opacity(opacity)
   }
 }

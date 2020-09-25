@@ -25,7 +25,6 @@ struct RSUIHostingView: View {
 
   public var body: some View {
     let children = viewRegistry.childrenForRootView()
-    let _ = print("Rendering RSUIHostingView with children count: \(children.count)")
 
     return FlexContainer {
       ZStack(alignment: .topLeading) {
@@ -35,17 +34,16 @@ struct RSUIHostingView: View {
           ForEach(children) { $0 }
         }
       }
-      .background(Color.secondary)
-      .simultaneousGesture(
-        DragGesture(minimumDistance: 0, coordinateSpace: .global)
-          .onChanged { value in
-            print("drag changed", value.location, value.translation, value.startLocation)
-          }
-          .onEnded { value in
-            print("drag ended", value.location, value.translation, value.startLocation)
-          }
-        , including: .all
-      )
+//      .simultaneousGesture(
+//        DragGesture(minimumDistance: 0, coordinateSpace: .global)
+//          .onChanged { value in
+//            print("drag changed", value.location, value.translation, value.startLocation)
+//          }
+//          .onEnded { value in
+//            print("drag ended", value.location, value.translation, value.startLocation)
+//          }
+//        , including: .all
+//      )
     }
   }
 }

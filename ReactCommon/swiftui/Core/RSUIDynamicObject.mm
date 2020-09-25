@@ -69,13 +69,13 @@ using namespace facebook::react;
   }
 }
 
-- (double)double:(NSString *)key
+- (double)double:(NSString *)key default:(double)defaultValue
 {
   folly::dynamic value = [self get:key];
   if (value.isDouble()) {
     return value.asDouble();
   } else {
-    return 0;
+    return defaultValue;
   }
 }
 
