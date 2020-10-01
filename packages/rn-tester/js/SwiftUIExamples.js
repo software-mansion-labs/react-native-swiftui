@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, UIManager, NativeModules, TextInput, Switch } from 'react-native';
 
 import Button from './swiftui/Button';
+import Shadow from './swiftui/Shadow';
 
 const colors = ['black', 'blue', 'orange', 'green', 'pink', 'yellow', 'purple', 'red', 'transparent'];
 
@@ -107,9 +108,16 @@ class SwiftUIExamples extends React.PureComponent {
           onEndEditing={() => console.log('end editing')} />
 
         <Switch
+          style={{ margin: 10 }}
           trackColor={{ false: 'red' }}
           value={this.state.switchValue}
           onChange={this.onSwitchChange} />
+
+        <Shadow radius={20} offsetX={0} offsetY={50}>
+          <View style={{ margin: 10, width: 100, height: 50, backgroundColor: 'magenta' }}>
+            <Text numberOfLines={3}>Rectangle with shadow</Text>
+          </View>
+        </Shadow>
       </View>
     );
   }
