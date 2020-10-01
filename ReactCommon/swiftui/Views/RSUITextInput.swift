@@ -66,7 +66,7 @@ open class RSUITextInput: RSUIView, ObservableObject {
   }
 
   public override func render() -> AnyView {
-    let color = props.color("color")
+    let color = props.color("color", .black)
 
     print("TextInput", props.dictionary())
     

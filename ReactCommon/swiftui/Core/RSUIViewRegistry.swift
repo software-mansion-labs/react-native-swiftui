@@ -26,6 +26,7 @@ public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
     register(viewType: RSUIRawTextView.self)
     register(viewType: RSUIButton.self)
     register(viewType: RSUITextInput.self)
+    register(viewType: RSUISwitchView.self)
   }
 
   @objc

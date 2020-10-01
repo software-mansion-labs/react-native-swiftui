@@ -70,13 +70,13 @@ using namespace facebook::react;
   }
 }
 
-- (NSInteger)int:(NSString *)key
+- (NSInteger)int:(NSString *)key :(NSInteger)fallback
 {
   folly::dynamic value = [self get:key];
   if (value.isNumber()) {
     return value.asInt();
   } else {
-    return 0;
+    return fallback;
   }
 }
 

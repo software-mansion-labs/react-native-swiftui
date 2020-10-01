@@ -8,8 +8,13 @@ public class RSUIViewProps: RSUIDynamicObject {
     return string(key) ?? fallback
   }
 
-  public func color(_ key: String) -> Color {
-    let colorInt = int(key)
+  public func color(_ key: String, _ fallback: Color) -> Color {
+    let colorInt = int(key, -1)
+
+    guard colorInt > 0 else {
+      return fallback
+    }
+
     let ratio = 256.0
     let red = Double((colorInt >> 16) & 0xff) / ratio
     let green = Double((colorInt >> 8) & 0xff) / ratio

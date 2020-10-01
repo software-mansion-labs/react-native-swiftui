@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (CGFloat)float:(NSString *)key;
 
-- (NSInteger)int:(NSString *)key;
+- (NSInteger)int:(NSString *)key :(NSInteger)fallback;
 
 - (double)double:(NSString *)key :(double)fallback;
 

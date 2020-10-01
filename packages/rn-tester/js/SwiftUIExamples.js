@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, UIManager, NativeModules, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, UIManager, NativeModules, TextInput, Switch } from 'react-native';
 
 import Button from './swiftui/Button';
 
@@ -10,6 +10,7 @@ class SwiftUIExamples extends React.PureComponent {
     colorIndex: 0,
     isButtonPressed: false,
     textInputValue: '',
+    switchValue: false,
   }
 
   componentDidMount() {
@@ -35,6 +36,11 @@ class SwiftUIExamples extends React.PureComponent {
   onTextChange = ({ nativeEvent }) => {
     this.setState({ textInputValue: nativeEvent.text.toUpperCase() });
     console.log('text changed', nativeEvent.text);
+  }
+
+  onSwitchChange = ({ nativeEvent }) => {
+    this.setState({ switchValue: nativeEvent.value });
+    console.log(`switch changed to ${nativeEvent.value}`);
   }
 
   render() {
@@ -99,6 +105,11 @@ class SwiftUIExamples extends React.PureComponent {
           onFocus={() => console.log('focus')}
           onBlur={() => console.log('blur')}
           onEndEditing={() => console.log('end editing')} />
+
+        <Switch
+          trackColor={{ false: 'red' }}
+          value={this.state.switchValue}
+          onChange={this.onSwitchChange} />
       </View>
     );
   }

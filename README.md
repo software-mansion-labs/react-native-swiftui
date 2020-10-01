@@ -51,3 +51,11 @@ This project is to research what we can do to take advantage of using SwiftUI as
   - Get cursor position
   - Read text selection
   - For multiline input we can use `TextEditor` however it doesn't meet our requirements even more as it doesn't support any events and placeholder text.
+
+### Switch
+
+- Props
+  - [x] `value`
+  - [x] partially `trackColor` (only `false` state is supported by SwiftUI yet)
+- Events
+  - [x] `onChange`
