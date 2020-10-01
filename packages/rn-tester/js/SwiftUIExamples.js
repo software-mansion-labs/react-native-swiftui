@@ -40,7 +40,7 @@ class SwiftUIExamples extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, justifyContent: 'flex-start', paddingTop: 44, backgroundColor: 'royalblue' }}>
-        {/* <View style={{ marginVertical: 20, flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ marginVertical: 20, flexDirection: 'row', alignItems: 'center' }}>
           <View
             style={{
               width: 60,
@@ -77,9 +77,9 @@ class SwiftUIExamples extends React.PureComponent {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           </Text>
           <View style={{ width: 50, height: 50, backgroundColor: 'yellow' }} />
-        </View> */}
+        </View>
 
-        {/* <View style={{ backgroundColor: 'orange', alignItems: 'center' }}>
+        <View style={{ backgroundColor: 'orange', alignItems: 'center', marginBottom: 10 }}>
           <Button style={{ backgroundColor: 'green' }} onPress={this.onPress} onActiveStateChange={this.onActiveStateChange}>
             <Text style={{
               margin: 15,
@@ -89,7 +89,7 @@ class SwiftUIExamples extends React.PureComponent {
               Press me!
             </Text>
           </Button>
-        </View> */}
+        </View>
 
         <TextInput
           style={{ minWidth: 150, padding: 10, backgroundColor: 'white', color: 'red' }}
