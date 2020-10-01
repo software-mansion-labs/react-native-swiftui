@@ -23,16 +23,17 @@ struct RSUIHostingView: View {
   @ObservedObject
   public var viewRegistry: RSUIViewRegistry
 
+  @State
+  public var text = "d"
+
   public var body: some View {
     let children = viewRegistry.childrenForRootView()
 
+    print("Hosting view render with text \(text)")
+
     return FlexContainer {
       ZStack(alignment: .topLeading) {
-        if children.count == 0 {
-          EmptyView()
-        } else {
-          ForEach(children) { $0 }
-        }
+        ForEach(children) { $0 }
       }
 //      .simultaneousGesture(
 //        DragGesture(minimumDistance: 0, coordinateSpace: .global)

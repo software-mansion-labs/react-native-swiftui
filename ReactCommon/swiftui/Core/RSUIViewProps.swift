@@ -3,19 +3,10 @@ import SwiftUI
 
 @objc
 public class RSUIViewProps: RSUIDynamicObject {
-  public let viewTag: ViewTag
-  private let viewRegistry: RSUIViewRegistry
 
-  var children: [RSUIViewWrapper] {
-    return self.viewRegistry.children(forViewTag: viewTag)
+  public func string(_ key: String, _ fallback: String) -> String {
+    return string(key) ?? fallback
   }
-
-  required init(viewRegistry: RSUIViewRegistry, tag: ViewTag) {
-    self.viewRegistry = viewRegistry
-    self.viewTag = tag
-  }
-
-  // MARK: value getters
 
   public func color(_ key: String) -> Color {
     let colorInt = int(key)

@@ -49,6 +49,7 @@ using namespace facebook::react;
       {"Paragraph", concreteComponentDescriptorConstructor<RSUIParagraphDescriptor>},
       {"RawText", concreteComponentDescriptorConstructor<RSUIRawTextDescriptor>},
       {"Text", concreteComponentDescriptorConstructor<RSUITextDescriptor>},
+      {"TextInput", concreteComponentDescriptorConstructor<RSUIParagraphDescriptor>},
       {"View", concreteComponentDescriptorConstructor<RSUIComponentDescriptor<RSUIComponentShadowNode>>},
     };
 

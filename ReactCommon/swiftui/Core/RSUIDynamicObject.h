@@ -9,13 +9,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nonnull NSDictionary<NSString *, id> *)dictionary;
 
-- (BOOL)bool:(NSString *)key;
+- (BOOL)boolean:(NSString *)key :(BOOL)fallback;
 
 - (CGFloat)float:(NSString *)key;
 
 - (NSInteger)int:(NSString *)key;
 
-- (double)double:(NSString *)key default:(double)defaultValue;
+- (double)double:(NSString *)key :(double)fallback;
 
 - (nullable NSString *)string:(NSString *)key;
 

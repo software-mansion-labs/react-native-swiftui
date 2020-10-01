@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, UIManager, NativeModules } from 'react-native';
+import { View, Text, TouchableOpacity, UIManager, NativeModules, TextInput } from 'react-native';
 
 import Button from './swiftui/Button';
 
@@ -9,6 +9,7 @@ class SwiftUIExamples extends React.PureComponent {
   state = {
     colorIndex: 0,
     isButtonPressed: false,
+    textInputValue: '',
   }
 
   componentDidMount() {
@@ -31,9 +32,14 @@ class SwiftUIExamples extends React.PureComponent {
     // console.log('active state change:', nativeEvent.state);
   }
 
+  onTextChange = ({ nativeEvent }) => {
+    this.setState({ textInputValue: nativeEvent.text.toUpperCase() });
+    console.log('text changed', nativeEvent.text);
+  }
+
   render() {
     return (
-      <View style={{ flex: 1, justifyContent: 'flex-start', paddingTop: 44 }}>
+      <View style={{ flex: 1, justifyContent: 'flex-start', paddingTop: 44, backgroundColor: 'royalblue' }}>
         {/* <View style={{ marginVertical: 20, flexDirection: 'row', alignItems: 'center' }}>
           <View
             style={{
@@ -72,7 +78,8 @@ class SwiftUIExamples extends React.PureComponent {
           </Text>
           <View style={{ width: 50, height: 50, backgroundColor: 'yellow' }} />
         </View> */}
-        <View style={{ backgroundColor: 'orange', alignItems: 'center' }}>
+
+        {/* <View style={{ backgroundColor: 'orange', alignItems: 'center' }}>
           <Button style={{ backgroundColor: 'green' }} onPress={this.onPress} onActiveStateChange={this.onActiveStateChange}>
             <Text style={{
               margin: 15,
@@ -82,7 +89,16 @@ class SwiftUIExamples extends React.PureComponent {
               Press me!
             </Text>
           </Button>
-        </View>
+        </View> */}
+
+        <TextInput
+          style={{ minWidth: 150, padding: 10, backgroundColor: 'white', color: 'red' }}
+          placeholder="How are you doing?"
+          value={this.state.textInputValue}
+          onChange={this.onTextChange}
+          onFocus={() => console.log('focus')}
+          onBlur={() => console.log('blur')}
+          onEndEditing={() => console.log('end editing')} />
       </View>
     );
   }

@@ -30,7 +30,7 @@ open class RSUIButton: RSUIView {
   public override func render() -> AnyView {
     return AnyView(
       Button(action: pressAction, label: {
-        Children(props.children)
+        Children()
       })
       .buttonStyle(RSUIButtonStyle(onPressChange: onPressChange))
     )

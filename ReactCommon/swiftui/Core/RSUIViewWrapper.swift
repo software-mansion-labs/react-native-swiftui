@@ -9,8 +9,10 @@ class ViewTagRef {
 }
 
 public struct RSUIViewWrapper: View, Identifiable {
-  public var id: ObjectIdentifier {
-    return ObjectIdentifier(ViewTagRef(descriptor.tag))
+
+  // Implementing `Identifiable` protocol is necessary for ForEach used to render view's children.
+  public var id: ViewTag {
+    return descriptor.tag
   }
 
   @ObservedObject
@@ -26,11 +28,12 @@ public struct RSUIViewWrapper: View, Identifiable {
     let borderLeftColor = props.color("borderLeftColor")
     let borderLeftWidth = props.float("borderLeftWidth")
 
-    let opacity = props.double("opacity", default: 1.0)
+    let opacity = props.double("opacity", 1.0)
 
 //    print(descriptor.name, props.dictionary())
+    print("Rendering wrapper for \(descriptor.name) (\(descriptor.tag))")
 
-    return descriptor.view?.render()
+    return descriptor.view.render()
       .frame(width: layoutMetrics.width, height: layoutMetrics.height, alignment: .topLeading)
       .background(backgroundColor)
       .foregroundColor(foregroundColor)

@@ -15,10 +15,17 @@ open class RSUIView: RSUIViewProtocol {
     self.descriptor = descriptor
   }
 
+  /**
+   * Lifecycle method that gets called each time the view receives new props.
+   */
+  public func propsWillChange(newProps: RSUIViewProps) {}
+
   public func render() -> AnyView {
+    print("Rendering RSUIView \(descriptor.tag)")
+
     return AnyView(
       FlexContainer {
-        Children(props.children)
+        Children()
       }
       .onTapGesture {
         self.eventEmitter.dispatchEvent("tap")
@@ -29,16 +36,10 @@ open class RSUIView: RSUIViewProtocol {
     )
   }
 
-  internal func update() {
-    descriptor.commitUpdates()
-  }
-
   // MARK: View helpers
 
-  func Children(_ children: [RSUIViewWrapper]) -> some View {
-    return ZStack(alignment: .topLeading) {
-      ForEach(children) { $0 }
-    }
+  func Children() -> some View {
+    return ForEach(descriptor.getChildren()) { $0 }
   }
 
   func FlexContainer<ContentType: View>(content: () -> ContentType) -> some View {

@@ -5,7 +5,7 @@ public typealias ViewTag = Int
 public typealias ViewName = String
 
 @objc
-public class RSUIViewRegistry: NSObject, ObservableObject {
+public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
   var descriptors: [ViewTag: RSUIViewDescriptor] = [:]
   var viewTypes: [ViewName: RSUIView.Type] = [:]
   let factory: RSUIComponentViewFactory
@@ -25,6 +25,7 @@ public class RSUIViewRegistry: NSObject, ObservableObject {
     register(viewType: RSUITextView.self)
     register(viewType: RSUIRawTextView.self)
     register(viewType: RSUIButton.self)
+    register(viewType: RSUITextInput.self)
   }
 
   @objc
@@ -41,8 +42,7 @@ public class RSUIViewRegistry: NSObject, ObservableObject {
         tag: tag,
         name: name,
         viewType: viewType,
-        props: RSUIViewProps(viewRegistry: self, tag: tag),
-        state: RSUIViewProps(viewRegistry: self, tag: tag)
+        viewRegistry: self
       )
     }
     return viewDescriptor(forTag: tag)

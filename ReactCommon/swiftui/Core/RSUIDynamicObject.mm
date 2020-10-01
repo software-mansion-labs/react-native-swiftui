@@ -17,10 +17,20 @@ using namespace facebook::react;
 
 - (instancetype)init
 {
+  return [self initWithDynamicObject:folly::dynamic::object()];
+}
+
+- (instancetype)initWithDynamicObject:(folly::dynamic)object
+{
   if (self = [super init]) {
-    _object = folly::dynamic::object();
+    _object = object;
   }
   return self;
+}
+
+- (instancetype)mergeWith:(folly::dynamic)object
+{
+  return [[self.class alloc] initWithDynamicObject:folly::dynamic::merge(_object, object)];
 }
 
 - (void)updateObject:(folly::dynamic)patch
@@ -44,9 +54,10 @@ using namespace facebook::react;
   return convertFollyDynamicToId(_object) ?: @{};
 }
 
-- (BOOL)bool:(NSString *)key
+- (BOOL)boolean:(NSString *)key :(BOOL)fallback
 {
-  return (BOOL)([self get:key].asBool());
+  folly::dynamic value = [self get:key];
+  return value.isBool() ? value.asBool() : fallback;
 }
 
 - (CGFloat)float:(NSString *)key
@@ -69,14 +80,10 @@ using namespace facebook::react;
   }
 }
 
-- (double)double:(NSString *)key default:(double)defaultValue
+- (double)double:(NSString *)key :(double)fallback
 {
   folly::dynamic value = [self get:key];
-  if (value.isDouble()) {
-    return value.asDouble();
-  } else {
-    return defaultValue;
-  }
+  return value.isDouble() ? value.asDouble() : fallback;
 }
 
 - (nullable NSString *)string:(NSString *)key

@@ -3,10 +3,17 @@
 public class RSUIViewDescriptor: NSObject, ObservableObject {
   let tag: ViewTag
   let name: ViewName
-  var view: RSUIView?
+  let viewType: RSUIView.Type
+  let viewRegistry: RSUIViewRegistry
+
+  lazy var view: RSUIView = viewType.init(self)
 
   @objc
-  public let props: RSUIViewProps
+  public var props: RSUIViewProps {
+    willSet {
+      view.propsWillChange(newProps: newValue)
+    }
+  }
 
   @objc
   public let state: RSUIViewProps
@@ -18,20 +25,21 @@ public class RSUIViewDescriptor: NSObject, ObservableObject {
   // multiplied by device's scale factor is less than 0.5
   // then further changes are being ignored 🤯
   var layoutMetrics = RSUILayoutMetrics(x: 1, y: 1, width: 0.167, height: 0.167)
+
   var children: [ViewTag] = []
 
   @Published
   var revision: UInt = 0
 
-  init(tag: ViewTag, name: ViewName, viewType: RSUIView.Type, props: RSUIViewProps, state: RSUIViewProps) {
+  init(tag: ViewTag, name: ViewName, viewType: RSUIView.Type, viewRegistry: RSUIViewRegistry) {
     self.tag = tag
     self.name = name
-    self.props = props
-    self.state = state
+    self.viewType = viewType
+    self.viewRegistry = viewRegistry
+    self.props = RSUIViewProps()
+    self.state = RSUIViewProps()
     self.eventEmitter = RSUIEventEmitter()
     super.init()
-
-    self.view = viewType.init(self)
   }
 
   func createView() -> RSUIViewWrapper {
@@ -60,6 +68,10 @@ public class RSUIViewDescriptor: NSObject, ObservableObject {
       children.remove(at: index)
       commitUpdates()
     }
+  }
+
+  func getChildren() -> [RSUIViewWrapper] {
+    return viewRegistry.children(forViewTag: tag)
   }
 
   // MARK: Layout management

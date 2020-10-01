@@ -68,7 +68,6 @@ public class RSUISurfaceContentView: UIView {
 
   private func createHostingRootView() -> some View {
     return RSUIHostingView(viewRegistry: viewRegistry!)
-      .background(Color.blue)
       .edgesIgnoringSafeArea(.all)
   }
 }
