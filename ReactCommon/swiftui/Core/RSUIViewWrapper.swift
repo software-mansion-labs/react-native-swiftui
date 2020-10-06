@@ -18,32 +18,110 @@ public struct RSUIViewWrapper: View, Identifiable {
   @ObservedObject
   var descriptor: RSUIViewDescriptor
 
-  public var body: some View {
-    let props = descriptor.props
-    let layoutMetrics = descriptor.layoutMetrics
+  var props: RSUIViewProps { descriptor.props }
 
+  func layout<InputType: View>(_ view: InputType) -> some View {
+    let layoutMetrics = descriptor.layoutMetrics
+    return view
+      .frame(
+        width: layoutMetrics.width,
+        height: layoutMetrics.height,
+        alignment: .topLeading
+      )
+  }
+
+  func style<InputType: View>(_ view: InputType) -> some View {
     let backgroundColor = props.color("backgroundColor", .clear)
     let foregroundColor = props.color("color", .white)
 
     let borderLeftColor = props.color("borderLeftColor", .clear)
-    let borderLeftWidth = props.float("borderLeftWidth")
+    let borderLeftWidth = props.cgFloat("borderLeftWidth")
 
     let opacity = props.double("opacity", 1.0)
 
-//    print(descriptor.name, props.dictionary())
-    print("Rendering wrapper for \(descriptor.name) (\(descriptor.tag))")
-
-    return descriptor.view.render()
-      .frame(width: layoutMetrics.width, height: layoutMetrics.height, alignment: .topLeading)
+    return view
       .background(backgroundColor)
       .foregroundColor(foregroundColor)
-      .overlay(
-        Rectangle()
-          .frame(width: borderLeftWidth, height: nil, alignment: .leading)
-          .foregroundColor(borderLeftColor),
-        alignment: .leading
-      )
-      .offset(x: layoutMetrics.x, y: layoutMetrics.y)
+      .overlay(Border())
       .opacity(opacity)
+  }
+
+  func maybeApplyFrame<InputType: View>(_ view: InputType, traits: RSUIViewTraits) -> AnyView {
+    if traits.contains(.Layoutable) {
+      return AnyView(layout(view))
+    } else {
+      return AnyView(view)
+    }
+  }
+
+  func maybeApplyStyles<InputType: View>(_ view: InputType, traits: RSUIViewTraits) -> AnyView {
+    if traits.contains(.Styleable) {
+      return AnyView(style(view))
+    } else {
+      return AnyView(view)
+    }
+  }
+
+  public var body: some View {
+    let traits = descriptor.traits()
+    var result = descriptor.view.render()
+
+    result = maybeApplyFrame(result, traits: traits)
+    result = maybeApplyStyles(result, traits: traits)
+
+    return result.offset(x: descriptor.layoutMetrics.x, y: descriptor.layoutMetrics.y)
+  }
+
+  // MARK: View helpers
+
+  func Border() -> AnyView {
+    let props = descriptor.props
+    let width = props.cgFloat("borderWidth", 0.0)
+    let color = props.color("borderColor", Color.clear)
+
+    return AnyView(
+      Rectangle()
+        .fill(Color.clear)
+        .overlay(
+          Rectangle()
+            .frame(
+              width: nil,
+              height: props.cgFloat("borderTopWidth", width),
+              alignment: .top
+            )
+            .foregroundColor(props.color("borderTopColor", color)),
+          alignment: .top
+        )
+        .overlay(
+          Rectangle()
+            .frame(
+              width: props.cgFloat("borderRightWidth", width),
+              height: nil,
+              alignment: .trailing
+            )
+            .foregroundColor(props.color("borderRightColor", color)),
+          alignment: .trailing
+        )
+        .overlay(
+          Rectangle()
+            .frame(
+              width: nil,
+              height: props.cgFloat("borderBottomWidth", width),
+              alignment: .bottom
+            )
+            .foregroundColor(props.color("borderBottomColor", color)),
+          alignment: .bottom
+        )
+        .overlay(
+          Rectangle()
+            .frame(
+              width: props.cgFloat("borderLeftWidth", width),
+              height: nil,
+              alignment: .leading
+            )
+            .foregroundColor(props.color("borderLeftColor", color)),
+          alignment: .leading
+        )
+    )
   }
 }

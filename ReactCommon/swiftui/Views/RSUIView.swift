@@ -4,6 +4,8 @@ import SwiftUI
 open class RSUIView: RSUIViewProtocol {
   public class var viewName: String { "View" }
 
+  public class func traits() -> RSUIViewTraits { [.Layoutable, .Styleable] }
+
   internal let descriptor: RSUIViewDescriptor
 
   // Computed properties for easier access to descriptor properties
@@ -21,10 +23,8 @@ open class RSUIView: RSUIViewProtocol {
   public func propsWillChange(newProps: RSUIViewProps) {}
 
   public func render() -> AnyView {
-    print("Rendering RSUIView \(descriptor.tag)")
-
     return AnyView(
-      FlexContainer {
+      ZStack(alignment: .topLeading) {
         Children()
       }
       .onTapGesture {
@@ -42,15 +42,35 @@ open class RSUIView: RSUIViewProtocol {
     return ForEach(descriptor.getChildren()) { $0 }
   }
 
-  func FlexContainer<ContentType: View>(content: () -> ContentType) -> some View {
-    ZStack(alignment: .topLeading) {
-      content()
-      HStack(alignment: .top) {
-        VStack(alignment: .leading) {
-          Spacer()
-        }
-        Spacer()
-      }
+  func AlignHorizontally<Content: View>(alignment: HorizontalAlignment, content: () -> Content) -> AnyView {
+    switch alignment {
+    case .leading:
+      return AnyView(HStack { content(); Spacer() })
+    case .center:
+      return AnyView(HStack { Spacer(); content(); Spacer() })
+    case .trailing:
+      return AnyView(HStack { Spacer(); content() })
+    default:
+      return AnyView(HStack { content() })
     }
+  }
+
+  func AlignVertically<Content: View>(alignment: VerticalAlignment, content: () -> Content) -> AnyView {
+    switch alignment {
+    case .top:
+      return AnyView(VStack { content(); Spacer() })
+    case .center:
+      return AnyView(VStack { Spacer(); content(); Spacer() })
+    case .bottom:
+      return AnyView(VStack { Spacer(); content() })
+    default:
+      return AnyView(VStack { content() })
+    }
+  }
+
+  func AlignContainer<Content: View>(alignment: Alignment, content: () -> Content) -> AnyView {
+    return AnyView(AlignHorizontally(alignment: alignment.horizontal) {
+      AlignVertically(alignment: alignment.vertical, content: content)
+    })
   }
 }

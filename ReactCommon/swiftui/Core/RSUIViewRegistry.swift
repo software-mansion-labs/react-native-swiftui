@@ -28,6 +28,9 @@ public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
     register(viewType: RSUITextInput.self)
     register(viewType: RSUISwitchView.self)
     register(viewType: RSUIShadow.self)
+    register(viewType: RSUIMask.self)
+    register(viewType: RSUIRect.self)
+    register(viewType: RSUICircle.self)
   }
 
   @objc

@@ -1,8 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, UIManager, NativeModules, TextInput, Switch } from 'react-native';
+import { View, Text, TouchableOpacity, UIManager, NativeModules, TextInput, StyleSheet, Switch } from 'react-native';
 
 import Button from './swiftui/Button';
 import Shadow from './swiftui/Shadow';
+import Mask from './swiftui/Mask';
+import Rect from './swiftui/Rect';
+import Circle from './swiftui/Circle';
 
 const colors = ['black', 'blue', 'orange', 'green', 'pink', 'yellow', 'purple', 'red', 'transparent'];
 
@@ -47,16 +50,15 @@ class SwiftUIExamples extends React.PureComponent {
   render() {
     return (
       <View style={{ flex: 1, justifyContent: 'flex-start', paddingTop: 44, backgroundColor: 'royalblue' }}>
-        <View style={{ marginVertical: 20, flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <View
             style={{
               width: 60,
               height: 60,
-              borderLeftWidth: 40,
-              borderLeftColor: 'white',
+              marginLeft: 10,
+              borderWidth: 4,
+              borderColor: 'white',
               backgroundColor: '#fa5637',
-              marginLeft: 0,
-              marginTop: 44,
             }}
           />
 
@@ -67,13 +69,14 @@ class SwiftUIExamples extends React.PureComponent {
               width: 70,
               height: 30,
               backgroundColor: colors[this.state.colorIndex],
-              borderLeftWidth: 20,
-              borderLeftColor: 'green',
-              marginTop: 50,
+              borderWidth: 2,
+              borderColor: 'green',
+              marginTop: 20,
               marginLeft: 30,
             }}
           />
         </View>
+
         <View style={{ marginVertical: 20, flexDirection: 'row', alignItems: 'flex-start' }}>
           <View style={{ width: 50, height: 50, backgroundColor: 'yellow' }} />
           <Text style={{ maxWidth: 100, backgroundColor: 'orange', color: 'white' }} numberOfLines={6}>
@@ -113,11 +116,57 @@ class SwiftUIExamples extends React.PureComponent {
           value={this.state.switchValue}
           onChange={this.onSwitchChange} />
 
-        <Shadow radius={20} offsetX={0} offsetY={50}>
-          <View style={{ margin: 10, width: 100, height: 50, backgroundColor: 'magenta' }}>
-            <Text numberOfLines={3}>Rectangle with shadow</Text>
+        <View style={{ flexDirection: 'row' }}>
+          <Shadow radius={20} offsetX={-10} offsetY={50}>
+            <View style={{ margin: 10, width: 100, height: 50, backgroundColor: 'magenta' }}>
+              <Text numberOfLines={3}>Rectangle with shadow</Text>
+            </View>
+          </Shadow>
+
+          <View style={{ width: 100, height: 100, backgroundColor: 'gray' }}>
+            <Rect
+              fill="pink"
+              width={50}
+              height={60}
+              stroke="black"
+              strokeWidth={4}
+              strokeDashes={[3, 8]}
+              strokeLineCap="round"
+              offsetX={5}
+              offsetY={5}
+              alignment="topLeft">
+              <Shadow radius={5} opacity={0.5} offsetX={5} style={StyleSheet.absoluteFill}>
+                <Circle fill="#7c238c" radius={10} />
+              </Shadow>
+            </Rect>
+            <Circle
+              fill="cyan"
+              stroke="black"
+              strokeWidth={2}
+              strokeDashes={[12, 5]}
+              strokeDashPhase={-30}
+              radius={25}
+              offsetX={-5}
+              offsetY={-5}
+              alignment="bottomRight">
+              <Circle radius={18} fill="white" stroke="red" strokeDashes={[1, 8]}>
+                <Circle radius={8} fill="orange" stroke="green" />
+              </Circle>
+            </Circle>
           </View>
-        </Shadow>
+
+          <Mask
+            style={{ marginLeft: 10 }}
+            shape={
+              <Circle radius={20} alignment="left">
+                <Circle radius={34} alignment="right" offsetX={50} />
+              </Circle>
+            }>
+            <View style={{ height: 50, justifyContent: 'center', backgroundColor: 'black', borderWidth: 2, borderColor: 'red' }}>
+              <Text style={{ fontSize: 9 }}>View masked by circles</Text>
+            </View>
+          </Mask>
+        </View>
       </View>
     );
   }

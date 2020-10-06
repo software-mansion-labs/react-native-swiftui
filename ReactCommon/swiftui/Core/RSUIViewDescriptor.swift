@@ -46,6 +46,10 @@ public class RSUIViewDescriptor: NSObject, ObservableObject {
     return RSUIViewWrapper(descriptor: self)
   }
 
+  func traits() -> RSUIViewTraits {
+    return viewType.traits()
+  }
+
   // MARK: Children management
 
   /**
