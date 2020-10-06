@@ -5,9 +5,9 @@ open class RSUIShadow: RSUIView {
   public override class var viewName: String { "RSUIShadow" }
 
   public override func render() -> AnyView {
-    let radius = props.float("radius")
-    let offsetX = props.float("offsetX")
-    let offsetY = props.float("offsetY")
+    let radius = props.cgFloat("radius")
+    let offsetX = props.cgFloat("offsetX")
+    let offsetY = props.cgFloat("offsetY")
     let color = props.color("color", Color.black)
     let opacity = props.double("opacity", 0.33)
 

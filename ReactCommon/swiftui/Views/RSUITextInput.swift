@@ -52,7 +52,7 @@ open class RSUITextInput: RSUIView, ObservableObject {
     }
 
     let placeholder = props.string("placeholder", "")
-    let padding = props.float("padding")
+    let padding = props.cgFloat("padding")
 
     return AnyView(
       TextField(
@@ -67,8 +67,6 @@ open class RSUITextInput: RSUIView, ObservableObject {
 
   public override func render() -> AnyView {
     let color = props.color("color", .black)
-
-    print("TextInput", props.dictionary())
     
     return AnyView(
       renderTextField()

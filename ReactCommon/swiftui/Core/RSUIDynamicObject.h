@@ -11,8 +11,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)boolean:(NSString *)key :(BOOL)fallback;
 
-- (CGFloat)float:(NSString *)key;
-
 - (NSInteger)int:(NSString *)key :(NSInteger)fallback;
 
 - (double)double:(NSString *)key :(double)fallback;

@@ -60,16 +60,6 @@ using namespace facebook::react;
   return value.isBool() ? value.asBool() : fallback;
 }
 
-- (CGFloat)float:(NSString *)key
-{
-  folly::dynamic value = [self get:key];
-  if (value.isDouble()) {
-    return CGFloat(value.asDouble());
-  } else {
-    return CGFloat();
-  }
-}
-
 - (NSInteger)int:(NSString *)key :(NSInteger)fallback
 {
   folly::dynamic value = [self get:key];
