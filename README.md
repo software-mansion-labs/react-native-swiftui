@@ -3,7 +3,7 @@
 
 This project is to research what we can do to take advantage of using SwiftUI as a replacement for UIKit being the iOS native framework used by React Native to render user interfaces. Especially, it would make it possible to use React Native on other Apple platforms such as macOS, watchOS, tvOS and iOS widgets.
 
-## Implemented components
+## Reimplemented React Native components
 
 ### View
 
@@ -59,3 +59,28 @@ This project is to research what we can do to take advantage of using SwiftUI as
   - [x] partially `trackColor` (only `false` state is supported by SwiftUI yet)
 - Events
   - [x] `onChange`
+
+## Graphical Effects
+
+### Shadow
+
+Adds a shadow with given `radius`, `offsetX`, `offsetY`, `opacity` and `color` to children views.
+
+### Mask
+
+Masks children views using the alpha channel of the views provided by `shape` prop.
+
+## Shapes
+
+SVG-like shape components. Shapes are not managed by Yoga which means they have their own layouting mechanism (configurable with `alignment`, `offsetX` and `offsetY` props) that makes them positioned absolutely to the parent view.
+As opposed to SVG, our shapes can contain children.
+
+Common shape props: `fill`, `alignment`, `offsetX`, `offsetY`, `stroke`, `strokeWidth`, `strokeLineCap`, `strokeLineJoin`, `strokeDashes`, `strokeDashPhase`.
+
+### Rect
+
+Additional props: `width`, `height`
+
+### Circle
+
+Additional props: `radius`
