@@ -110,7 +110,7 @@ RCT_NOT_IMPLEMENTED(-(instancetype)init)
       [UIApplication class], originalKeyEventSelector, handleKeyUIEventSwizzleBlock, swizzledKeyEventSelector);
 }
 
-- (void)handleKeyUIEventSwizzle:(UIEvent *)event
+- (void)handleKeyUIEventSwizzle:(UIEvent *)event NS_EXTENSION_UNAVAILABLE_IOS("")
 {
   NSString *modifiedInput = nil;
   UIKeyModifierFlags *modifierFlags = nil;

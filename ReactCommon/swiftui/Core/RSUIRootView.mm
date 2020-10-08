@@ -136,6 +136,11 @@ static RuntimeExecutor RCTRuntimeExecutorFromBridge(RCTBridge *bridge)
   [_surface stop];
 }
 
+- (RSUIViewRegistryObjC *)viewRegistry
+{
+  return _surfacePresenter.viewRegistry;
+}
+
 #pragma mark - Stuff copied from RCTSurfacePresenterBridgeAdapter.mm
 
 - (void)_updateSurfacePresenter

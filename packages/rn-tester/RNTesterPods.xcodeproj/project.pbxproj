@@ -11,6 +11,7 @@
 		2687FBA6E032D1A3AB662C58 /* libPods-RNTester.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DC13C38906E5C982658AD2D6 /* libPods-RNTester.a */; };
 		272E6B3F1BEA849E001FCF37 /* UpdatePropertiesExampleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 272E6B3C1BEA849E001FCF37 /* UpdatePropertiesExampleView.m */; };
 		27F441EC1BEBE5030039B79C /* FlexibleSizeExampleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 27F441E81BEBE5030039B79C /* FlexibleSizeExampleView.m */; };
+		2B9358244E1E0496025FE08D /* libPods-RNTesterWidgetExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A66F998726B10B6D6BDA65E0 /* libPods-RNTesterWidgetExtension.a */; };
 		2DDEF0101F84BF7B00DBDF73 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2DDEF00F1F84BF7B00DBDF73 /* Images.xcassets */; };
 		383889DA23A7398900D06C3E /* RCTConvert_UIColorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 383889D923A7398900D06C3E /* RCTConvert_UIColorTests.m */; };
 		3D2AFAF51D646CF80089D1A3 /* legacy_image@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3D2AFAF41D646CF80089D1A3 /* legacy_image@2x.png */; };
@@ -59,6 +60,13 @@
 		E7DB218C22B41FCD005AC45F /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7DB218B22B41FCD005AC45F /* XCTest.framework */; };
 		F127980724F7C03E00103619 /* SwiftEnabler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F127980624F7C03E00103619 /* SwiftEnabler.swift */; };
 		F1783C3B25169463008BD0A8 /* SwiftUIExamples.js in Resources */ = {isa = PBXBuildFile; fileRef = F1783C3A25169463008BD0A8 /* SwiftUIExamples.js */; };
+		F1BD801C252C4905001AB422 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1BD801B252C4905001AB422 /* WidgetKit.framework */; };
+		F1BD801E252C4905001AB422 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1BD801D252C4905001AB422 /* SwiftUI.framework */; };
+		F1BD8021252C4905001AB422 /* RNTesterWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1BD8020252C4905001AB422 /* RNTesterWidget.swift */; };
+		F1BD8024252C4907001AB422 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1BD8023252C4907001AB422 /* Assets.xcassets */; };
+		F1BD8026252C4907001AB422 /* RNTesterWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F1BD8022252C4905001AB422 /* RNTesterWidget.intentdefinition */; };
+		F1BD8027252C4907001AB422 /* RNTesterWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F1BD8022252C4905001AB422 /* RNTesterWidget.intentdefinition */; };
+		F1BD802B252C4907001AB422 /* RNTesterWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F1BD801A252C4905001AB422 /* RNTesterWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,7 +77,28 @@
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
 			remoteInfo = RNTester;
 		};
+		F1BD8028252C4907001AB422 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F1BD8019252C4905001AB422;
+			remoteInfo = RNTesterWidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F1BD802A252C4907001AB422 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				F1BD802B252C4907001AB422 /* RNTesterWidgetExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		13B07F961A680F5B00A75B9A /* RNTester.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RNTester.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -84,6 +113,7 @@
 		34028D6B10F47E490042EB27 /* Pods-RNTesterUnitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNTesterUnitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RNTesterUnitTests/Pods-RNTesterUnitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		383889D923A7398900D06C3E /* RCTConvert_UIColorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTConvert_UIColorTests.m; sourceTree = "<group>"; };
 		3D2AFAF41D646CF80089D1A3 /* legacy_image@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "legacy_image@2x.png"; path = "RNTester/legacy_image@2x.png"; sourceTree = "<group>"; };
+		41EAEFECBE76D9AB43782EDB /* Pods-RNTesterWidgetExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNTesterWidgetExtension.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RNTesterWidgetExtension/Pods-RNTesterWidgetExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		5BEC8567F3741044B6A5EFC5 /* Pods-RNTester.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNTester.release.xcconfig"; path = "Pods/Target Support Files/Pods-RNTester/Pods-RNTester.release.xcconfig"; sourceTree = "<group>"; };
 		5C60EB1B226440DB0018C04F /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = RNTester/AppDelegate.mm; sourceTree = "<group>"; };
 		5CB07C99226467E60039471C /* RNTesterTurboModuleProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RNTesterTurboModuleProvider.mm; path = RNTester/RNTesterTurboModuleProvider.mm; sourceTree = "<group>"; };
@@ -93,7 +123,9 @@
 		8145AE05241172D900A3F8DA /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = RNTester/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		972A459EE6CF8CC63531A088 /* Pods-RNTesterIntegrationTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNTesterIntegrationTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RNTesterIntegrationTests/Pods-RNTesterIntegrationTests.debug.xcconfig"; sourceTree = "<group>"; };
 		98233960D1D6A1977D1C7EAF /* Pods-RNTester.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNTester.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RNTester/Pods-RNTester.debug.xcconfig"; sourceTree = "<group>"; };
+		A66F998726B10B6D6BDA65E0 /* libPods-RNTesterWidgetExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RNTesterWidgetExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2014FF084A918CB9AC99E11 /* libPods-RNTesterIntegrationTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RNTesterIntegrationTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6E8A0DE4061F2649EFE9584 /* Pods-RNTesterWidgetExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNTesterWidgetExtension.release.xcconfig"; path = "Pods/Target Support Files/Pods-RNTesterWidgetExtension/Pods-RNTesterWidgetExtension.release.xcconfig"; sourceTree = "<group>"; };
 		DC13C38906E5C982658AD2D6 /* libPods-RNTester.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RNTester.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E771AEEA22B44E3100EA1189 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = RNTester/Info.plist; sourceTree = "<group>"; };
 		E7C1241922BEC44B00DA25C0 /* RNTesterIntegrationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNTesterIntegrationTests.m; sourceTree = "<group>"; };
@@ -171,6 +203,13 @@
 		F127980524F7C03E00103619 /* RNTester-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RNTester-Bridging-Header.h"; sourceTree = "<group>"; };
 		F127980624F7C03E00103619 /* SwiftEnabler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SwiftEnabler.swift; path = RCTTest/SwiftEnabler.swift; sourceTree = "<group>"; };
 		F1783C3A25169463008BD0A8 /* SwiftUIExamples.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = SwiftUIExamples.js; path = js/SwiftUIExamples.js; sourceTree = "<group>"; };
+		F1BD801A252C4905001AB422 /* RNTesterWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RNTesterWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1BD801B252C4905001AB422 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		F1BD801D252C4905001AB422 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		F1BD8020252C4905001AB422 /* RNTesterWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RNTesterWidget.swift; sourceTree = "<group>"; };
+		F1BD8022252C4905001AB422 /* RNTesterWidget.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = RNTesterWidget.intentdefinition; sourceTree = "<group>"; };
+		F1BD8023252C4907001AB422 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F1BD8025252C4907001AB422 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,6 +238,16 @@
 				E7DB218C22B41FCD005AC45F /* XCTest.framework in Frameworks */,
 				E7DB216722B2F69F005AC45F /* JavaScriptCore.framework in Frameworks */,
 				96010200CC5BF8BC79BEAAA4 /* libPods-RNTesterIntegrationTests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F1BD8017252C4905001AB422 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F1BD801E252C4905001AB422 /* SwiftUI.framework in Frameworks */,
+				F1BD801C252C4905001AB422 /* WidgetKit.framework in Frameworks */,
+				2B9358244E1E0496025FE08D /* libPods-RNTesterWidgetExtension.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,6 +323,9 @@
 				DC13C38906E5C982658AD2D6 /* libPods-RNTester.a */,
 				B2014FF084A918CB9AC99E11 /* libPods-RNTesterIntegrationTests.a */,
 				767E10A1E434EE79D4C9D824 /* libPods-RNTesterUnitTests.a */,
+				F1BD801B252C4905001AB422 /* WidgetKit.framework */,
+				F1BD801D252C4905001AB422 /* SwiftUI.framework */,
+				A66F998726B10B6D6BDA65E0 /* libPods-RNTesterWidgetExtension.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -287,6 +339,8 @@
 				7D51F73F0DA20287418D98BD /* Pods-RNTesterIntegrationTests.release.xcconfig */,
 				34028D6B10F47E490042EB27 /* Pods-RNTesterUnitTests.debug.xcconfig */,
 				E9618482EC8608D4872A6E28 /* Pods-RNTesterUnitTests.release.xcconfig */,
+				41EAEFECBE76D9AB43782EDB /* Pods-RNTesterWidgetExtension.debug.xcconfig */,
+				C6E8A0DE4061F2649EFE9584 /* Pods-RNTesterWidgetExtension.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -304,6 +358,7 @@
 				13B07FAE1A68108700A75B9A /* RNTester */,
 				E7DB20A022B2BA84005AC45F /* RNTesterUnitTests */,
 				E7DB215422B2F332005AC45F /* RNTesterIntegrationTests */,
+				F1BD801F252C4905001AB422 /* RNTesterWidget */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2DE7E7D81FB2A4F3009E225D /* Frameworks */,
 				571A4A20844C3BA40A3D302B /* Pods */,
@@ -319,6 +374,7 @@
 				13B07F961A680F5B00A75B9A /* RNTester.app */,
 				E7DB209F22B2BA84005AC45F /* RNTesterUnitTests.xctest */,
 				E7DB215322B2F332005AC45F /* RNTesterIntegrationTests.xctest */,
+				F1BD801A252C4905001AB422 /* RNTesterWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -393,6 +449,17 @@
 			path = RNTesterIntegrationTests;
 			sourceTree = "<group>";
 		};
+		F1BD801F252C4905001AB422 /* RNTesterWidget */ = {
+			isa = PBXGroup;
+			children = (
+				F1BD8020252C4905001AB422 /* RNTesterWidget.swift */,
+				F1BD8022252C4905001AB422 /* RNTesterWidget.intentdefinition */,
+				F1BD8023252C4907001AB422 /* Assets.xcassets */,
+				F1BD8025252C4907001AB422 /* Info.plist */,
+			);
+			path = RNTesterWidget;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -407,10 +474,12 @@
 				68CD48B71D2BCB2C007E06A9 /* Build JS Bundle */,
 				5CF0FD27207FC6EC00C13D65 /* Start Metro */,
 				15B77E382EE3FF65ADBE9FDB /* [CP] Copy Pods Resources */,
+				F1BD802A252C4907001AB422 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				F1BD8029252C4907001AB422 /* PBXTargetDependency */,
 			);
 			name = RNTester;
 			productName = "Hello World";
@@ -456,12 +525,33 @@
 			productReference = E7DB215322B2F332005AC45F /* RNTesterIntegrationTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		F1BD8019252C4905001AB422 /* RNTesterWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F1BD802E252C4907001AB422 /* Build configuration list for PBXNativeTarget "RNTesterWidgetExtension" */;
+			buildPhases = (
+				456341A32F3A03B84B9F94F0 /* [CP] Check Pods Manifest.lock */,
+				F1BD8016252C4905001AB422 /* Sources */,
+				F1BD8017252C4905001AB422 /* Frameworks */,
+				F1BD8018252C4905001AB422 /* Resources */,
+				F1353947252CA8BA005FC0A3 /* Build JS Bundle */,
+				AE9AA26ED15F9E8880221C5E /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RNTesterWidgetExtension;
+			productName = RNTesterWidgetExtension;
+			productReference = F1BD801A252C4905001AB422 /* RNTesterWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1200;
 				LastUpgradeCheck = 1140;
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
@@ -474,6 +564,9 @@
 					E7DB215222B2F332005AC45F = {
 						CreatedOnToolsVersion = 10.2.1;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
+					};
+					F1BD8019252C4905001AB422 = {
+						CreatedOnToolsVersion = 12.0.1;
 					};
 				};
 			};
@@ -493,6 +586,7 @@
 				13B07F861A680F5B00A75B9A /* RNTester */,
 				E7DB209E22B2BA84005AC45F /* RNTesterUnitTests */,
 				E7DB215222B2F332005AC45F /* RNTesterIntegrationTests */,
+				F1BD8019252C4905001AB422 /* RNTesterWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -524,6 +618,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F1BD8018252C4905001AB422 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F1BD8024252C4907001AB422 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -542,6 +644,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RNTester/Pods-RNTester-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		456341A32F3A03B84B9F94F0 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-RNTesterWidgetExtension-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		56D84768A7BBB2750D674CF3 /* [CP] Check Pods Manifest.lock */ = {
@@ -651,6 +775,41 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RNTesterUnitTests/Pods-RNTesterUnitTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		AE9AA26ED15F9E8880221C5E /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RNTesterWidgetExtension/Pods-RNTesterWidgetExtension-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RNTesterWidgetExtension/Pods-RNTesterWidgetExtension-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RNTesterWidgetExtension/Pods-RNTesterWidgetExtension-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F1353947252CA8BA005FC0A3 /* Build JS Bundle */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build JS Bundle";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export NODE_BINARY=node\n\"$SRCROOT/../../scripts/react-native-xcode.sh\" $SRCROOT/../../packages/rn-tester/js/Widget.js\n";
+		};
 		F9CB97B0D9633939D43E75E0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -678,6 +837,7 @@
 			files = (
 				272E6B3F1BEA849E001FCF37 /* UpdatePropertiesExampleView.m in Sources */,
 				5CB07C9B226467E60039471C /* RNTesterTurboModuleProvider.mm in Sources */,
+				F1BD8027252C4907001AB422 /* RNTesterWidget.intentdefinition in Sources */,
 				27F441EC1BEBE5030039B79C /* FlexibleSizeExampleView.m in Sources */,
 				5C60EB1C226440DB0018C04F /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
@@ -733,6 +893,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F1BD8016252C4905001AB422 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F1BD8021252C4905001AB422 /* RNTesterWidget.swift in Sources */,
+				F1BD8026252C4907001AB422 /* RNTesterWidget.intentdefinition in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -740,6 +909,11 @@
 			isa = PBXTargetDependency;
 			target = 13B07F861A680F5B00A75B9A /* RNTester */;
 			targetProxy = E7DB215822B2F332005AC45F /* PBXContainerItemProxy */;
+		};
+		F1BD8029252C4907001AB422 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F1BD8019252C4905001AB422 /* RNTesterWidgetExtension */;
+			targetProxy = F1BD8028252C4907001AB422 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1193,6 +1367,80 @@
 			};
 			name = Release;
 		};
+		F1BD802C252C4907001AB422 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 41EAEFECBE76D9AB43782EDB /* Pods-RNTesterWidgetExtension.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = J5FM626PE2;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+				);
+				INFOPLIST_FILE = RNTesterWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.facebook.react.uiapp.RNTesterWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F1BD802D252C4907001AB422 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C6E8A0DE4061F2649EFE9584 /* Pods-RNTesterWidgetExtension.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = J5FM626PE2;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+				);
+				INFOPLIST_FILE = RNTesterWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.facebook.react.uiapp.RNTesterWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1228,6 +1476,15 @@
 			buildConfigurations = (
 				E7DB215B22B2F332005AC45F /* Debug */,
 				E7DB215C22B2F332005AC45F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F1BD802E252C4907001AB422 /* Build configuration list for PBXNativeTarget "RNTesterWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F1BD802C252C4907001AB422 /* Debug */,
+				F1BD802D252C4907001AB422 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

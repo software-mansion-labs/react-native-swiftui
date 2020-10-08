@@ -97,7 +97,7 @@ continueUserActivity:(NSUserActivity *)userActivity
 
 RCT_EXPORT_METHOD(openURL:(NSURL *)URL
                   resolve:(RCTPromiseResolveBlock)resolve
-                  reject:(RCTPromiseRejectBlock)reject)
+                  reject:(RCTPromiseRejectBlock)reject NS_EXTENSION_UNAVAILABLE_IOS(""))
 {
   [RCTSharedApplication() openURL:URL options:@{} completionHandler:^(BOOL success) {
     if (success) {
@@ -166,7 +166,7 @@ RCT_EXPORT_METHOD(getInitialURL:(RCTPromiseResolveBlock)resolve
 }
 
 RCT_EXPORT_METHOD(openSettings:(RCTPromiseResolveBlock)resolve
-                  reject:(__unused RCTPromiseRejectBlock)reject)
+                  reject:(__unused RCTPromiseRejectBlock)reject NS_EXTENSION_UNAVAILABLE_IOS(""))
 {
   NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
   [RCTSharedApplication() openURL:url options:@{} completionHandler:^(BOOL success) {

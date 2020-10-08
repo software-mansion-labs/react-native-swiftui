@@ -68,7 +68,7 @@ using namespace facebook::react;
 /*
  * Please do not use this, this will be deleted soon.
  */
-- (nullable UIView *)findComponentViewWithTag_DO_NOT_USE_DEPRECATED:(NSInteger)tag;
+- (id)findComponentViewWithTag_DO_NOT_USE_DEPRECATED:(NSInteger)tag;
 
 @end
 

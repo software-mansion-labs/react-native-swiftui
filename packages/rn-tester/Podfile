@@ -45,6 +45,10 @@ target 'RNTesterIntegrationTests' do
   pod 'React-RCTTest', :path => "./RCTTest"
 end
 
+target 'RNTesterWidgetExtension' do
+  pods()
+end
+
 def frameworks_pre_install(installer)
   static_frameworks = ['FlipperKit', 'Flipper', 'Flipper-Folly',
       'CocoaAsyncSocket', 'ComponentKit', 'Flipper-DoubleConversion',

@@ -200,10 +200,10 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
   LayoutConstraints layoutConstraints = RCTGetLayoutConstraintsForSize(minimumSize, maximumSize);
   [scheduler constraintSurfaceLayoutWithLayoutConstraints:layoutConstraints
                                             layoutContext:layoutContext
-                                                surfaceId:surface.rootTag];
+                                                surfaceId:(int)surface.rootTag];
 }
 
-- (UIView *)findComponentViewWithTag_DO_NOT_USE_DEPRECATED:(NSInteger)tag
+- (id)findComponentViewWithTag_DO_NOT_USE_DEPRECATED:(NSInteger)tag
 {
 //  UIView<RCTComponentViewProtocol> *componentView =
 //      [_mountingManager.componentViewRegistry findComponentViewWithTag:tag];

@@ -70,11 +70,13 @@
 
 - (nonnull RSUISurfaceView *)view
 {
+#if __has_include(<UIKit/UIView.h>)
   RCTAssertMainQueue();
 
   if (!_view) {
     _view = [[RSUISurfaceView alloc] initWithSurface:(RCTSurface *)self viewRegistry:_surfacePresenter.viewRegistry];
   }
+#endif
   return _view;
 }
 
