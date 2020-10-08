@@ -155,17 +155,18 @@ class SwiftUIExamples extends React.PureComponent {
             </Circle>
           </View>
 
-          <Mask
-            style={{ marginLeft: 10 }}
-            shape={
-              <Circle radius={20} alignment="left">
-                <Circle radius={34} alignment="right" offsetX={50} />
-              </Circle>
-            }>
-            <View style={{ height: 50, justifyContent: 'center', backgroundColor: 'black', borderWidth: 2, borderColor: 'red' }}>
-              <Text style={{ fontSize: 9 }}>View masked by circles</Text>
-            </View>
-          </Mask>
+          <Shadow radius={2} offsetX={20} offsetY={20} style={{ marginLeft: 10 }}>
+            <Mask
+              shape={
+                <Circle radius={20} alignment="left">
+                  <Circle radius={34} alignment="right" offsetX={50} />
+                </Circle>
+              }>
+              <View style={{ height: 50, justifyContent: 'center', backgroundColor: 'black', borderWidth: 2, borderColor: 'red' }}>
+                <Text style={{ fontSize: 9 }}>View masked by circles</Text>
+              </View>
+            </Mask>
+          </Shadow>
         </View>
       </View>
     );
