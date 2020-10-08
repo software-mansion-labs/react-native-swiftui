@@ -1,16 +1,15 @@
 
 import SwiftUI
 
-struct RSUIHostingView: View {
-  public static func viewName() -> String {
-    return "RootView"
-  }
+open class RSUIHostingView: RSUIView {
+  public override class var viewName: String { "RootView" }
 
-  @ObservedObject
-  public var viewRegistry: RSUIViewRegistry
+  public override func render() -> AnyView {
+    let _ = print("RSUIHostingView, children count", descriptor.children.count)
 
-  public var body: some View {
-    let children = viewRegistry.childrenForRootView()
-    return ForEach(children) { $0 }
+    return AnyView(Group {
+//      return AnyView(Rectangle().fill(Color.red))
+      Children()
+    })
   }
 }

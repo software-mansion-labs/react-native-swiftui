@@ -3,14 +3,14 @@ import SwiftUI
 
 @objc
 public class RSUISurfaceContentView: UIView {
-  var viewRegistry: RSUIViewRegistry?
+  var surfaceDescriptor: RSUIViewDescriptor?
 
   lazy var hostingController = UIHostingController(rootView: AnyView(createHostingRootView()))
 
   @objc
-  public init(viewRegistry: RSUIViewRegistry) {
+  public init(viewRegistry: RSUIViewRegistry, surfaceTag: ViewTag) {
     super.init(frame: .zero)
-    self.viewRegistry = viewRegistry
+    self.surfaceDescriptor = viewRegistry.create(surfaceTag, name: "RootView")
   }
 
   required init?(coder: NSCoder) {
@@ -67,7 +67,6 @@ public class RSUISurfaceContentView: UIView {
   }
 
   private func createHostingRootView() -> some View {
-    return RSUIHostingView(viewRegistry: viewRegistry!)
-      .edgesIgnoringSafeArea(.all)
+    return RSUIViewWrapper(descriptor: surfaceDescriptor!)
   }
 }

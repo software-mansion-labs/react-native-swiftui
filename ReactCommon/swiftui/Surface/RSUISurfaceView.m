@@ -11,7 +11,7 @@
 - (instancetype)initWithSurface:(RCTSurface *)surface viewRegistry:(RSUIViewRegistry *)viewRegistry
 {
   if (self = [super initWithSurface:surface]) {
-    _contentView = [[RSUISurfaceContentView alloc] initWithViewRegistry:viewRegistry];
+    _contentView = [[RSUISurfaceContentView alloc] initWithViewRegistry:viewRegistry surfaceTag:surface.rootTag];
   }
   return self;
 }

@@ -10,9 +10,6 @@ public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
   var viewTypes: [ViewName: RSUIView.Type] = [:]
   let factory: RSUIComponentViewFactory
 
-  @Published
-  var rootViewTag: ViewTag = 0
-
   // MARK: public
 
   @objc
@@ -20,7 +17,7 @@ public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
     factory = RSUIComponentViewFactory.standard()
     super.init()
 
-    register(viewType: RSUIView.self, name: "RootView")
+    register(viewType: RSUIHostingView.self)
     register(viewType: RSUIView.self)
     register(viewType: RSUITextView.self)
     register(viewType: RSUIRawTextView.self)
@@ -41,6 +38,7 @@ public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
   // MARK: View management
 
   @objc
+  @discardableResult
   public func create(_ tag: ViewTag, name: ViewName) -> RSUIViewDescriptor? {
     if let viewType = viewTypes[name] {
       descriptors[tag] = RSUIViewDescriptor(
@@ -57,9 +55,6 @@ public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
   public func insert(_ tag: ViewTag, toParent parentTag: ViewTag, atIndex index: Int) {
     if let descriptor = descriptors[parentTag], index <= descriptor.children.count {
       descriptor.insertChild(tag, atIndex: index)
-    }
-    if parentTag == 1 {
-      rootViewTag = parentTag
     }
   }
 
@@ -94,8 +89,8 @@ public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
       .map { descriptors[$0]!.createView() }
   }
 
-  public func childrenForRootView() -> [RSUIViewWrapper] {
-    return children(forViewTag: 1)
+  subscript(key: ViewTag) -> RSUIViewDescriptor? {
+    return viewDescriptor(forTag: key)
   }
 
   // MARK: internal
