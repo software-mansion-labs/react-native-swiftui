@@ -33,10 +33,6 @@ public struct RSUIViewWrapper: View, Identifiable {
   func style<InputType: View>(_ view: InputType) -> some View {
     let backgroundColor = props.color("backgroundColor", .clear)
     let foregroundColor = props.color("color", .white)
-
-    let borderLeftColor = props.color("borderLeftColor", .clear)
-    let borderLeftWidth = props.cgFloat("borderLeftWidth")
-
     let opacity = props.double("opacity", 1.0)
 
     return view

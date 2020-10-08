@@ -186,7 +186,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
   LayoutConstraints layoutConstraints = RCTGetLayoutConstraintsForSize(minimumSize, maximumSize);
   return [scheduler measureSurfaceWithLayoutConstraints:layoutConstraints
                                           layoutContext:layoutContext
-                                              surfaceId:surface.rootTag];
+                                              surfaceId:(int)surface.rootTag];
   return CGSizeZero;
 }
 
@@ -242,7 +242,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
     return NO;
   }
 
-  auto mountingCoordinator = [scheduler mountingCoordinatorWithSurfaceId:surface.rootTag];
+  auto mountingCoordinator = [scheduler mountingCoordinatorWithSurfaceId:(int)surface.rootTag];
 
   if (!mountingCoordinator->waitForTransaction(std::chrono::duration<NSTimeInterval>(timeout))) {
     return NO;
@@ -419,14 +419,14 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
 {
   RSUIMountingManager *mountingManager = _mountingManager;
   RCTExecuteOnMainQueue(^{
-    [mountingManager.viewRegistry create:surface.rootTag name:@"RootView"];
+    [mountingManager.viewRegistry create:(int)surface.rootTag name:@"RootView"];
   });
 
   LayoutContext layoutContext = RCTGetLayoutContext(surface.viewportOffset);
 
   LayoutConstraints layoutConstraints = RCTGetLayoutConstraintsForSize(surface.minimumSize, surface.maximumSize);
 
-  [scheduler startSurfaceWithSurfaceId:surface.rootTag
+  [scheduler startSurfaceWithSurfaceId:(int)surface.rootTag
                             moduleName:surface.moduleName
                           initialProps:surface.properties
                      layoutConstraints:layoutConstraints
@@ -435,7 +435,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
 
 - (void)stopSurface:(RSUISurface *)surface scheduler:(RCTScheduler *)scheduler
 {
-  [scheduler stopSurfaceWithSurfaceId:surface.rootTag];
+  [scheduler stopSurfaceWithSurfaceId:(int)surface.rootTag];
 
 //  RSUIMountingManager *mountingManager = _mountingManager;
 //  RCTExecuteOnMainQueue(^{
