@@ -1,11 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, UIManager, NativeModules, TextInput, StyleSheet, Switch } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Switch } from 'react-native';
 
-import Button from './swiftui/Button';
-import Shadow from './swiftui/Shadow';
-import Mask from './swiftui/Mask';
-import Rect from './swiftui/Rect';
-import Circle from './swiftui/Circle';
+import { Button, Shadow, Mask, Rect, Circle } from 'react-native-swiftui';
 
 const colors = ['black', 'blue', 'orange', 'green', 'pink', 'yellow', 'purple', 'red', 'transparent'];
 

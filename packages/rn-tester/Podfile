@@ -27,7 +27,7 @@ def pods()
   # To use fabric: add `fabric_enabled` option to the use_react_native method above, like below
   # use_react_native!(path: "..", fabric_enabled: true)
 
-  pod 'ReactSwiftUI', :path => "#{prefix_path}/ReactCommon"
+  pod 'ReactSwiftUI', :path => "#{prefix_path}/packages/react-native-swiftui"
 end
 
 target 'RNTester' do

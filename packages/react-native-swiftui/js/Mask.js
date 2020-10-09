@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import * as ReactNativeViewViewConfig from '../../../../Libraries/Components/View/ReactNativeViewViewConfig';
-import { register } from '../../../../Libraries/Renderer/shims/ReactNativeViewConfigRegistry';
+import * as ReactNativeViewViewConfig from 'react-native/Libraries/Components/View/ReactNativeViewViewConfig';
+import { register } from 'react-native/Libraries/Renderer/shims/ReactNativeViewConfigRegistry';
 
 const MaskNativeComponent = register('RSUIMask', () => {
   return {

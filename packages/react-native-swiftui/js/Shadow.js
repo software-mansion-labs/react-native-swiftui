@@ -1,8 +1,8 @@
 import React from 'react';
 import { processColor } from 'react-native';
 
-import * as ReactNativeViewViewConfig from '../../../../Libraries/Components/View/ReactNativeViewViewConfig';
-import { register } from '../../../../Libraries/Renderer/shims/ReactNativeViewConfigRegistry';
+import * as ReactNativeViewViewConfig from 'react-native/Libraries/Components/View/ReactNativeViewViewConfig';
+import { register } from 'react-native/Libraries/Renderer/shims/ReactNativeViewConfigRegistry';
 
 const ShadowNativeComponent = register('RSUIShadow', () => {
   return {

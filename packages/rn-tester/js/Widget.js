@@ -1,9 +1,7 @@
 import React from 'react';
 import { AppRegistry, Text, View } from 'react-native';
 
-import Rect from './swiftui/Rect';
-import Circle from './swiftui/Circle';
-import Shadow from './swiftui/Shadow';
+import { Rect, Circle, Shadow } from 'react-native-swiftui';
 
 class RNTesterWidget extends React.PureComponent {
   render() {
