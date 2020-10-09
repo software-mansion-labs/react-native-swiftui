@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.homepage             = 'https://swmansion.com'
   s.license              = 'MIT'
   s.authors              = 'Software Mansion'
-  s.platform             = :ios, '13.0'
+  s.platforms            = { :ios => "13.0", :tvos => "10.0", :osx => "10.15" }
   s.source               = { :git => 'https://github.com/software-mansion-labs/react-native-swiftui.git' }
   s.swift_version        = '5.2'
   s.source_files         = 'native/**/*.{m,mm,h,cpp,swift}'
