@@ -21,15 +21,15 @@ def use_react_native! (options={})
   pod 'React', :path => "#{prefix}/"
   pod 'React-Core', :path => "#{prefix}/"
   pod 'React-CoreModules', :path => "#{prefix}/React/CoreModules"
-  pod 'React-RCTActionSheet', :path => "#{prefix}/Libraries/ActionSheetIOS"
-  pod 'React-RCTAnimation', :path => "#{prefix}/Libraries/NativeAnimation"
-  pod 'React-RCTBlob', :path => "#{prefix}/Libraries/Blob"
+  # pod 'React-RCTActionSheet', :path => "#{prefix}/Libraries/ActionSheetIOS"
+  # pod 'React-RCTAnimation', :path => "#{prefix}/Libraries/NativeAnimation"
+  # pod 'React-RCTBlob', :path => "#{prefix}/Libraries/Blob"
   pod 'React-RCTImage', :path => "#{prefix}/Libraries/Image"
   pod 'React-RCTLinking', :path => "#{prefix}/Libraries/LinkingIOS"
   pod 'React-RCTNetwork', :path => "#{prefix}/Libraries/Network"
   pod 'React-RCTSettings', :path => "#{prefix}/Libraries/Settings"
   pod 'React-RCTText', :path => "#{prefix}/Libraries/Text"
-  pod 'React-RCTVibration', :path => "#{prefix}/Libraries/Vibration"
+  # pod 'React-RCTVibration', :path => "#{prefix}/Libraries/Vibration"
   pod 'React-Core/RCTWebSocket', :path => "#{prefix}/"
 
   unless production
@@ -57,7 +57,7 @@ def use_react_native! (options={})
     pod 'React-Fabric', :path => "#{prefix}/ReactCommon"
     pod 'React-graphics', :path => "#{prefix}/ReactCommon/react/renderer/graphics"
     pod 'React-jsi/Fabric', :path => "#{prefix}/ReactCommon/jsi"
-    pod 'React-RCTFabric', :path => "#{prefix}/React"
+    # pod 'React-RCTFabric', :path => "#{prefix}/React"
     pod 'Folly/Fabric', :podspec => "#{prefix}/third-party-podspecs/Folly.podspec"
   end
 end

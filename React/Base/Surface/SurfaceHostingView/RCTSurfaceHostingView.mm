@@ -22,14 +22,14 @@
 @end
 
 @implementation RCTSurfaceHostingView {
-  UIView *_Nullable _activityIndicatorView;
-  UIView *_Nullable _surfaceView;
+  RCTUIView *_Nullable _activityIndicatorView; // TODO(macOS ISS#2323203)
+  RCTUIView *_Nullable _surfaceView; // TODO(macOS ISS#2323203)
   RCTSurfaceStage _stage;
 }
 
-+ (id<RCTSurfaceProtocol>)createSurfaceWithBridge:(RCTBridge *)bridge
-                                       moduleName:(NSString *)moduleName
-                                initialProperties:(NSDictionary *)initialProperties
++ (RCTSurface *)createSurfaceWithBridge:(RCTBridge *)bridge
+                             moduleName:(NSString *)moduleName
+                      initialProperties:(NSDictionary *)initialProperties
 {
   return [[RCTSurface alloc] initWithBridge:bridge moduleName:moduleName initialProperties:initialProperties];
 }
@@ -43,15 +43,14 @@
              initialProperties:(NSDictionary *)initialProperties
                sizeMeasureMode:(RCTSurfaceSizeMeasureMode)sizeMeasureMode
 {
-  id<RCTSurfaceProtocol> surface = [[self class] createSurfaceWithBridge:bridge
-                                                              moduleName:moduleName
-                                                       initialProperties:initialProperties];
+  RCTSurface *surface = [[self class] createSurfaceWithBridge:bridge
+                                                   moduleName:moduleName
+                                            initialProperties:initialProperties];
   [surface start];
   return [self initWithSurface:surface sizeMeasureMode:sizeMeasureMode];
 }
 
-- (instancetype)initWithSurface:(id<RCTSurfaceProtocol>)surface
-                sizeMeasureMode:(RCTSurfaceSizeMeasureMode)sizeMeasureMode
+- (instancetype)initWithSurface:(RCTSurface *)surface sizeMeasureMode:(RCTSurfaceSizeMeasureMode)sizeMeasureMode
 {
   if (self = [super initWithFrame:CGRectZero]) {
     _surface = surface;
@@ -79,9 +78,8 @@
 
   RCTSurfaceMinimumSizeAndMaximumSizeFromSizeAndSizeMeasureMode(
       self.bounds.size, _sizeMeasureMode, &minimumSize, &maximumSize);
-  CGRect windowFrame = [self.window convertRect:self.frame fromView:self.superview];
 
-  [_surface setMinimumSize:minimumSize maximumSize:maximumSize viewportOffset:windowFrame.origin];
+  [_surface setMinimumSize:minimumSize maximumSize:maximumSize];
 }
 
 - (CGSize)intrinsicContentSize
@@ -101,7 +99,11 @@
 {
   if (RCTSurfaceStageIsPreparing(_stage)) {
     if (_activityIndicatorView) {
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
       return [_activityIndicatorView sizeThatFits:size];
+#else // [TODO(macOS ISS#2323203)
+      return [_activityIndicatorView fittingSize];
+#endif // ]TODO(macOS ISS#2323203)
     }
 
     return CGSizeZero;
@@ -199,6 +201,7 @@
 
 #pragma mark - UITraitCollection updates
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
 {
   [super traitCollectionDidChange:previousTraitCollection];
@@ -209,13 +212,18 @@
                     RCTUserInterfaceStyleDidChangeNotificationTraitCollectionKey : self.traitCollection,
                   }];
 }
+#endif // TODO(macOS ISS#2323203)
 
 #pragma mark - Private stuff
 
 - (void)_invalidateLayout
 {
   [self invalidateIntrinsicContentSize];
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   [self.superview setNeedsLayout];
+#else // [TODO(macOS ISS#2323203)
+  [self.superview setNeedsLayout:YES];
+#endif // ]TODO(macOS ISS#2323203)
 }
 
 - (void)_updateViews

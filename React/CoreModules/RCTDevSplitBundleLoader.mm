@@ -70,7 +70,7 @@ RCT_EXPORT_METHOD(loadBundle
           __typeof(self) strongSelf = weakSelf;
           strongSelf->_loadScript(source);
           RCTDevSettings *devSettings = [strongSelf->_turboModuleRegistry moduleForName:"RCTDevSettings"];
-          [devSettings setupHMRClientWithAdditionalBundleURL:source.url];
+          [devSettings setupHotModuleReloadClientIfApplicableForURL:source.url];
           resolve(@YES);
         }];
   }

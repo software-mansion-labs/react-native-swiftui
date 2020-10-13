@@ -14,9 +14,7 @@
 
 #import <React/CoreModulesPlugins.h>
 #import <ReactCommon/SampleTurboCxxModule.h>
-#import <ReactCommon/RCTSampleTurboModule.h>
 
-#import "RSUIRootView.h"
 #import "RSUIEntryViewManager.h"
 
 #pragma mark - TurboModule provider
@@ -26,18 +24,10 @@ Class RSUITurboModuleClassProvider(const char *name) {
 }
 
 std::shared_ptr<facebook::react::TurboModule> RSUITurboModuleProvider(const std::string &name, std::shared_ptr<facebook::react::CallInvoker> jsInvoker) {
-  if (name == "SampleTurboCxxModule") {
-    return std::make_shared<facebook::react::SampleTurboCxxModule>(jsInvoker);
-  }
-
   return nullptr;
 }
 
 std::shared_ptr<facebook::react::TurboModule> RSUITurboModuleProvider(const std::string &name, const facebook::react::ObjCTurboModule::InitParams &params) {
-  if (name == "SampleTurboModule") {
-    return std::make_shared<facebook::react::NativeSampleTurboModuleSpecJSI>(params);
-  }
-
   return nullptr;
 }
 
@@ -51,18 +41,19 @@ std::shared_ptr<facebook::react::TurboModule> RSUITurboModuleProvider(const std:
   RCTTurboModuleManager *_turboModuleManager;
 }
 
-- (instancetype)init
+- (instancetype)initWithModuleName:(NSString *)moduleName
 {
   if (self = [super init]) {
     _bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:nil];
-    _rootView = [[RSUIRootView alloc] initWithBridge:_bridge moduleName:@"RNTesterWidget" initialProperties:@{}];
+    _appContext = [[RSUIAppContext alloc] initWithBridge:_bridge moduleName:moduleName initialProperties:@{}];
+    [_appContext.surface start];
   }
   return self;
 }
 
 - (NSInteger)surfaceTag
 {
-  return _rootView.surface.rootTag;
+  return _appContext.surface.rootTag;
 }
 
 # pragma mark - RCTCxxBridgeDelegate
@@ -70,7 +61,7 @@ std::shared_ptr<facebook::react::TurboModule> RSUITurboModuleProvider(const std:
 - (NSURL *)sourceURLForBridge:(__unused RCTBridge *)bridge
 {
   NSString *bundlePrefix = [[[NSBundle mainBundle] infoDictionary] valueForKey:@"RN_BUNDLE_PREFIX"];
-  NSString *bundleRoot = [NSString stringWithFormat:@"%@packages/rn-tester/js/Widget", bundlePrefix];
+  NSString *bundleRoot = [NSString stringWithFormat:@"%@packages/rn-tester/js/RNTesterApp.ios", bundlePrefix];
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:bundleRoot
                                                         fallbackResource:nil];
 }

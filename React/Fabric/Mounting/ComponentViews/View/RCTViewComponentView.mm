@@ -18,7 +18,7 @@
 using namespace facebook::react;
 
 @implementation RCTViewComponentView {
-  UIColor *_backgroundColor;
+  RCTUIColor *_backgroundColor;
   CALayer *_borderLayer;
   BOOL _needsInvalidateLayer;
 }
@@ -37,7 +37,7 @@ using namespace facebook::react;
   return _props;
 }
 
-- (void)setContentView:(UIView *)contentView
+- (void)setContentView:(RCTUIView *)contentView
 {
   if (_contentView) {
     [_contentView removeFromSuperview];
@@ -60,12 +60,12 @@ using namespace facebook::react;
   return CGRectContainsPoint(hitFrame, point);
 }
 
-- (UIColor *)backgroundColor
+- (RCTUIColor *)backgroundColor
 {
   return _backgroundColor;
 }
 
-- (void)setBackgroundColor:(UIColor *)backgroundColor
+- (void)setBackgroundColor:(RCTUIColor *)backgroundColor
 {
   _backgroundColor = backgroundColor;
 }

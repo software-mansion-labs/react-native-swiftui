@@ -16,6 +16,10 @@
 #import "RCTParserUtils.h"
 #import "RCTUtils.h"
 
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+#import "RCTDynamicColor.h"
+#endif // ]TODO(macOS ISS#2323203)
+
 @implementation RCTConvert
 
 RCT_CONVERTER(id, id, self)
@@ -356,6 +360,19 @@ RCT_ENUM_CONVERTER(
     RCTTextDecorationLineTypeNone,
     integerValue)
 
+// [TODO(OSS Candidate ISS#2710739)
+RCT_ENUM_CONVERTER(
+    RCTFontSmoothing,
+    (@{
+      @"auto": @(RCTFontSmoothingAuto),
+      @"none": @(RCTFontSmoothingNone),
+      @"antialiased": @(RCTFontSmoothingAntialiased),
+      @"subpixel-antialiased": @(RCTFontSmoothingSubpixelAntialiased),
+    }),
+    RCTFontSmoothingAuto,
+    integerValue)
+// ]TODO(OSS Candidate ISS#2710739)
+
 RCT_ENUM_CONVERTER(
     NSWritingDirection,
     (@{
@@ -366,6 +383,7 @@ RCT_ENUM_CONVERTER(
     NSWritingDirectionNatural,
     integerValue)
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 RCT_ENUM_CONVERTER(
     UITextAutocapitalizationType,
     (@{
@@ -430,6 +448,7 @@ RCT_MULTI_ENUM_CONVERTER(
     UIDataDetectorTypePhoneNumber,
     unsignedLongLongValue)
 
+#if WEBKIT_IOS_10_APIS_AVAILABLE
 RCT_MULTI_ENUM_CONVERTER(
     WKDataDetectorTypes,
     (@{
@@ -445,6 +464,7 @@ RCT_MULTI_ENUM_CONVERTER(
     }),
     WKDataDetectorTypePhoneNumber,
     unsignedLongLongValue)
+#endif // WEBKIT_IOS_10_APIS_AVAILABLE
 
 #endif // !TARGET_OS_TV
 
@@ -512,6 +532,23 @@ RCT_ENUM_CONVERTER(
     UIBarStyleDefault,
     integerValue)
 #endif
+#else // [TODO(macOS ISS#2323203)
+RCT_MULTI_ENUM_CONVERTER(NSTextCheckingTypes, (@{
+  @"ortography": @(NSTextCheckingTypeOrthography),
+  @"spelling": @(NSTextCheckingTypeSpelling),
+  @"grammar": @(NSTextCheckingTypeGrammar),
+  @"calendarEvent": @(NSTextCheckingTypeDate),
+  @"address": @(NSTextCheckingTypeAddress),
+  @"link": @(NSTextCheckingTypeLink),
+  @"quote": @(NSTextCheckingTypeQuote),
+  @"dash": @(NSTextCheckingTypeDash),
+  @"replacement": @(NSTextCheckingTypeReplacement),
+  @"correction": @(NSTextCheckingTypeCorrection),
+  @"regularExpression": @(NSTextCheckingTypeRegularExpression),
+  @"phoneNumber": @(NSTextCheckingTypePhoneNumber),
+  @"transitInformation": @(NSTextCheckingTypeTransitInformation),
+}), NSTextCheckingTypeOrthography, unsignedLongLongValue)
+#endif // ]TODO(macOS ISS#2323203)
 
 static void convertCGStruct(const char *type, NSArray *fields, CGFloat *result, id json)
 {
@@ -603,6 +640,86 @@ static NSDictionary<NSString *, NSDictionary *> *RCTSemanticColorsMap()
   static NSDictionary<NSString *, NSDictionary *> *colorMap = nil;
   if (colorMap == nil) {
     NSMutableDictionary<NSString *, NSDictionary *> *map = [@{
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+      // https://developer.apple.com/documentation/appkit/nscolor/ui_element_colors
+      // Label Colors
+      @"labelColor": @{}, // 10_10
+      @"secondaryLabelColor": @{}, // 10_10
+      @"tertiaryLabelColor": @{}, // 10_10
+      @"quaternaryLabelColor": @{}, // 10_10
+      // Text Colors
+      @"textColor": @{},
+      @"placeholderTextColor": @{}, // 10_10
+      @"selectedTextColor": @{},
+      @"textBackgroundColor": @{},
+      @"selectedTextBackgroundColor": @{},
+      @"keyboardFocusIndicatorColor": @{},
+      @"unemphasizedSelectedTextColor": @{ // 10_14
+        RCTFallback: @"selectedTextColor"
+      },
+      @"unemphasizedSelectedTextBackgroundColor": @{ // 10_14
+        RCTFallback: @"textBackgroundColor"
+      },
+      // Content Colors
+      @"linkColor": @{}, // 10_10
+      @"separatorColor": @{ // 10_14: Replacement for +controlHighlightColor, +controlLightHighlightColor, +controlShadowColor, +controlDarkShadowColor
+        RCTFallback: @"gridColor"
+      },
+      @"selectedContentBackgroundColor": @{ // 10_14: Alias for +alternateSelectedControlColor
+        RCTFallback: @"alternateSelectedControlColor"
+      },
+      @"unemphasizedSelectedContentBackgroundColor": @{ // 10_14: Alias for +secondarySelectedControlColor
+        RCTFallback: @"secondarySelectedControlColor"
+      },
+      // Menu Colors
+      @"selectedMenuItemTextColor": @{},
+      // Table Colors
+      @"gridColor": @{},
+      @"headerTextColor": @{},
+      @"alternatingEvenContentBackgroundColor": @{ // 10_14: Alias for +controlAlternatingRowBackgroundColors
+        RCTSelector: @"alternatingContentBackgroundColors",
+        RCTIndex: @0,
+        RCTFallback: @"controlAlternatingRowBackgroundColors"
+      },
+      @"alternatingOddContentBackgroundColor": @{ // 10_14: Alias for +controlAlternatingRowBackgroundColors
+        RCTSelector: @"alternatingContentBackgroundColors",
+        RCTIndex: @1,
+        RCTFallback: @"controlAlternatingRowBackgroundColors"
+      },
+      // Control Colors
+      @"controlAccentColor": @{ // 10_14
+        RCTFallback: @"controlColor"
+      },
+      @"controlColor": @{},
+      @"controlBackgroundColor": @{},
+      @"controlTextColor": @{},
+      @"disabledControlTextColor": @{},
+      @"selectedControlColor": @{},
+      @"selectedControlTextColor": @{},
+      @"alternateSelectedControlTextColor": @{},
+      @"scrubberTexturedBackgroundColor": @{}, // 10_12_2
+      // Window Colors
+      @"windowBackgroundColor": @{},
+      @"windowFrameTextColor": @{},
+      @"underPageBackgroundColor": @{}, // 10_8
+      // Highlights and Shadows
+      @"findHighlightColor": @{ // 10_13
+        RCTFallback: @"highlightColor"
+      },
+      @"highlightColor": @{},
+      @"shadowColor": @{},
+      // https://developer.apple.com/documentation/appkit/nscolor/standard_colors
+      // Standard Colors
+      @"systemBlueColor": @{},   // 10_10
+      @"systemBrownColor": @{},  // 10_10
+      @"systemGrayColor": @{},   // 10_10
+      @"systemGreenColor": @{},  // 10_10
+      @"systemOrangeColor": @{}, // 10_10
+      @"systemPinkColor": @{},   // 10_10
+      @"systemPurpleColor": @{}, // 10_10
+      @"systemRedColor": @{},    // 10_10
+      @"systemYellowColor": @{}, // 10_10
+#else // ]TODO(macOS ISS#2323203)
       // https://developer.apple.com/documentation/uikit/uicolor/ui_element_colors
       // Label Colors
       @"labelColor" : @{
@@ -727,18 +844,19 @@ static NSDictionary<NSString *, NSDictionary *> *RCTSemanticColorsMap()
         // iOS 13.0
         RCTFallbackARGB : @(0xFFf2f2f7)
       },
+#endif // TODO(macOS ISS#2323203)
     } mutableCopy];
     // The color names are the Objective-C UIColor selector names,
     // but Swift selector names are valid as well, so make aliases.
     static NSString *const RCTColorSuffix = @"Color";
     NSMutableDictionary<NSString *, NSDictionary *> *aliases = [NSMutableDictionary new];
     for (NSString *objcSelector in map) {
-      RCTAssert(
-          [objcSelector hasSuffix:RCTColorSuffix], @"A selector in the color map did not end with the suffix Color.");
+      RCTAssert([objcSelector hasSuffix:RCTColorSuffix], @"A selector in the color map did not end with the suffix Color.");
       NSMutableDictionary *entry = [map[objcSelector] mutableCopy];
-      RCTAssert([entry objectForKey:RCTSelector] == nil, @"Entry should not already have an RCTSelector");
+      if ([entry objectForKey:RCTSelector] == nil) {
+        entry[RCTSelector] = objcSelector;
+      }
       NSString *swiftSelector = [objcSelector substringToIndex:[objcSelector length] - [RCTColorSuffix length]];
-      entry[RCTSelector] = objcSelector;
       aliases[swiftSelector] = entry;
     }
     [map addEntriesFromDictionary:aliases];
@@ -765,13 +883,14 @@ static NSDictionary<NSString *, NSDictionary *> *RCTSemanticColorsMap()
   return colorMap;
 }
 
+// [TODO(macOS ISS#2323203)
 /** Returns a UIColor based on a semantic color name.
  *  Returns nil if the semantic color name is invalid.
  */
-static UIColor *RCTColorFromSemanticColorName(NSString *semanticColorName)
+static RCTUIColor *RCTColorFromSemanticColorName(NSString *semanticColorName)
 {
   NSDictionary<NSString *, NSDictionary *> *colorMap = RCTSemanticColorsMap();
-  UIColor *color = nil;
+  RCTUIColor *color = nil;
   NSDictionary<NSString *, id> *colorInfo = colorMap[semanticColorName];
   if (colorInfo) {
     NSString *semanticColorSelector = colorInfo[RCTSelector];
@@ -779,7 +898,7 @@ static UIColor *RCTColorFromSemanticColorName(NSString *semanticColorName)
       semanticColorSelector = semanticColorName;
     }
     SEL selector = NSSelectorFromString(semanticColorSelector);
-    if (![UIColor respondsToSelector:selector]) {
+    if (![RCTUIColor respondsToSelector:selector]) {
       NSNumber *fallbackRGB = colorInfo[RCTFallbackARGB];
       if (fallbackRGB != nil) {
         RCTAssert([fallbackRGB isKindOfClass:[NSNumber class]], @"fallback ARGB is not a number");
@@ -788,12 +907,12 @@ static UIColor *RCTColorFromSemanticColorName(NSString *semanticColorName)
       semanticColorSelector = colorInfo[RCTFallback];
       selector = NSSelectorFromString(semanticColorSelector);
     }
-    RCTAssert([UIColor respondsToSelector:selector], @"RCTUIColor does not respond to a semantic color selector.");
-    Class klass = [UIColor class];
+    RCTAssert ([RCTUIColor respondsToSelector:selector], @"RCTUIColor does not respond to a semantic color selector.");
+    Class klass = [RCTUIColor class];
     IMP imp = [klass methodForSelector:selector];
     id (*getSemanticColorObject)(id, SEL) = (void *)imp;
     id colorObject = getSemanticColorObject(klass, selector);
-    if ([colorObject isKindOfClass:[UIColor class]]) {
+    if ([colorObject isKindOfClass:[RCTUIColor class]]) {
       color = colorObject;
     } else if ([colorObject isKindOfClass:[NSArray class]]) {
       NSArray *colors = colorObject;
@@ -806,17 +925,17 @@ static UIColor *RCTColorFromSemanticColorName(NSString *semanticColorName)
   }
   return color;
 }
+// ]TODO(macOS ISS#2323203)
 
-/** Returns an alphabetically sorted comma seperated list of the valid semantic color names
+/** Returns a comma seperated list of the valid semantic color names
  */
 static NSString *RCTSemanticColorNames()
 {
   NSMutableString *names = [[NSMutableString alloc] init];
   NSDictionary<NSString *, NSDictionary *> *colorMap = RCTSemanticColorsMap();
-  NSArray *allKeys =
-      [[[colorMap allKeys] mutableCopy] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+  NSArray *allKeys = [[[colorMap allKeys] mutableCopy] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
 
-  for (id key in allKeys) {
+  for(id key in allKeys) {
     if ([names length]) {
       [names appendString:@", "];
     }
@@ -825,7 +944,14 @@ static NSString *RCTSemanticColorNames()
   return names;
 }
 
-+ (UIColor *)UIColor:(id)json
+// [TODO(macOS ISS#2323203)
++ (RCTUIColor *)NSColor:(id)json
+{
+  return [RCTConvert UIColor:json];
+}
+// ]TODO(macOS ISS#2323203)
+
++ (RCTUIColor *)UIColor:(id)json // TODO(OSS Candidate ISS#2710739)
 {
   if (!json) {
     return nil;
@@ -833,24 +959,25 @@ static NSString *RCTSemanticColorNames()
   if ([json isKindOfClass:[NSArray class]]) {
     NSArray *components = [self NSNumberArray:json];
     CGFloat alpha = components.count > 3 ? [self CGFloat:components[3]] : 1.0;
-    return [UIColor colorWithRed:[self CGFloat:components[0]]
-                           green:[self CGFloat:components[1]]
-                            blue:[self CGFloat:components[2]]
-                           alpha:alpha];
+    return [RCTUIColor colorWithRed:[self CGFloat:components[0]] // TODO(OSS Candidate ISS#2710739)
+                              green:[self CGFloat:components[1]]
+                               blue:[self CGFloat:components[2]]
+                              alpha:alpha];
   } else if ([json isKindOfClass:[NSNumber class]]) {
     NSUInteger argb = [self NSUInteger:json];
     CGFloat a = ((argb >> 24) & 0xFF) / 255.0;
     CGFloat r = ((argb >> 16) & 0xFF) / 255.0;
     CGFloat g = ((argb >> 8) & 0xFF) / 255.0;
     CGFloat b = (argb & 0xFF) / 255.0;
-    return [UIColor colorWithRed:r green:g blue:b alpha:a];
+    return [RCTUIColor colorWithRed:r green:g blue:b alpha:a]; // TODO(OSS Candidate ISS#2710739)
+// [TODO(macOS ISS#2323203)
   } else if ([json isKindOfClass:[NSDictionary class]]) {
     NSDictionary *dictionary = json;
     id value = nil;
     if ((value = [dictionary objectForKey:@"semantic"])) {
       if ([value isKindOfClass:[NSString class]]) {
         NSString *semanticName = value;
-        UIColor *color = RCTColorFromSemanticColorName(semanticName);
+        RCTUIColor *color = RCTColorFromSemanticColorName(semanticName);
         if (color == nil) {
           RCTLogConvertError(
               json,
@@ -859,7 +986,7 @@ static NSString *RCTSemanticColorNames()
         return color;
       } else if ([value isKindOfClass:[NSArray class]]) {
         for (id name in value) {
-          UIColor *color = RCTColorFromSemanticColorName(name);
+          RCTUIColor *color = RCTColorFromSemanticColorName(name);
           if (color != nil) {
             return color;
           }
@@ -876,10 +1003,14 @@ static NSString *RCTSemanticColorNames()
     } else if ((value = [dictionary objectForKey:@"dynamic"])) {
       NSDictionary *appearances = value;
       id light = [appearances objectForKey:@"light"];
-      UIColor *lightColor = [RCTConvert UIColor:light];
+      RCTUIColor *lightColor = [RCTConvert UIColor:light];
       id dark = [appearances objectForKey:@"dark"];
-      UIColor *darkColor = [RCTConvert UIColor:dark];
+      RCTUIColor *darkColor = [RCTConvert UIColor:dark];
       if (lightColor != nil && darkColor != nil) {
+#if TARGET_OS_OSX
+        RCTDynamicColor *color = [[RCTDynamicColor alloc] initWithAquaColor:lightColor darkAquaColor:darkColor];
+        return color;
+#else
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
         if (@available(iOS 13.0, *)) {
           UIColor *color =
@@ -893,14 +1024,17 @@ static NSString *RCTSemanticColorNames()
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
         }
 #endif
+#endif
+// [TODO(macOS ISS#2323203)
       } else {
-        RCTLogConvertError(json, @"a UIColor. Expected an iOS dynamic appearance aware color.");
+        RCTLogConvertError(json, @"a UIColor. Expected a dynamic appearance aware color.");
         return nil;
       }
     } else {
-      RCTLogConvertError(json, @"a UIColor. Expected an iOS semantic color or dynamic appearance aware color.");
+      RCTLogConvertError(json, @"a UIColor. Expected a semantic color or dynamic appearance aware color.");
       return nil;
     }
+// ]TODO(macOS ISS#2323203)
   } else {
     RCTLogConvertError(json, @"a UIColor. Did you forget to call processColor() on the JS side?");
     return nil;
@@ -960,7 +1094,7 @@ NSArray *RCTConvertArrayValue(SEL type, id json)
 
 RCT_ARRAY_CONVERTER(NSURL)
 RCT_ARRAY_CONVERTER(RCTFileURL)
-RCT_ARRAY_CONVERTER(UIColor)
+RCT_ARRAY_CONVERTER(RCTUIColor) // TODO(OSS Candidate ISS#2710739)
 
 /**
  * This macro is used for creating converter functions for directly
@@ -992,6 +1126,36 @@ RCT_JSON_ARRAY_CONVERTER(NSNumber)
   }
   return colors;
 }
+
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
++ (NSArray<NSPasteboardType> *)NSPasteboardType:(id)json
+{
+  NSString *type = [self NSString:json];
+  if (!type) {
+    return @[];
+  }
+
+  if ([type isEqualToString:@"fileUrl"]) {
+    return @[NSFilenamesPboardType];
+  }
+
+  return @[];
+}
+
++ (NSArray<NSPasteboardType> *)NSPasteboardTypeArray:(id)json
+{
+  if ([json isKindOfClass:[NSString class]]) {
+    return [RCTConvert NSPasteboardType:json];
+  } else if ([json isKindOfClass:[NSArray class]]) {
+    NSMutableArray *mutablePastboardTypes = [[NSMutableArray alloc] init];
+    for (NSString *type in json) {
+      [mutablePastboardTypes addObjectsFromArray:[RCTConvert NSPasteboardType:type]];
+      return mutablePastboardTypes.copy;
+    }
+  }
+  return @[];
+}
+#endif // ]TODO(macOS ISS#2323203)
 
 static id RCTConvertPropertyListValue(id json)
 {
@@ -1117,11 +1281,7 @@ RCT_ENUM_CONVERTER(
 
 RCT_ENUM_CONVERTER(
     YGPositionType,
-    (@{
-      @"static" : @(YGPositionTypeStatic),
-      @"absolute" : @(YGPositionTypeAbsolute),
-      @"relative" : @(YGPositionTypeRelative)
-    }),
+    (@{@"absolute" : @(YGPositionTypeAbsolute), @"relative" : @(YGPositionTypeRelative)}),
     YGPositionTypeRelative,
     intValue)
 
@@ -1145,15 +1305,84 @@ RCT_ENUM_CONVERTER(
 RCT_ENUM_CONVERTER(
     RCTAnimationType,
     (@{
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
       @"spring" : @(RCTAnimationTypeSpring),
+#endif // TODO(macOS ISS#2323203)
       @"linear" : @(RCTAnimationTypeLinear),
       @"easeIn" : @(RCTAnimationTypeEaseIn),
       @"easeOut" : @(RCTAnimationTypeEaseOut),
       @"easeInEaseOut" : @(RCTAnimationTypeEaseInEaseOut),
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
       @"keyboard" : @(RCTAnimationTypeKeyboard),
+#endif // TODO(macOS ISS#2323203)
     }),
     RCTAnimationTypeEaseInEaseOut,
     integerValue)
+
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
++ (NSString*)accessibilityRoleFromTrait:(NSString*)trait
+{
+  static NSDictionary<NSString *, NSString *> *traitOrRoleToAccessibilityRole;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    traitOrRoleToAccessibilityRole = @{
+      // from https://reactnative.dev/docs/accessibility#accessibilityrole
+      @"adjustable": NSAccessibilitySliderRole,
+      @"alert": NSAccessibilityStaticTextRole, // no exact match on macOS
+      @"button": NSAccessibilityButtonRole, // also a legacy iOS accessibilityTraits
+      @"checkbox": NSAccessibilityCheckBoxRole,
+      @"combobox": NSAccessibilityComboBoxRole,
+      @"header": NSAccessibilityStaticTextRole, // no exact match on macOS
+      @"image": NSAccessibilityImageRole, // also a legacy iOS accessibilityTraits
+      @"imagebutton": NSAccessibilityButtonRole, // no exact match on macOS
+      @"keyboardkey": NSAccessibilityButtonRole, // no exact match on macOS
+      @"link": NSAccessibilityLinkRole, // also a legacy iOS accessibilityTraits
+      @"menu": NSAccessibilityMenuRole,
+      @"menubar": NSAccessibilityMenuBarRole,
+      @"menuitem": NSAccessibilityMenuBarItemRole,
+      @"none": NSAccessibilityUnknownRole,
+      @"progressbar": NSAccessibilityProgressIndicatorRole,
+      @"radio": NSAccessibilityRadioButtonRole,
+      @"radiogroup": NSAccessibilityRadioGroupRole,
+      @"scrollbar": NSAccessibilityScrollBarRole,
+      @"search": NSAccessibilityTextFieldRole, // no exact match on macOS
+      @"spinbutton": NSAccessibilityIncrementorRole,
+      @"summary": NSAccessibilityStaticTextRole, // no exact match on macOS
+      @"switch": NSAccessibilityCheckBoxRole, // no exact match on macOS
+      @"tab": NSAccessibilityButtonRole, // no exact match on macOS
+      @"tablist": NSAccessibilityTabGroupRole,
+      @"text": NSAccessibilityStaticTextRole, // also a legacy iOS accessibilityTraits
+      @"timer": NSAccessibilityStaticTextRole, // no exact match on macOS
+      @"toolbar": NSAccessibilityToolbarRole,
+      // Roles/traits that are macOS specific and are used by some of the core components (Lists):
+      @"disclosure": NSAccessibilityDisclosureTriangleRole,
+      @"group": NSAccessibilityGroupRole,
+      @"list": NSAccessibilityListRole,
+    };
+  });
+
+  NSString *role = [traitOrRoleToAccessibilityRole valueForKey:trait];
+  if (role == nil) {
+    role = NSAccessibilityUnknownRole;
+  }
+  return role;
+}
+
++ (NSString *)accessibilityRoleFromTraits:(id)json
+{
+  if ([json isKindOfClass:[NSString class]]) {
+    return [RCTConvert accessibilityRoleFromTrait:json];
+  } else if ([json isKindOfClass:[NSArray class]]) {
+    for (NSString *trait in json) {
+      NSString *accessibilityRole = [RCTConvert accessibilityRoleFromTrait:trait];
+      if (![accessibilityRole isEqualToString:NSAccessibilityUnknownRole]) {
+        return accessibilityRole;
+      }
+    }
+  }
+  return NSAccessibilityUnknownRole;
+}
+#endif // ]TODO(macOS ISS#2323203)
 
 @end
 
@@ -1207,23 +1436,29 @@ RCT_ENUM_CONVERTER(
       RCTLogConvertError(json, @"an image. File not found.");
     }
   } else if ([scheme isEqualToString:@"data"]) {
-    image = [UIImage imageWithData:[NSData dataWithContentsOfURL:URL]];
+    image = UIImageWithData([NSData dataWithContentsOfURL:URL]); // TODO(macOS ISS#2323203)
   } else if ([scheme isEqualToString:@"http"] && imageSource.packagerAsset) {
-    image = [UIImage imageWithData:[NSData dataWithContentsOfURL:URL]];
+    image = UIImageWithData([NSData dataWithContentsOfURL:URL]); // TODO(macOS ISS#2323203)
   } else {
     RCTLogConvertError(json, @"an image. Only local files or data URIs are supported.");
     return nil;
   }
 
+  CGImageRef imageRef = UIImageGetCGImageRef(image); // TODO(macOS ISS#2323203)
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   CGFloat scale = imageSource.scale;
   if (!scale && imageSource.size.width) {
     // If no scale provided, set scale to image width / source width
-    scale = CGImageGetWidth(image.CGImage) / imageSource.size.width;
+    scale = CGImageGetWidth(imageRef) / imageSource.size.width; // TODO(macOS ISS#2323203)
   }
-
   if (scale) {
-    image = [UIImage imageWithCGImage:image.CGImage scale:scale orientation:image.imageOrientation];
+    image = [UIImage imageWithCGImage:imageRef scale:scale orientation:image.imageOrientation];
   }
+#else // [TODO(macOS ISS#2323203)
+  if (!CGSizeEqualToSize(image.size, imageSource.size)) {
+    image = [[NSImage alloc] initWithCGImage:imageRef size:imageSource.size];
+  }
+#endif // ]TODO(macOS ISS#2323203)
 
   if (!CGSizeEqualToSize(imageSource.size, CGSizeZero) && !CGSizeEqualToSize(imageSource.size, image.size)) {
     RCTLogError(
@@ -1238,7 +1473,7 @@ RCT_ENUM_CONVERTER(
 
 + (CGImageRef)CGImage:(id)json
 {
-  return [self UIImage:json].CGImage;
+  return UIImageGetCGImageRef([self UIImage:json]); // TODO(macOS ISS#2323203)
 }
 
 @end

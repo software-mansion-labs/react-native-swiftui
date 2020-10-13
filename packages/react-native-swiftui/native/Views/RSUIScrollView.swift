@@ -47,17 +47,19 @@ open class RSUIScrollView: RSUIView {
 
     return AnyView(
       ScrollView(axisSet, showsIndicators: showsIndicators) {
-        ScrollViewReader { [self] (scrollViewProxy: ScrollViewProxy) in
-          ZStack(alignment: .topLeading) {
-            // `ScrollViewProxy` doesn't provide a way to scroll to specified point within the view,
-            // instead it let us scroll to a view with specified ID. To omit this limitation,
-            // we render empty points filling the entire axis with an ID being its (X,Y) position.
-            VStack(alignment: .leading, spacing: 0) {
-              ForEach(0..<maxY) { y in
-                Rectangle()
-                  .fill(Color.clear)
-                  .frame(width: 0, height: 1)
-                  .id("0,\(y)")
+        ScrollViewReaderShim { [self] (scrollViewProxy: ScrollViewProxyShim) -> AnyView in
+          let zStack = ZStack(alignment: .topLeading) {
+            if #available(iOS 14.0, macOS 11.0, *) {
+              // `ScrollViewProxy` doesn't provide a way to scroll to specified point within the view,
+              // instead it let us scroll to a view with specified ID. To omit this limitation,
+              // we render empty points filling the entire axis with an ID being its (X,Y) position.
+              VStack(alignment: .leading, spacing: 0) {
+                ForEach(0..<maxY) { y in
+                  Rectangle()
+                    .fill(Color.clear)
+                    .frame(width: 0, height: 1)
+                    .id("0,\(y)")
+                }
               }
             }
 
@@ -70,8 +72,9 @@ open class RSUIScrollView: RSUIView {
             // Render scrolling content
             ForEach(children) { $0 }
           }
+          #if os(iOS) // TODO: Remove this once Xcode starts including macOS 11.0 SDK
           // Use the proxy to scroll to given position once the target changes.
-          .onChange(of: state["scrollTarget"] as [Int?]?) { target in
+          return AnyView(zStack.onChange(of: state["scrollTarget"] as [Int?]?) { target in
             guard let target = target else {
               // Target is unset — no reason to do anything.
               return
@@ -98,7 +101,10 @@ open class RSUIScrollView: RSUIView {
               "scrollTarget": nil,
               "scrollAnimated": nil,
             ])
-          }
+          })
+          #else
+          return AnyView(zStack)
+          #endif
         }
       }
       .edgesIgnoringSafeArea(.all)

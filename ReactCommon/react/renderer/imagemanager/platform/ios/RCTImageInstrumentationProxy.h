@@ -26,7 +26,7 @@ class RCTImageInstrumentationProxy final : public ImageInstrumentation {
   void didEnterVisibilityRange() const override;
   void didExitVisibilityRange() const override;
 
-  void trackNativeImageView(UIView *imageView) const;
+  void trackNativeImageView(RCTUIView *imageView) const;
   void setImageURLLoaderRequest(RCTImageURLLoaderRequest *request);
 
  private:

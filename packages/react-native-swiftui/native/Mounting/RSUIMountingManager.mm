@@ -11,12 +11,29 @@
 #import <React/RCTFollyConvert.h>
 #import <React/RCTUtils.h>
 
-#import <React/RCTConversions.h>
-#import <React/RCTMountingTransactionObserverCoordinator.h>
-#import <React/RCTComponentViewRegistry.h>
+//#import <React/RCTMountingTransactionObserverCoordinator.h>
+//#import <React/RCTComponentViewRegistry.h>
 
 #import "RSUIMountingManager.h"
 #import <ReactSwiftUI-Swift.h>
+
+#if TARGET_OS_OSX
+#import <QuartzCore/QuartzCore.h> // Includes CoreAnimation
+#endif
+
+/*
+ * Bitmask for all types of possible updates performing during mounting.
+ */
+typedef NS_OPTIONS(NSInteger, RNComponentViewUpdateMask) {
+  RNComponentViewUpdateMaskNone = 0,
+  RNComponentViewUpdateMaskProps = 1 << 0,
+  RNComponentViewUpdateMaskEventEmitter = 1 << 1,
+  RNComponentViewUpdateMaskState = 1 << 3,
+  RNComponentViewUpdateMaskLayoutMetrics = 1 << 4,
+
+  RNComponentViewUpdateMaskAll = RNComponentViewUpdateMaskProps | RNComponentViewUpdateMaskEventEmitter |
+      RNComponentViewUpdateMaskState | RNComponentViewUpdateMaskLayoutMetrics
+};
 
 using namespace facebook::react;
 
@@ -31,7 +48,7 @@ using namespace facebook::react;
 @end
 
 @implementation RSUIMountingManager {
-  RCTMountingTransactionObserverCoordinator _observerCoordinator;
+//  RCTMountingTransactionObserverCoordinator _observerCoordinator;
   BOOL _transactionInFlight;
   BOOL _followUpTransactionRequired;
 
@@ -120,13 +137,13 @@ using namespace facebook::react;
   mountingCoordinator->getTelemetryController().pullTransaction(
       [&](MountingTransactionMetadata metadata) {
         [self.delegate mountingManager:self willMountComponentsWithRootTag:surfaceId];
-        _observerCoordinator.notifyObserversMountingTransactionWillMount(metadata);
+//        _observerCoordinator.notifyObserversMountingTransactionWillMount(metadata);
       },
       [&](ShadowViewMutationList const &mutations) {
         [self performMutations:mutations];
       },
       [&](MountingTransactionMetadata metadata) {
-        _observerCoordinator.notifyObserversMountingTransactionDidMount(metadata);
+//        _observerCoordinator.notifyObserversMountingTransactionDidMount(metadata);
         [self.delegate mountingManager:self didMountComponentsWithRootTag:surfaceId];
       });
 }
@@ -203,7 +220,7 @@ using namespace facebook::react;
         auto &newChildShadowView = mutation.newChildShadowView;
         auto &parentShadowView = mutation.parentShadowView;
 
-        NSLog(@"Insert %s with tag %d", newChildShadowView.componentName, newChildShadowView.tag);
+        NSLog(@"Insert %s with tag %d to %d", newChildShadowView.componentName, newChildShadowView.tag, parentShadowView.tag);
         [_viewRegistry insert:newChildShadowView.tag toParent:parentShadowView.tag atIndex:mutation.index];
         break;
       }

@@ -7,7 +7,7 @@
 
 #import "RCTI18nUtil.h"
 
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h>
 
 @implementation RCTI18nUtil
 

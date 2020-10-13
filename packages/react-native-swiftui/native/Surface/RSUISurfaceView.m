@@ -1,4 +1,5 @@
 
+#if !TARGET_OS_OSX
 #import "RSUISurfaceView.h"
 #import "RSUISurface.h"
 
@@ -35,3 +36,4 @@
 }
 
 @end
+#endif

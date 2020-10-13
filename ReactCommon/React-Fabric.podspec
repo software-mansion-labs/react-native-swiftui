@@ -114,14 +114,14 @@ Pod::Spec.new do |s|
       sss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/ReactCommon\" \"$(PODS_ROOT)/Folly\"" }
     end
 
-    ss.subspec "inputaccessory" do |sss|
-      sss.dependency             folly_dep_name, folly_version
-      sss.compiler_flags       = folly_compiler_flags
-      sss.source_files         = "react/renderer/components/inputaccessory/**/*.{m,mm,cpp,h}"
-      sss.exclude_files        = "**/tests/*"
-      sss.header_dir           = "react/renderer/components/inputaccessory"
-      sss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/ReactCommon\" \"$(PODS_ROOT)/Folly\"" }
-    end
+    # ss.subspec "inputaccessory" do |sss|
+    #   sss.dependency             folly_dep_name, folly_version
+    #   sss.compiler_flags       = folly_compiler_flags
+    #   sss.source_files         = "react/renderer/components/inputaccessory/**/*.{m,mm,cpp,h}"
+    #   sss.exclude_files        = "**/tests/*"
+    #   sss.header_dir           = "react/renderer/components/inputaccessory"
+    #   sss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/ReactCommon\" \"$(PODS_ROOT)/Folly\"" }
+    # end
 
     ss.subspec "legacyviewmanagerinterop" do |sss|
       sss.dependency             folly_dep_name, folly_version
@@ -132,14 +132,14 @@ Pod::Spec.new do |s|
       sss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/ReactCommon\" \"$(PODS_ROOT)/Folly\" \"$(PODS_ROOT)/Headers/Private/React-Core\"" }
     end
 
-    ss.subspec "modal" do |sss|
-      sss.dependency             folly_dep_name, folly_version
-      sss.compiler_flags       = folly_compiler_flags
-      sss.source_files         = "react/renderer/components/modal/**/*.{m,mm,cpp,h}"
-      sss.exclude_files        = "**/tests/*"
-      sss.header_dir           = "react/renderer/components/modal"
-      sss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/ReactCommon\" \"$(PODS_ROOT)/Folly\"" }
-    end
+    # ss.subspec "modal" do |sss|
+    #   sss.dependency             folly_dep_name, folly_version
+    #   sss.compiler_flags       = folly_compiler_flags
+    #   sss.source_files         = "react/renderer/components/modal/**/*.{m,mm,cpp,h}"
+    #   sss.exclude_files        = "**/tests/*"
+    #   sss.header_dir           = "react/renderer/components/modal"
+    #   sss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/ReactCommon\" \"$(PODS_ROOT)/Folly\"" }
+    # end
 
     ss.subspec "rncore" do |sss|
       sss.dependency             folly_dep_name, folly_version
@@ -170,24 +170,24 @@ Pod::Spec.new do |s|
       sss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/ReactCommon\" \"$(PODS_ROOT)/Folly\"" }
     end
 
-    ss.subspec "scrollview" do |sss|
-      sss.dependency             folly_dep_name, folly_version
-      sss.compiler_flags       = folly_compiler_flags
-      sss.source_files         = "react/renderer/components/scrollview/**/*.{m,mm,cpp,h}"
-      sss.exclude_files        = "**/tests/*"
-      sss.header_dir           = "react/renderer/components/scrollview"
-      sss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/ReactCommon\" \"$(PODS_ROOT)/Folly\"" }
-    end
+    # ss.subspec "scrollview" do |sss|
+    #   sss.dependency             folly_dep_name, folly_version
+    #   sss.compiler_flags       = folly_compiler_flags
+    #   sss.source_files         = "react/renderer/components/scrollview/**/*.{m,mm,cpp,h}"
+    #   sss.exclude_files        = "**/tests/*"
+    #   sss.header_dir           = "react/renderer/components/scrollview"
+    #   sss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/ReactCommon\" \"$(PODS_ROOT)/Folly\"" }
+    # end
 
-    ss.subspec "slider" do |sss|
-      sss.dependency             folly_dep_name, folly_version
-      sss.compiler_flags       = folly_compiler_flags
-      sss.source_files         = "react/renderer/components/slider/platform/ios/**/*.{m,mm,cpp,h}", "react/renderer/components/slider/*.{m,mm,cpp,h}"
-      sss.exclude_files        = ["**/tests/*",
-                                 "**/android/*"]
-      sss.header_dir           = "react/renderer/components/slider"
-      sss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/ReactCommon\" \"$(PODS_ROOT)/Folly\"" }
-    end
+    # ss.subspec "slider" do |sss|
+    #   sss.dependency             folly_dep_name, folly_version
+    #   sss.compiler_flags       = folly_compiler_flags
+    #   sss.source_files         = "react/renderer/components/slider/platform/ios/**/*.{m,mm,cpp,h}", "react/renderer/components/slider/*.{m,mm,cpp,h}"
+    #   sss.exclude_files        = ["**/tests/*",
+    #                              "**/android/*"]
+    #   sss.header_dir           = "react/renderer/components/slider"
+    #   sss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/ReactCommon\" \"$(PODS_ROOT)/Folly\"" }
+    # end
 
     ss.subspec "text" do |sss|
       sss.dependency             folly_dep_name, folly_version
@@ -198,14 +198,14 @@ Pod::Spec.new do |s|
       sss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/ReactCommon\" \"$(PODS_ROOT)/Folly\"" }
     end
 
-    ss.subspec "textinput" do |sss|
-      sss.dependency             folly_dep_name, folly_version
-      sss.compiler_flags       = folly_compiler_flags
-      sss.source_files         = "react/renderer/components/textinput/iostextinput/**/*.{m,mm,cpp,h}"
-      sss.exclude_files        = "**/tests/*"
-      sss.header_dir           = "react/renderer/components/iostextinput"
-      sss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/ReactCommon\" \"$(PODS_ROOT)/Folly\"" }
-    end
+    # ss.subspec "textinput" do |sss|
+    #   sss.dependency             folly_dep_name, folly_version
+    #   sss.compiler_flags       = folly_compiler_flags
+    #   sss.source_files         = "react/renderer/components/textinput/iostextinput/**/*.{m,mm,cpp,h}"
+    #   sss.exclude_files        = "**/tests/*"
+    #   sss.header_dir           = "react/renderer/components/iostextinput"
+    #   sss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/ReactCommon\" \"$(PODS_ROOT)/Folly\"" }
+    # end
 
     ss.subspec "unimplementedview" do |sss|
       sss.dependency             folly_dep_name, folly_version

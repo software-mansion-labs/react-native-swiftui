@@ -107,6 +107,9 @@ static UIFont *RCTDefaultFontWithFontProperties(RCTFontProperties fontProperties
 
 UIFont *RCTFontWithFontProperties(RCTFontProperties fontProperties)
 {
+#if TARGET_OS_OSX
+  return nil;
+#else
   RCTFontProperties defaultFontProperties = RCTDefaultFontProperties();
   fontProperties = RCTResolveFontProperties(fontProperties, defaultFontProperties);
 
@@ -164,4 +167,5 @@ UIFont *RCTFontWithFontProperties(RCTFontProperties fontProperties)
   }
 
   return font;
+#endif
 }

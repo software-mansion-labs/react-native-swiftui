@@ -5,7 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h> // TODO(macOS ISS#2323203)
+
+#import "RCTTextUIKit.h" // TODO(macOS ISS#2323203)
 
 #import <React/RCTBackedTextInputViewProtocol.h>
 #import <React/RCTBackedTextInputDelegate.h>
@@ -15,7 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
 /*
  * Just regular UITextField... but much better!
  */
+#if RCT_SUBCLASS_SECURETEXTFIELD
+@interface RCTUISecureTextField : NSSecureTextField <RCTBackedTextInputViewProtocol>
+#else
 @interface RCTUITextField : UITextField <RCTBackedTextInputViewProtocol>
+#endif
 
 - (instancetype)initWithCoder:(NSCoder *)decoder NS_UNAVAILABLE;
 
@@ -23,12 +29,30 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) BOOL caretHidden;
 @property (nonatomic, assign) BOOL contextMenuHidden;
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 @property (nonatomic, assign, readonly) BOOL textWasPasted;
-@property (nonatomic, strong, nullable) UIColor *placeholderColor;
+#else // [TODO(macOS ISS#2323203)
+@property (nonatomic, assign) BOOL textWasPasted;
+#endif // ]TODO(macOS ISS#2323203)
+@property (nonatomic, strong, nullable) RCTUIColor *placeholderColor; // TODO(OSS Candidate ISS#2710739)
 @property (nonatomic, assign) UIEdgeInsets textContainerInset;
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 @property (nonatomic, assign, getter=isEditable) BOOL editable;
+#else // [TODO(macOS ISS#2323203)
+@property (assign, getter=isEditable) BOOL editable;
+#endif // ]TODO(macOS ISS#2323203)
 @property (nonatomic, getter=isScrollEnabled) BOOL scrollEnabled;
-@property (nonatomic, strong, nullable) NSString *inputAccessoryViewID;
+
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+@property (nonatomic, copy, nullable) NSString *text;
+@property (nonatomic, copy, nullable) NSAttributedString *attributedText;
+@property (nonatomic, copy) NSDictionary<NSAttributedStringKey, id> *defaultTextAttributes;
+@property (nonatomic, assign) NSTextAlignment textAlignment;
+@property (nonatomic, getter=isAutomaticTextReplacementEnabled) BOOL automaticTextReplacementEnabled;
+@property (nonatomic, getter=isAutomaticSpellingCorrectionEnabled) BOOL automaticSpellingCorrectionEnabled;
+@property (nonatomic, strong, nullable) RCTUIColor *selectionColor;
+@property (weak, nullable) id<RCTUITextFieldDelegate> delegate;
+#endif // ]TODO(macOS ISS#2323203)
 
 @end
 

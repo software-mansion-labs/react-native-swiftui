@@ -69,7 +69,6 @@
 		F1BD8027252C4907001AB422 /* RNTesterWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F1BD8022252C4905001AB422 /* RNTesterWidget.intentdefinition */; };
 		F1BD802B252C4907001AB422 /* RNTesterWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F1BD801A252C4905001AB422 /* RNTesterWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F1DD082625303EA100667473 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DD082525303EA100667473 /* AppDelegate.swift */; };
-		F1DD082825303EA100667473 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DD082725303EA100667473 /* ContentView.swift */; };
 		F1DD082A25303EA200667473 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1DD082925303EA200667473 /* Assets.xcassets */; };
 		F1DD082D25303EA200667473 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1DD082C25303EA200667473 /* Preview Assets.xcassets */; };
 		F1DD083025303EA200667473 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F1DD082E25303EA200667473 /* Main.storyboard */; };
@@ -221,7 +220,6 @@
 		F1BD8025252C4907001AB422 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F1DD082325303EA100667473 /* RNTesterMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RNTesterMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1DD082525303EA100667473 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		F1DD082725303EA100667473 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		F1DD082925303EA200667473 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F1DD082C25303EA200667473 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F1DD082F25303EA200667473 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -494,7 +492,6 @@
 			isa = PBXGroup;
 			children = (
 				F1DD082525303EA100667473 /* AppDelegate.swift */,
-				F1DD082725303EA100667473 /* ContentView.swift */,
 				F1DD082925303EA200667473 /* Assets.xcassets */,
 				F1DD082E25303EA200667473 /* Main.storyboard */,
 				F1DD083125303EA200667473 /* Info.plist */,
@@ -605,6 +602,7 @@
 				F1DD081F25303EA100667473 /* Sources */,
 				F1DD082025303EA100667473 /* Frameworks */,
 				F1DD082125303EA100667473 /* Resources */,
+				F168B2A0254C6C5D00377BB1 /* Build JS Bundle */,
 				62EE91ABC4C5F20546E0C76E /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
@@ -622,7 +620,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1200;
+				LastSwiftUpdateCheck = 1210;
 				LastUpgradeCheck = 1140;
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
@@ -934,6 +932,24 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n\"$SRCROOT/../../scripts/react-native-xcode.sh\" $SRCROOT/../../packages/rn-tester/js/Widget.js\n";
 		};
+		F168B2A0254C6C5D00377BB1 /* Build JS Bundle */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build JS Bundle";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export NODE_BINARY=node\n\"$SRCROOT/../../scripts/react-native-xcode.sh\" $SRCROOT/../../packages/rn-tester/js/Widget.js\n";
+		};
 		F9CB97B0D9633939D43E75E0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1030,7 +1046,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F1DD082825303EA100667473 /* ContentView.swift in Sources */,
 				F1DD082625303EA100667473 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

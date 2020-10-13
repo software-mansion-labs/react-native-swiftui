@@ -5,12 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <UIKit/UIKit.h>
-
 #import <React/RCTBridge.h>
 #import <React/RCTBridgeModule.h>
 #import <React/RCTInvalidating.h>
 #import <React/RCTRootView.h>
+#import <React/RCTUIKit.h> // TODO(macOS ISS#2323203)
 #import <React/RCTViewManager.h>
 
 /**
@@ -18,6 +17,8 @@
  * next render cycle will pick up updated views and layout appropriately.
  */
 RCT_EXTERN NSString *const RCTUIManagerWillUpdateViewsDueToContentSizeMultiplierChangeNotification;
+
+void RCTTraverseViewNodes(id<RCTComponent> view, void (^block)(id<RCTComponent>)); // TODO(macOS ISS#2323203)
 
 @class RCTLayoutAnimationGroup;
 @class RCTUIManagerObserverCoordinator;
@@ -36,7 +37,7 @@ RCT_EXTERN NSString *const RCTUIManagerWillUpdateViewsDueToContentSizeMultiplier
 /**
  * Register a root view with the RCTUIManager.
  */
-- (void)registerRootView:(UIView *)rootView;
+- (void)registerRootView:(RCTUIView *)rootView; // TODO(macOS ISS#3536887)
 
 /**
  * Gets the view name associated with a reactTag.
@@ -46,7 +47,7 @@ RCT_EXTERN NSString *const RCTUIManagerWillUpdateViewsDueToContentSizeMultiplier
 /**
  * Gets the view associated with a reactTag.
  */
-- (UIView *)viewForReactTag:(NSNumber *)reactTag;
+- (RCTPlatformView *)viewForReactTag:(NSNumber *)reactTag; // TODO(macOS ISS#2323203)
 
 /**
  * Gets the shadow view associated with a reactTag.
@@ -60,7 +61,7 @@ RCT_EXTERN NSString *const RCTUIManagerWillUpdateViewsDueToContentSizeMultiplier
  * this value does not affect root node size style properties.
  * Can be considered as something similar to `setSize:forView:` but applicable only for root view.
  */
-- (void)setAvailableSize:(CGSize)availableSize forRootView:(UIView *)rootView;
+- (void)setAvailableSize:(CGSize)availableSize forRootView:(RCTUIView *)rootView; // TODO(macOS ISS#3536887)
 
 /**
  * Sets local data for a shadow view corresponded with given view.
@@ -71,20 +72,20 @@ RCT_EXTERN NSString *const RCTUIManagerWillUpdateViewsDueToContentSizeMultiplier
  * the shadow view.
  * Please respect one-directional data flow of React.
  */
-- (void)setLocalData:(NSObject *)localData forView:(UIView *)view;
+- (void)setLocalData:(NSObject *)localData forView:(RCTUIView *)view; // TODO(macOS ISS#3536887)
 
 /**
  * Set the size of a view. This might be in response to a screen rotation
  * or some other layout event outside of the React-managed view hierarchy.
  */
-- (void)setSize:(CGSize)size forView:(UIView *)view;
+- (void)setSize:(CGSize)size forView:(RCTPlatformView *)view; // TODO(macOS ISS#2323203)
 
 /**
  * Set the natural size of a view, which is used when no explicit size is set.
  * Use `UIViewNoIntrinsicMetric` to ignore a dimension.
  * The `size` must NOT include padding and border.
  */
-- (void)setIntrinsicContentSize:(CGSize)intrinsicContentSize forView:(UIView *)view;
+- (void)setIntrinsicContentSize:(CGSize)intrinsicContentSize forView:(RCTPlatformView *)view; // TODO(macOS ISS#2323203)
 
 /**
  * Sets up layout animation which will perform on next layout pass.
@@ -123,7 +124,7 @@ RCT_EXTERN NSString *const RCTUIManagerWillUpdateViewsDueToContentSizeMultiplier
  * @param completion the completion block that will hand over the rootView, if any.
  *
  */
-- (void)rootViewForReactTag:(NSNumber *)reactTag withCompletion:(void (^)(UIView *view))completion;
+- (void)rootViewForReactTag:(NSNumber *)reactTag withCompletion:(void (^)(RCTPlatformView *view))completion; // TODO(macOS ISS#2323203)
 
 /**
  * Finds a view that is tagged with nativeID as its nativeID prop
@@ -133,7 +134,7 @@ RCT_EXTERN NSString *const RCTUIManagerWillUpdateViewsDueToContentSizeMultiplier
  * @param nativeID the id reference to native component relative to root view.
  * @param rootTag the react tag of root view hierarchy from which to find the view.
  */
-- (UIView *)viewForNativeID:(NSString *)nativeID withRootTag:(NSNumber *)rootTag;
+- (RCTUIView *)viewForNativeID:(NSString *)nativeID withRootTag:(NSNumber *)rootTag; // TODO(macOS ISS#3536887)
 
 /**
  * Register a view that is tagged with nativeID as its nativeID prop
@@ -141,12 +142,12 @@ RCT_EXTERN NSString *const RCTUIManagerWillUpdateViewsDueToContentSizeMultiplier
  * @param nativeID the id reference to native component relative to root view.
  * @param view the view that is tagged with nativeID as its nativeID prop.
  */
-- (void)setNativeID:(NSString *)nativeID forView:(UIView *)view;
+- (void)setNativeID:(NSString *)nativeID forView:(RCTUIView *)view; // TODO(macOS ISS#2323203)
 
 /**
  * The view that is currently first responder, according to the JS context.
  */
-+ (UIView *)JSResponder;
++ (RCTPlatformView *)JSResponder; // TODO(macOS ISS#2323203)
 
 /**
  * In some cases we might want to trigger layout from native side.

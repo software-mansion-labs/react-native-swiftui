@@ -57,7 +57,11 @@ static NSLineBreakMode RCTNSLineBreakModeFromEllipsizeMode(EllipsizeMode ellipsi
 
   CGSize size = [layoutManager usedRectForTextContainer:textContainer].size;
 
+#if TARGET_OS_OSX
+  size = (CGSize){RCTCeilPixelValue(size.width, 1.0), RCTCeilPixelValue(size.height, 1.0)};
+#else
   size = (CGSize){RCTCeilPixelValue(size.width), RCTCeilPixelValue(size.height)};
+#endif
 
   __block auto attachments = TextMeasurement::Attachments{};
 

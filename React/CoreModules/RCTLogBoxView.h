@@ -7,8 +7,19 @@
 
 #import <React/RCTBridge.h>
 #import <React/RCTSurfaceView.h>
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h>
 
+#if TARGET_OS_OSX
+@interface RCTLogBoxView : NSWindow
+
+- (instancetype)initWithFrame:(CGRect)frame;
+
+- (instancetype)initWithFrame:(CGRect)frame bridge:(RCTBridge *)bridge;
+
+- (void)show;
+
+@end
+#else
 @interface RCTLogBoxView : UIWindow
 
 - (instancetype)initWithFrame:(CGRect)frame;
@@ -20,3 +31,4 @@
 - (void)show;
 
 @end
+#endif

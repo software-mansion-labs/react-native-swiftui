@@ -7,9 +7,11 @@
 
 #import <Foundation/Foundation.h>
 
+#import <React/RCTPlatformDisplayLink.h> // TODO(macOS ISS#2323203)
+
 @protocol RCTDisplayRefreshable
 
-- (void)displayDidRefresh:(CADisplayLink *)displayLink;
+- (void)displayDidRefresh:(RCTPlatformDisplayLink *)displayLink;
 
 @end
 
@@ -17,6 +19,6 @@
 
 @property (nonatomic, weak) id<RCTDisplayRefreshable> refreshable;
 
-+ (CADisplayLink *)displayLinkWithWeakRefreshable:(id<RCTDisplayRefreshable>)refreshable;
++ (RCTPlatformDisplayLink *)displayLinkWithWeakRefreshable:(id<RCTDisplayRefreshable>)refreshable;
 
 @end

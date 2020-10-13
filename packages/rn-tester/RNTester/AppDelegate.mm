@@ -28,13 +28,13 @@
 #import <React/RCTPushNotificationManager.h>
 #endif
 
-#ifdef RN_FABRIC_ENABLED
-#import <React/RCTSurfacePresenter.h>
-#import <React/RCTSurfacePresenterBridgeAdapter.h>
-#import <React/RCTFabricSurfaceHostingProxyRootView.h>
-
-#import <react/config/ReactNativeConfig.h>
-#endif
+//#ifdef RN_FABRIC_ENABLED
+//#import <React/RCTSurfacePresenter.h>
+//#import <React/RCTSurfacePresenterBridgeAdapter.h>
+//#import <React/RCTFabricSurfaceHostingProxyRootView.h>
+//
+//#import <react/config/ReactNativeConfig.h>
+//#endif
 
   
 #if DEBUG
@@ -58,11 +58,11 @@
 
 @interface AppDelegate() <RCTCxxBridgeDelegate, RCTTurboModuleManagerDelegate>{
 
-#ifdef RN_FABRIC_ENABLED
-  RCTSurfacePresenterBridgeAdapter *_bridgeAdapter;
-  std::shared_ptr<const facebook::react::ReactNativeConfig> _reactNativeConfig;
-  facebook::react::ContextContainer::Shared _contextContainer;
-#endif
+//#ifdef RN_FABRIC_ENABLED
+//  RCTSurfacePresenterBridgeAdapter *_bridgeAdapter;
+//  std::shared_ptr<const facebook::react::ReactNativeConfig> _reactNativeConfig;
+//  facebook::react::ContextContainer::Shared _contextContainer;
+//#endif
 
   RCTTurboModuleManager *_turboModuleManager;
 }

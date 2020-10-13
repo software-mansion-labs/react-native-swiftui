@@ -17,11 +17,13 @@
 #import <React/RCTProfile.h>
 #import <React/RCTReloadCommand.h>
 #import <React/RCTUtils.h>
+#import <React/RCTBundleURLProvider.h> // TODO(macOS ISS#2323203)
 
 #import <React/RCTDevMenu.h>
 
 #import "CoreModulesPlugins.h"
 
+static NSString *const kRCTDevSettingDevModeEnabled = @"devModeEnabled"; // TODO(OSS Candidate ISS#2710739)
 static NSString *const kRCTDevSettingProfilingEnabled = @"profilingEnabled";
 static NSString *const kRCTDevSettingHotLoadingEnabled = @"hotLoadingEnabled";
 static NSString *const kRCTDevSettingIsInspectorShown = @"showInspector";
@@ -29,6 +31,7 @@ static NSString *const kRCTDevSettingIsDebuggingRemotely = @"isDebuggingRemotely
 static NSString *const kRCTDevSettingExecutorOverrideClass = @"executor-override";
 static NSString *const kRCTDevSettingShakeToShowDevMenu = @"shakeToShow";
 static NSString *const kRCTDevSettingIsPerfMonitorShown = @"RCTPerfMonitorKey";
+static NSString *const kRCTDevSettingSecondClickToShowDevMenu = @"secondClickToShow"; // TODO(macOS ISS#2323203)
 
 static NSString *const kRCTDevSettingsUserDefaultsKey = @"RCTDevMenu";
 
@@ -122,7 +125,7 @@ void RCTDevSettingsSetEnabled(BOOL enabled)
 }
 
 @property (nonatomic, strong) Class executorClass;
-@property (nonatomic, readwrite, strong) id<RCTDevSettingsDataSource> dataSource;
+@property (atomic, readwrite, strong) id<RCTDevSettingsDataSource> dataSource; // TODO(OSS Candidate ISS#2710739): protect against race conditions where another thread changes the _dataSource
 
 @end
 
@@ -134,8 +137,12 @@ RCT_EXPORT_MODULE()
 {
   // Default behavior is to use NSUserDefaults with shake and hot loading enabled.
   NSDictionary *defaultValues = @{
+#if DEBUG // [TODO(OSS Candidate ISS#2710739)
+    kRCTDevSettingDevModeEnabled: @YES,
+#endif // ]TODO(OSS Candidate ISS#2710739)
     kRCTDevSettingShakeToShowDevMenu : @YES,
     kRCTDevSettingHotLoadingEnabled : @YES,
+    kRCTDevSettingSecondClickToShowDevMenu: @YES, // TODO(macOS ISS#2323203)
   };
   RCTDevSettingsUserDefaultsDataSource *dataSource =
       [[RCTDevSettingsUserDefaultsDataSource alloc] initWithDefaultValues:defaultValues];
@@ -164,7 +171,7 @@ RCT_EXPORT_MODULE()
 {
   [super setBridge:bridge];
 
-#if ENABLE_PACKAGER_CONNECTION
+#if DEBUG && ENABLE_PACKAGER_CONNECTION // TODO(OSS Candidate ISS#2710739)
   RCTBridge *__weak weakBridge = bridge;
   _reloadToken = [[RCTPackagerConnection sharedPackagerConnection]
       addNotificationHandler:^(id params) {
@@ -177,7 +184,7 @@ RCT_EXPORT_MODULE()
                    forMethod:@"reload"];
 #endif
 
-#if RCT_ENABLE_INSPECTOR
+#if RCT_ENABLE_INSPECTOR && !TARGET_OS_UIKITFORMAC && DEBUG // TODO(OSS Candidate ISS#2710739)
   // We need this dispatch to the main thread because the bridge is not yet
   // finished with its initialisation. By the time it relinquishes control of
   // the main thread, this operation can be performed.
@@ -214,15 +221,15 @@ RCT_EXPORT_MODULE()
 
 - (void)_updateSettingWithValue:(id)value forKey:(NSString *)key
 {
-  [_dataSource updateSettingWithValue:value forKey:key];
+  [[self dataSource] updateSettingWithValue:value forKey:key]; // TODO(OSS Candidate ISS#2710739): protect against race conditions where another thread changes the _dataSource
 }
 
 - (id)settingForKey:(NSString *)key
 {
-  return [_dataSource settingForKey:key];
+  return [[self dataSource] settingForKey:key]; // TODO(OSS Candidate ISS#2710739): protect against race conditions where another thread changes the _dataSource
 }
 
-- (BOOL)isDeviceDebuggingAvailable
+- (BOOL)isNuclideDebuggingAvailable
 {
 #if RCT_ENABLE_INSPECTOR
   return self.bridge.isInspectable;
@@ -230,6 +237,18 @@ RCT_EXPORT_MODULE()
   return false;
 #endif // RCT_ENABLE_INSPECTOR
 }
+
+// [TODO(OSS Candidate ISS#2710739)
+RCT_EXPORT_METHOD(setDevModeEnabled:(BOOL)enabled)
+{
+  [self _updateSettingWithValue:@(enabled) forKey:kRCTDevSettingDevModeEnabled];
+}
+
+- (BOOL)isDevModeEnabled
+{
+  return [[self settingForKey:kRCTDevSettingDevModeEnabled] boolValue];
+}
+// ]TODO(OSS Candidate ISS#2710739)
 
 - (BOOL)isRemoteDebuggingAvailable
 {
@@ -270,7 +289,19 @@ RCT_EXPORT_METHOD(setIsShakeToShowDevMenuEnabled : (BOOL)enabled)
   return [[self settingForKey:kRCTDevSettingShakeToShowDevMenu] boolValue];
 }
 
-RCT_EXPORT_METHOD(setIsDebuggingRemotely : (BOOL)enabled)
+// [TODO(macOS ISS#2323203)
+RCT_EXPORT_METHOD(setIsSecondaryClickToShowDevMenuEnabled:(BOOL)enabled)
+{
+  [self _updateSettingWithValue:@(enabled) forKey:kRCTDevSettingSecondClickToShowDevMenu];
+}
+
+- (BOOL)isSecondaryClickToShowDevMenuEnabled
+{
+  return [[self settingForKey:kRCTDevSettingSecondClickToShowDevMenu] boolValue];
+}
+// ]TODO(macOS ISS#2323203)
+
+RCT_EXPORT_METHOD(setIsDebuggingRemotely:(BOOL)enabled)
 {
   [self _updateSettingWithValue:@(enabled) forKey:kRCTDevSettingIsDebuggingRemotely];
   [self _remoteDebugSettingDidChange];
@@ -403,33 +434,20 @@ RCT_EXPORT_METHOD(addMenuItem : (NSString *)title)
 #endif
 }
 
-- (void)setupHMRClientWithBundleURL:(NSURL *)bundleURL
+- (void)setupHotModuleReloadClientIfApplicableForURL:(NSURL *)bundleURL
 {
   if (bundleURL && !bundleURL.fileURL) { // isHotLoadingAvailable check
     NSString *const path = [bundleURL.path substringFromIndex:1]; // Strip initial slash.
     NSString *const host = bundleURL.host;
     NSNumber *const port = bundleURL.port;
+    // TODO(macOS ISS#2323203) - we could perhaps infer the platform from the bundleURL's query parameters, instead of hardcoding
     if (self.bridge) {
       [self.bridge enqueueJSCall:@"HMRClient"
                           method:@"setup"
-                            args:@[ @"ios", path, host, RCTNullIfNil(port), @(YES) ]
+                            args:@[ kRCTPlatformName, path, host, RCTNullIfNil(port), @(YES) ] // TODO(macOS ISS#2323203)
                       completion:NULL];
     } else {
-      self.invokeJS(@"HMRClient", @"setup", @[ @"ios", path, host, RCTNullIfNil(port), @(YES) ]);
-    }
-  }
-}
-
-- (void)setupHMRClientWithAdditionalBundleURL:(NSURL *)bundleURL
-{
-  if (bundleURL && !bundleURL.fileURL) { // isHotLoadingAvailable check
-    if (self.bridge) {
-      [self.bridge enqueueJSCall:@"HMRClient"
-                          method:@"registerBundle"
-                            args:@[ [bundleURL absoluteString] ]
-                      completion:NULL];
-    } else {
-      self.invokeJS(@"HMRClient", @"registerBundle", @[ [bundleURL absoluteString] ]);
+      self.invokeJS(@"HMRClient", @"setup", @[ kRCTPlatformName, path, host, RCTNullIfNil(port), @(YES) ]); // TODO(macOS ISS#2323203)
     }
   }
 }
@@ -467,8 +485,7 @@ RCT_EXPORT_METHOD(addMenuItem : (NSString *)title)
   });
 }
 
-- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
-    (const facebook::react::ObjCTurboModule::InitParams &)params
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const facebook::react::ObjCTurboModule::InitParams &)params
 {
   return std::make_shared<facebook::react::NativeDevSettingsSpecJSI>(params);
 }
@@ -523,10 +540,7 @@ RCT_EXPORT_METHOD(addMenuItem : (NSString *)title)
 - (void)toggleElementInspector
 {
 }
-- (void)setupHMRClientWithBundleURL:(NSURL *)bundleURL
-{
-}
-- (void)setupHMRClientWithAdditionalBundleURL:(NSURL *)bundleURL
+- (void)setupHotModuleReloadClientIfApplicableForURL:(NSURL *)bundleURL
 {
 }
 - (void)addMenuItem:(NSString *)title
@@ -536,8 +550,7 @@ RCT_EXPORT_METHOD(addMenuItem : (NSString *)title)
 {
 }
 
-- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
-    (const facebook::react::ObjCTurboModule::InitParams &)params
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const facebook::react::ObjCTurboModule::InitParams &)params
 {
   return std::make_shared<facebook::react::NativeDevSettingsSpecJSI>(params);
 }

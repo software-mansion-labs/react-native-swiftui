@@ -18,8 +18,10 @@
 
 Class RCTCoreModulesClassProvider(const char *name) {
   static std::unordered_map<std::string, Class (*)(void)> sCoreModuleClassMap = {
+#if !TARGET_OS_OSX
     {"AccessibilityManager", RCTAccessibilityManagerCls},
     {"Appearance", RCTAppearanceCls},
+#endif
     {"DeviceInfo", RCTDeviceInfoCls},
     {"ExceptionsManager", RCTExceptionsManagerCls},
     {"PlatformConstants", RCTPlatformCls},
@@ -33,11 +35,15 @@ Class RCTCoreModulesClassProvider(const char *name) {
     {"StatusBarManager", RCTStatusBarManagerCls},
     {"KeyboardObserver", RCTKeyboardObserverCls},
     {"AppState", RCTAppStateCls},
+#if !TARGET_OS_OSX
     {"PerfMonitor", RCTPerfMonitorCls},
+#endif
     {"DevMenu", RCTDevMenuCls},
     {"DevSettings", RCTDevSettingsCls},
     {"RedBox", RCTRedBoxCls},
+#if !TARGET_OS_OSX
     {"LogBox", RCTLogBoxCls},
+#endif
     {"TVNavigationEventEmitter", RCTTVNavigationEventEmitterCls},
     {"WebSocketExecutor", RCTWebSocketExecutorCls},
     {"WebSocketModule", RCTWebSocketModuleCls},

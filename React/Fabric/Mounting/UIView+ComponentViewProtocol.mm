@@ -15,7 +15,7 @@
 
 using namespace facebook::react;
 
-@implementation UIView (ComponentViewProtocol)
+@implementation RCTUIView (ComponentViewProtocol)
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
 {
@@ -28,6 +28,7 @@ using namespace facebook::react;
   return {};
 }
 
+#if !TARGET_OS_OSX // TODO(macOS we don't use this class either way, so just remove this code)
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   RCTAssert(childComponentView.superview == nil, @"Attempt to mount already mounted component view.");
@@ -43,6 +44,7 @@ using namespace facebook::react;
 
   [childComponentView removeFromSuperview];
 }
+#endif
 
 - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
 {
@@ -87,16 +89,18 @@ using namespace facebook::react;
     } else {
       // Note: Changing `frame` when `layer.transform` is not the `identity transform` is undefined behavior.
       // Therefore, we must use `center` and `bounds`.
-      self.center = CGPoint{CGRectGetMidX(frame), CGRectGetMidY(frame)};
+      self.frame.origin = CGPoint{CGRectGetMidX(frame), CGRectGetMidY(frame)};
       self.bounds = CGRect{CGPointZero, frame.size};
     }
   }
 
+#if !TARGET_OS_OSX
   if (forceUpdate || (layoutMetrics.layoutDirection != oldLayoutMetrics.layoutDirection)) {
     self.semanticContentAttribute = layoutMetrics.layoutDirection == LayoutDirection::RightToLeft
         ? UISemanticContentAttributeForceRightToLeft
         : UISemanticContentAttributeForceLeftToRight;
   }
+#endif
 
   if (forceUpdate || (layoutMetrics.displayType != oldLayoutMetrics.displayType)) {
     self.hidden = layoutMetrics.displayType == DisplayType::None;

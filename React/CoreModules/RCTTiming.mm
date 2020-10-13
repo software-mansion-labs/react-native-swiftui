@@ -131,6 +131,7 @@ RCT_EXPORT_MODULE()
   _timers = [NSMutableDictionary new];
   _inBackground = NO;
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   for (NSString *name in @[
          UIApplicationWillResignActiveNotification,
          UIApplicationDidEnterBackgroundNotification,
@@ -148,6 +149,7 @@ RCT_EXPORT_MODULE()
                                                  name:name
                                                object:nil];
   }
+#endif // TODO(macOS ISS#2323203)
 }
 
 - (void)dealloc

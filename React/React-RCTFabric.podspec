@@ -34,6 +34,9 @@ Pod::Spec.new do |s|
                             #  "Tests/**/*.{mm}"
   s.exclude_files          = "**/tests/*",
                              "**/android/*",
+                             "**/InputAccessory/*",
+                             "**/Modal/*"
+  s.osx.exclude_files      = "**/ScrollView/*"
   s.compiler_flags         = folly_compiler_flags + ' ' + boost_compiler_flags
   s.header_dir             = "React"
   s.framework              = "JavaScriptCore"

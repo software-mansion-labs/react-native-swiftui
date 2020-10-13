@@ -6,10 +6,6 @@ open class RSUIHostingView: RSUIView {
 
   public override func render() -> AnyView {
     let _ = print("RSUIHostingView, children count", descriptor.children.count)
-
-    return AnyView(Group {
-//      return AnyView(Rectangle().fill(Color.red))
-      Children()
-    })
+    return AnyView(Children())
   }
 }

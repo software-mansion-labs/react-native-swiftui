@@ -7,7 +7,7 @@
 
 #import <React/RCTDecayAnimation.h>
 
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h>
 #import <React/RCTConvert.h>
 
 #import <React/RCTAnimationUtils.h>

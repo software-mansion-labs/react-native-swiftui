@@ -60,7 +60,7 @@ void RCTImageInstrumentationProxy::didExitVisibilityRange() const
   }
 }
 
-void RCTImageInstrumentationProxy::trackNativeImageView(UIView *imageView) const
+void RCTImageInstrumentationProxy::trackNativeImageView(RCTUIView *imageView) const
 {
   if (!RCTImageLoadingPerfInstrumentationEnabled()) {
     return;

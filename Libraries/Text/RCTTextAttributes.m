@@ -12,6 +12,7 @@
 #import <React/RCTLog.h>
 
 NSString *const RCTTextAttributesIsHighlightedAttributeName = @"RCTTextAttributesIsHighlightedAttributeName";
+NSString *const RCTTextAttributesFontSmoothingAttributeName = @"RCTTextAttributesFontSmoothingAttributeName"; // TODO(OSS Candidate ISS#2710739)
 NSString *const RCTTextAttributesTagAttributeName = @"RCTTextAttributesTagAttributeName";
 
 @implementation RCTTextAttributes
@@ -30,6 +31,9 @@ NSString *const RCTTextAttributesTagAttributeName = @"RCTTextAttributesTagAttrib
     _textShadowRadius = NAN;
     _opacity = NAN;
     _textTransform = RCTTextTransformUndefined;
+#if TARGET_OS_OSX // TODO(macOS ISS#2323203)
+    _foregroundColor = [NSColor labelColor];
+#endif // TODO(macOS ISS#2323203)
   }
 
   return self;
@@ -56,6 +60,7 @@ NSString *const RCTTextAttributesTagAttributeName = @"RCTTextAttributesTagAttrib
   _fontVariant = textAttributes->_fontVariant ?: _fontVariant;
   _allowFontScaling = textAttributes->_allowFontScaling || _allowFontScaling;  // *
   _letterSpacing = !isnan(textAttributes->_letterSpacing) ? textAttributes->_letterSpacing : _letterSpacing;
+  _fontSmoothing = textAttributes->_fontSmoothing != RCTFontSmoothingAuto ? textAttributes->_fontSmoothing : _fontSmoothing; // TODO(OSS Candidate ISS#2710739)
 
   // Paragraph Styles
   _lineHeight = !isnan(textAttributes->_lineHeight) ? textAttributes->_lineHeight : _lineHeight;
@@ -93,27 +98,27 @@ NSString *const RCTTextAttributesTagAttributeName = @"RCTTextAttributesTagAttrib
         alignment = NSTextAlignmentRight;
       }
     }
-    
+
     paragraphStyle.alignment = alignment;
     isParagraphStyleUsed = YES;
   }
-  
+
   if (_baseWritingDirection != NSWritingDirectionNatural) {
     paragraphStyle.baseWritingDirection = _baseWritingDirection;
     isParagraphStyleUsed = YES;
   }
-  
+
   if (!isnan(_lineHeight)) {
     CGFloat lineHeight = _lineHeight * self.effectiveFontSizeMultiplier;
     paragraphStyle.minimumLineHeight = lineHeight;
     paragraphStyle.maximumLineHeight = lineHeight;
     isParagraphStyleUsed = YES;
   }
-  
+
   if (isParagraphStyleUsed) {
     return [paragraphStyle copy];
   }
-  
+
   return nil;
 }
 
@@ -129,7 +134,7 @@ NSString *const RCTTextAttributesTagAttributeName = @"RCTTextAttributesTagAttrib
   }
 
   // Colors
-  UIColor *effectiveForegroundColor = self.effectiveForegroundColor;
+  RCTUIColor *effectiveForegroundColor = self.effectiveForegroundColor; // TODO(OSS Candidate ISS#2710739)
 
   if (_foregroundColor || !isnan(_opacity)) {
     attributes[NSForegroundColorAttributeName] = effectiveForegroundColor;
@@ -183,6 +188,12 @@ NSString *const RCTTextAttributesTagAttributeName = @"RCTTextAttributesTagAttrib
     attributes[RCTTextAttributesIsHighlightedAttributeName] = @YES;
   }
 
+  // [TODO(macOS ISS#2323203)
+  if (_fontSmoothing != RCTFontSmoothingAuto) {
+    attributes[RCTTextAttributesFontSmoothingAttributeName] = @(_fontSmoothing);
+  }
+  // ]TODO(macOS ISS#2323203)
+
   if (_tag) {
     attributes[RCTTextAttributesTagAttributeName] = _tag;
   }
@@ -215,9 +226,9 @@ NSString *const RCTTextAttributesTagAttributeName = @"RCTTextAttributesTagAttrib
   }
 }
 
-- (UIColor *)effectiveForegroundColor
+- (RCTUIColor *)effectiveForegroundColor // TODO(OSS Candidate ISS#2710739)
 {
-  UIColor *effectiveForegroundColor = _foregroundColor ?: [UIColor blackColor];
+  RCTUIColor *effectiveForegroundColor = _foregroundColor ?: [RCTUIColor blackColor]; // TODO(OSS Candidate ISS#2710739)
 
   if (!isnan(_opacity)) {
     effectiveForegroundColor = [effectiveForegroundColor colorWithAlphaComponent:CGColorGetAlpha(effectiveForegroundColor.CGColor) * _opacity];
@@ -226,15 +237,15 @@ NSString *const RCTTextAttributesTagAttributeName = @"RCTTextAttributesTagAttrib
   return effectiveForegroundColor;
 }
 
-- (UIColor *)effectiveBackgroundColor
+- (RCTUIColor *)effectiveBackgroundColor // TODO(OSS Candidate ISS#2710739)
 {
-  UIColor *effectiveBackgroundColor = _backgroundColor;// ?: [[UIColor whiteColor] colorWithAlphaComponent:0];
+  RCTUIColor *effectiveBackgroundColor = _backgroundColor;// ?: [[UIColor whiteColor] colorWithAlphaComponent:0]; // TODO(OSS Candidate ISS#2710739)
 
   if (effectiveBackgroundColor && !isnan(_opacity)) {
     effectiveBackgroundColor = [effectiveBackgroundColor colorWithAlphaComponent:CGColorGetAlpha(effectiveBackgroundColor.CGColor) * _opacity];
   }
 
-  return effectiveBackgroundColor ?: [UIColor clearColor];
+  return effectiveBackgroundColor ?: [RCTUIColor clearColor]; // TODO(OSS Candidate ISS#2710739)
 }
 
 - (NSString *)applyTextAttributesToText:(NSString *)text
@@ -290,6 +301,7 @@ NSString *const RCTTextAttributesTagAttributeName = @"RCTTextAttributesTagAttrib
     RCTTextAttributesCompareObjects(_fontVariant) &&
     RCTTextAttributesCompareOthers(_allowFontScaling) &&
     RCTTextAttributesCompareFloats(_letterSpacing) &&
+    RCTTextAttributesCompareOthers(_fontSmoothing) && // TODO(OSS Candidate ISS#2710739)
     // Paragraph Styles
     RCTTextAttributesCompareFloats(_lineHeight) &&
     RCTTextAttributesCompareFloats(_alignment) &&
@@ -308,5 +320,17 @@ NSString *const RCTTextAttributesTagAttributeName = @"RCTTextAttributesTagAttrib
     RCTTextAttributesCompareOthers(_layoutDirection) &&
     RCTTextAttributesCompareOthers(_textTransform);
 }
+
+// [TODO(OSS Candidate ISS#2710739)
+static RCTFontSmoothing _fontSmoothingDefault = RCTFontSmoothingAuto;
+
++ (RCTFontSmoothing)fontSmoothingDefault {
+  return _fontSmoothingDefault;
+}
+
++ (void)setFontSmoothingDefault:(RCTFontSmoothing)fontSmoothingDefault {
+  _fontSmoothingDefault = fontSmoothingDefault;
+}
+// ]TODO(OSS Candidate ISS#2710739)
 
 @end

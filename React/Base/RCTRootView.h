@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h> // TODO(macOS ISS#2323203)
 
 #import <React/RCTBridge.h>
 
@@ -45,7 +45,7 @@ extern
  * like any ordinary UIView. You can have multiple RCTRootViews on screen at
  * once, all controlled by the same JavaScript application.
  */
-@interface RCTRootView : UIView
+@interface RCTRootView : RCTUIView
 
 /**
  * - Designated initializer -
@@ -112,14 +112,14 @@ extern
 /**
  * The React-managed contents view of the root view.
  */
-@property (nonatomic, strong, readonly) UIView *contentView;
+@property (nonatomic, strong, readonly) RCTUIView *contentView;
 
 /**
  * A view to display while the JavaScript is loading, so users aren't presented
  * with a blank screen. By default this is nil, but you can override it with
  * (for example) a UIActivityIndicatorView or a placeholder image.
  */
-@property (nonatomic, strong, nullable) UIView *loadingView;
+@property (nonatomic, strong, nullable) RCTUIView *loadingView;
 
 /**
  * When set, any touches on the RCTRootView that are not matched up to any of the child

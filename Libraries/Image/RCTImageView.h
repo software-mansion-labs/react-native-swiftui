@@ -5,7 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#import <React/RCTUIKit.h> // TODO(macOS ISS#2323203)
+#if !TARGET_OS_OSX // [TODO(macOS ISS#2323203)
 #import <UIKit/UIKit.h>
+#else // [TODO(macOS ISS#2323203)
+typedef NS_ENUM(NSInteger, UIImageRenderingMode) {
+    UIImageRenderingModeAlwaysOriginal,
+    UIImageRenderingModeAlwaysTemplate,
+};
+#endif // ]TODO(macOS ISS#2323203)
 #import <React/RCTView.h>
 #import <React/RCTResizeMode.h>
 
@@ -22,6 +30,8 @@
 @property (nonatomic, copy) NSArray<RCTImageSource *> *imageSources;
 @property (nonatomic, assign) CGFloat blurRadius;
 @property (nonatomic, assign) RCTResizeMode resizeMode;
-@property (nonatomic, copy) NSString *internal_analyticTag;
 
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+@property (nonatomic, copy) NSColor *tintColor;
+#endif // ]TODO(macOS ISS#2323203)
 @end

@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithCoordinator:(RCTLegacyViewManagerInteropCoordinator *)coordinator reactTag:(NSInteger)tag;
 
-@property (strong, nonatomic) UIView *paperView;
+@property (strong, nonatomic) RCTUIView *paperView;
 
 @property (nonatomic, copy, nullable) void (^eventInterceptor)(std::string eventName, folly::dynamic event);
 

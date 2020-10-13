@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#if !TARGET_OS_OSX // TODO(macOS we don't use this class either way, so just remove this code)
 #import <UIKit/UIKit.h>
 
 @protocol RCTRedBoxExtraDataActionDelegate <NSObject>
@@ -18,3 +19,4 @@
 - (void)addExtraData:(NSDictionary *)data forIdentifier:(NSString *)identifier;
 
 @end
+#endif

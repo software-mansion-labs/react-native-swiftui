@@ -246,6 +246,7 @@ static void RCTSendPaperScrollEvent_DEPRECATED(UIScrollView *scrollView, NSInteg
   _scrollView.contentSize = contentSize;
 }
 
+#if !TARGET_OS_OSX // TODO(macOS we don't use this class either way, so just remove this code)
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   if (_isOnDemandViewMountingEnabled) {
@@ -270,6 +271,7 @@ static void RCTSendPaperScrollEvent_DEPRECATED(UIScrollView *scrollView, NSInteg
     [childComponentView removeFromSuperview];
   }
 }
+#endif
 
 - (ScrollViewMetrics)_scrollViewMetrics
 {

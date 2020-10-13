@@ -5,27 +5,38 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h> // TODO(macOS ISS#2323203)
 
 #import <React/RCTBorderStyle.h>
 #import <React/RCTComponent.h>
+#import <React/RCTEventDispatcher.h> // TODO(OSS Candidate ISS#2710739)
 #import <React/RCTPointerEvents.h>
-#import <React/RCTView.h>
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 extern const UIAccessibilityTraits SwitchAccessibilityTrait;
+#endif // TODO(macOS ISS#2323203)
 
 @protocol RCTAutoInsetsProtocol;
 
 @class RCTView;
 
-@interface RCTView : UIView
+@interface RCTView : RCTUIView // TODO(macOS ISS#3536887)
+
+// [TODO(OSS Candidate ISS#2710739)
+- (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher;
+
+- (BOOL)becomeFirstResponder;
+- (BOOL)resignFirstResponder;
+// ]TODO(OSS Candidate ISS#2710739)
 
 /**
  * Accessibility event handlers
  */
 @property (nonatomic, copy) RCTDirectEventBlock onAccessibilityAction;
 @property (nonatomic, copy) RCTDirectEventBlock onAccessibilityTap;
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 @property (nonatomic, copy) RCTDirectEventBlock onMagicTap;
+#endif // TODO(macOS ISS#2323203)
 @property (nonatomic, copy) RCTDirectEventBlock onAccessibilityEscape;
 
 /**
@@ -33,14 +44,16 @@ extern const UIAccessibilityTraits SwitchAccessibilityTrait;
  */
 @property (nonatomic, assign) RCTPointerEvents pointerEvents;
 
-+ (void)autoAdjustInsetsForView:(UIView<RCTAutoInsetsProtocol> *)parentView
-                 withScrollView:(UIScrollView *)scrollView
++ (void)autoAdjustInsetsForView:(RCTUIView<RCTAutoInsetsProtocol> *)parentView // TODO(macOS ISS#3536887)
+                 withScrollView:(RCTUIScrollView *)scrollView // TODO(macOS ISS#3536887) and TODO(macOS ISS#3536887)
                    updateOffset:(BOOL)updateOffset;
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 /**
  * Find the first view controller whose view, or any subview is the specified view.
  */
 + (UIEdgeInsets)contentInsetsForView:(UIView *)curView;
+#endif // TODO(macOS ISS#2323203)
 
 /**
  * Layout direction of the view.
@@ -110,5 +123,24 @@ extern const UIAccessibilityTraits SwitchAccessibilityTrait;
  *  Insets used when hit testing inside this view.
  */
 @property (nonatomic, assign) UIEdgeInsets hitTestEdgeInsets;
+
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+/**
+ * macOS Properties
+ */
+@property (nonatomic, copy) RCTDirectEventBlock onDoubleClick;
+@property (nonatomic, copy) RCTDirectEventBlock onClick;
+@property (nonatomic, copy) RCTDirectEventBlock onMouseEnter;
+@property (nonatomic, copy) RCTDirectEventBlock onMouseLeave;
+@property (nonatomic, copy) RCTDirectEventBlock onDragEnter;
+@property (nonatomic, copy) RCTDirectEventBlock onDragLeave;
+@property (nonatomic, copy) RCTDirectEventBlock onDrop;
+#endif // ]TODO(macOS ISS#2323203)
+
+/**
+ * Common Focus Properties
+ */
+@property (nonatomic, copy) RCTBubblingEventBlock onFocus;
+@property (nonatomic, copy) RCTBubblingEventBlock onBlur;
 
 @end

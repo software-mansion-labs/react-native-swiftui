@@ -34,6 +34,54 @@ static BOOL RCTShouldReloadImageForSizeChange(CGSize currentSize, CGSize idealSi
     heightMultiplier > upscaleThreshold || heightMultiplier < downscaleThreshold;
 }
 
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+/**
+ * Implements macOS equivalent behavior of UIViewContentModeScaleAspectFill.
+ * Used for RCTResizeModeCover support.
+ */
+static NSImage *RCTFillImagePreservingAspectRatio(NSImage *originalImage, NSSize targetSize, CGFloat windowScale)
+{
+  RCTAssertParam(originalImage);
+  if (!originalImage) {
+    return nil;
+  }
+
+  NSSize originalImageSize = originalImage.size;
+  if (NSEqualSizes(originalImageSize, NSZeroSize) || [[originalImage representations] count] == 0) {
+    return originalImage;
+  }
+
+  CGFloat scaleX = targetSize.width / originalImageSize.width;
+  CGFloat scaleY = targetSize.height / originalImageSize.height;
+  CGFloat scale = 1.0;
+
+  if (scaleX < scaleY) {
+    // clamped width
+    scale = scaleY;
+  }
+  else {
+    // clamped height
+    scale = scaleX;
+  }
+
+  NSSize newSize = NSMakeSize(RCTRoundPixelValue(originalImageSize.width * scale, windowScale),
+                              RCTRoundPixelValue(originalImageSize.height * scale, windowScale));
+  NSImage *newImage = [[NSImage alloc] initWithSize:newSize];
+
+  for (NSImageRep *imageRep in [originalImage representations]) {
+    NSImageRep *newImageRep = [imageRep copy];
+    NSSize newImageRepSize = NSMakeSize(RCTRoundPixelValue(imageRep.size.width * scale, windowScale),
+                                        RCTRoundPixelValue(imageRep.size.height * scale, windowScale));
+
+    newImageRep.size = newImageRepSize;
+
+    [newImage addRepresentation:newImageRep];
+  }
+
+  return newImage;
+}
+#endif // ]TODO(macOS ISS#2323203)
+
 /**
  * See RCTConvert (ImageSource). We want to send down the source as a similar
  * JSON parameter.
@@ -41,9 +89,9 @@ static BOOL RCTShouldReloadImageForSizeChange(CGSize currentSize, CGSize idealSi
 static NSDictionary *onLoadParamsForSource(RCTImageSource *source)
 {
   NSDictionary *dict = @{
-    @"uri": source.request.URL.absoluteString,
     @"width": @(source.size.width),
     @"height": @(source.size.height),
+    @"url": source.request.URL.absoluteString,
   };
   return @{ @"source": dict };
 }
@@ -64,9 +112,6 @@ static NSDictionary *onLoadParamsForSource(RCTImageSource *source)
   // Weak reference back to the bridge, for image loading
   __weak RCTBridge *_bridge;
 
-  // Weak reference back to the active image loader.
-  __weak id<RCTImageLoaderWithAttributionProtocol> _imageLoader;
-
   // The image source that's currently displayed
   RCTImageSource *_imageSource;
 
@@ -76,18 +121,32 @@ static NSDictionary *onLoadParamsForSource(RCTImageSource *source)
   // Size of the image loaded / being loaded, so we can determine when to issue a reload to accommodate a changing size.
   CGSize _targetSize;
 
+  // A block that can be invoked to cancel the most recent call to -reloadImage, if any
+  RCTImageLoaderCancellationBlock _reloadImageCancellationBlock;
+
   // Whether the latest change of props requires the image to be reloaded
   BOOL _needsReload;
 
   RCTUIImageViewAnimated *_imageView;
 
-  RCTImageURLLoaderRequest *_loaderRequest;
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+  // Whether observing changes to the window's backing scale
+  BOOL _subscribedToWindowBackingNotifications;
+#endif // [TODO(macOS ISS#2323203)
 }
 
 - (instancetype)initWithBridge:(RCTBridge *)bridge
 {
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   if ((self = [super initWithFrame:CGRectZero])) {
+#else // [TODO(macOS ISS#2323203)
+  if ((self = [super initWithFrame:NSZeroRect])) {
+#endif // ]TODO(macOS ISS#2323203)
     _bridge = bridge;
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+    self.wantsLayer = YES;
+#endif
+#if !TARGET_OS_OSX // [TODO(macOS ISS#2323203)
     _imageView = [[RCTUIImageViewAnimated alloc] init];
     _imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self addSubview:_imageView];
@@ -110,15 +169,20 @@ static NSDictionary *onLoadParamsForSource(RCTImageSource *source)
                    object:nil];
     }
 #endif
+#endif // ]TODO(macOS ISS#2323203)
   }
   return self;
 }
 
 RCT_NOT_IMPLEMENTED(- (instancetype)init)
 
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+RCT_NOT_IMPLEMENTED(- (instancetype)initWithCoder:(NSCoder *)coder)
+RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(NSRect)frame)
+#else
 RCT_NOT_IMPLEMENTED(- (instancetype)initWithCoder:(NSCoder *)aDecoder)
-
 RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
+#endif // ]TODO(macOS ISS#2323203)
 
 - (void)updateWithImage:(UIImage *)image
 {
@@ -128,15 +192,31 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
   }
 
   // Apply rendering mode
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   if (_renderingMode != image.renderingMode) {
     image = [image imageWithRenderingMode:_renderingMode];
   }
+#else // [TODO(macOS ISS#2323203)
+  if ((_renderingMode == UIImageRenderingModeAlwaysTemplate) != [image isTemplate]) {
+    [image setTemplate:(_renderingMode == UIImageRenderingModeAlwaysTemplate)];
+  }
+#endif // ]TODO(macOS ISS#2323203)
 
   if (_resizeMode == RCTResizeModeRepeat) {
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
     image = [image resizableImageWithCapInsets:_capInsets resizingMode:UIImageResizingModeTile];
+#else // [TODO(macOS ISS#2323203)
+    image.capInsets = _capInsets;
+    image.resizingMode = NSImageResizingModeTile;
+#endif // ]TODO(macOS ISS#2323203)
   } else if (!UIEdgeInsetsEqualToEdgeInsets(UIEdgeInsetsZero, _capInsets)) {
     // Applying capInsets of 0 will switch the "resizingMode" of the image to "tile" which is undesired
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
     image = [image resizableImageWithCapInsets:_capInsets resizingMode:UIImageResizingModeStretch];
+#else // [TODO(macOS ISS#2323203)
+    image.capInsets = _capInsets;
+    image.resizingMode = NSImageResizingModeStretch;
+#endif // ]TODO(macOS ISS#2323203)
   }
 
   // Apply trilinear filtering to smooth out mis-sized images
@@ -150,6 +230,11 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
 {
   image = image ?: _defaultImage;
   if (image != self.image) {
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+    if (image && _resizeMode == RCTResizeModeCover && !NSEqualSizes(self.bounds.size, NSZeroSize)) {
+      image = RCTFillImagePreservingAspectRatio(image, self.bounds.size, self.window.backingScaleFactor ?: 1.0);
+    }
+#endif // ]TODO(macOS ISS#2323203)
     [self updateWithImage:image];
   }
 }
@@ -205,9 +290,21 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
     if (_resizeMode == RCTResizeModeRepeat) {
       // Repeat resize mode is handled by the UIImage. Use scale to fill
       // so the repeated image fills the UIImageView.
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
       _imageView.contentMode = UIViewContentModeScaleToFill;
+#else // [TODO(macOS ISS#2323203)
+      _imageView.imageScaling = NSImageScaleAxesIndependently;
+#endif // ]TODO(macOS ISS#2323203)
     } else {
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
       _imageView.contentMode = (UIViewContentMode)resizeMode;
+#else // [TODO(macOS ISS#2323203)
+      // This relies on having previously resampled the image to a size that exceeds the image view.
+      if (resizeMode == RCTResizeModeCover) {
+        resizeMode = RCTResizeModeCenter;
+      }
+      _imageView.imageScaling = (NSImageScaling)resizeMode;
+#endif // ]TODO(macOS ISS#2323203)
     }
 
     if ([self shouldReloadImageSourceAfterResize]) {
@@ -216,35 +313,32 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
   }
 }
 
-- (void)setInternal_analyticTag:(NSString *)internal_analyticTag {
-    if (_internal_analyticTag != internal_analyticTag) {
-        _internal_analyticTag = internal_analyticTag;
-        _needsReload = YES;
-    }
-}
-
 - (void)cancelImageLoad
 {
-  [_loaderRequest cancel];
+  RCTImageLoaderCancellationBlock previousCancellationBlock = _reloadImageCancellationBlock;
+  if (previousCancellationBlock) {
+    previousCancellationBlock();
+    _reloadImageCancellationBlock = nil;
+  }
+
   _pendingImageSource = nil;
 }
 
-- (void)cancelAndClearImageLoad
+- (void)clearImage
 {
   [self cancelImageLoad];
-
-  [_imageLoader trackURLImageRequestDidDestroy:_loaderRequest];
-  _loaderRequest = nil;
+  self.image = nil;
+  _imageSource = nil;
 }
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 - (void)clearImageIfDetached
 {
   if (!self.window) {
-    [self cancelAndClearImageLoad];
-    self.image = nil;
-    _imageSource = nil;
+    [self clearImage];
   }
 }
+#endif // TODO(macOS ISS#2323203)
 
 - (BOOL)hasMultipleSources
 {
@@ -262,7 +356,11 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
     return nil;
   }
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   const CGFloat scale = RCTScreenScale();
+#else // [TODO(macOS ISS#2323203)
+  const CGFloat scale = self.window != nil ? self.window.backingScaleFactor : [NSScreen mainScreen].backingScaleFactor;
+#endif // ]TODO(macOS ISS#2323203)
   const CGFloat targetImagePixels = size.width * size.height * scale * scale;
 
   RCTImageSource *bestSource = nil;
@@ -298,7 +396,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
 
 - (void)reloadImage
 {
-  [self cancelAndClearImageLoad];
+  [self cancelImageLoad];
   _needsReload = NO;
 
   RCTImageSource *source = [self imageSourceForSize:self.frame.size];
@@ -325,7 +423,11 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
     };
 
     CGSize imageSize = self.bounds.size;
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
     CGFloat imageScale = RCTScreenScale();
+#else // [TODO(macOS ISS#2323203)
+    CGFloat imageScale = self.window != nil ? self.window.backingScaleFactor : [NSScreen mainScreen].backingScaleFactor;
+#endif // ]TODO(macOS ISS#2323203)
     if (!UIEdgeInsetsEqualToEdgeInsets(_capInsets, UIEdgeInsetsZero)) {
       // Don't resize images that use capInsets
       imageSize = CGSizeZero;
@@ -336,27 +438,24 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
       [weakSelf imageLoaderLoadedImage:loadedImage error:error forImageSource:source partial:NO];
     };
 
-    if (!_imageLoader) {
-      _imageLoader = [_bridge moduleForName:@"ImageLoader" lazilyLoadIfNecessary:YES];
-    }
-
-    RCTImageURLLoaderRequest *loaderRequest = [_imageLoader loadImageWithURLRequest:source.request
-                                                                               size:imageSize
-                                                                              scale:imageScale
+    id<RCTImageLoaderWithAttributionProtocol> imageLoader = [_bridge moduleForName:@"ImageLoader"
+                                                             lazilyLoadIfNecessary:YES];
+    RCTImageURLLoaderRequest *loaderRequest = [imageLoader loadImageWithURLRequest:source.request
+                                                                              size:imageSize
+                                                                             scale:imageScale
                                                                            clipped:NO
                                                                         resizeMode:_resizeMode
                                                                           priority:RCTImageLoaderPriorityImmediate
                                                                        attribution:{
                                                                                    .nativeViewTag = [self.reactTag intValue],
                                                                                    .surfaceId = [self.rootTag intValue],
-                                                                                   .analyticTag = self.internal_analyticTag
                                                                                    }
                                                                      progressBlock:progressHandler
                                                                   partialLoadBlock:partialLoadHandler
                                                                    completionBlock:completionHandler];
-    _loaderRequest = loaderRequest;
+    _reloadImageCancellationBlock = loaderRequest.cancellationBlock;
   } else {
-    [self cancelAndClearImageLoad];
+    [self clearImage];
   }
 }
 
@@ -434,13 +533,31 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
     [self reloadImage];
   } else if ([self shouldReloadImageSourceAfterResize]) {
     CGSize imageSize = self.image.size;
-    CGFloat imageScale = self.image.scale;
-    CGSize idealSize = RCTTargetSize(imageSize, imageScale, frame.size, RCTScreenScale(),
-                                     (RCTResizeMode)self.contentMode, YES);
+    CGFloat imageScale = UIImageGetScale(self.image); // [TODO(macOS ISS#2323203)
+#if !TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+    CGFloat windowScale = RCTScreenScale();
+    RCTResizeMode resizeMode = (RCTResizeMode)_imageView.contentMode;
+#else // [TODO(macOS ISS#2323203)
+    CGFloat windowScale = self.window != nil ? self.window.backingScaleFactor : [NSScreen mainScreen].backingScaleFactor;
+    RCTResizeMode resizeMode = self.resizeMode;
 
+    // self.contentMode on iOS is translated to RCTResizeModeRepeat in -setResizeMode:
+    if (resizeMode == RCTResizeModeRepeat) {
+      resizeMode = RCTResizeModeStretch;
+    }
+#endif // [TODO(macOS ISS#2323203)
+    CGSize idealSize = RCTTargetSize(imageSize, imageScale, frame.size, windowScale,
+                                     resizeMode, YES); // ]TODO(macOS ISS#2323203)
     // Don't reload if the current image or target image size is close enough
-    if (!RCTShouldReloadImageForSizeChange(imageSize, idealSize) ||
-        !RCTShouldReloadImageForSizeChange(_targetSize, idealSize)) {
+    if ((!RCTShouldReloadImageForSizeChange(imageSize, idealSize) ||
+         !RCTShouldReloadImageForSizeChange(_targetSize, idealSize)) // [TODO(macOS ISS#2323203)
+#if TARGET_OS_OSX
+         // Since mac doen't suport UIViewContentModeScaleAspectFill, we have to manually resample the image
+         // If we're in cover mode we need to ensure that the image is re-sampled to the correct size when the container size (shrinking
+         // being the most obvious case) otherwise we will end up in a state an image will not properly scale inside its container
+         && (resizeMode != RCTResizeModeCover || (imageSize.width == idealSize.width && imageSize.height == idealSize.height))
+#endif
+         ) { // ]TODO(macOS ISS#2323203)
       return;
     }
 
@@ -467,24 +584,71 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
   }
 }
 
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+#define didMoveToWindow viewDidMoveToWindow
+#endif
+#if TARGET_OS_OSX
+- (void)viewWillMoveToWindow:(NSWindow *)newWindow
+{
+  if (_subscribedToWindowBackingNotifications &&
+      self.window != nil &&
+      self.window != newWindow) {
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSWindowDidChangeBackingPropertiesNotification
+                                                  object:self.window];
+    _subscribedToWindowBackingNotifications = NO;
+  }
+}
+#endif // ]TODO(macOS ISS#2323203)
 - (void)didMoveToWindow
 {
   [super didMoveToWindow];
 
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+  if (!_subscribedToWindowBackingNotifications && self.window != nil) {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(windowDidChangeBackingProperties:)
+                                                 name:NSWindowDidChangeBackingPropertiesNotification
+                                               object:self.window];
+    _subscribedToWindowBackingNotifications = YES;
+  }
+#endif // ]TODO(macOS ISS#2323203)
   if (!self.window) {
     // Cancel loading the image if we've moved offscreen. In addition to helping
     // prioritise image requests that are actually on-screen, this removes
     // requests that have gotten "stuck" from the queue, unblocking other images
     // from loading.
-    // Do not clear _loaderRequest because this component can be visible again without changing image source
     [self cancelImageLoad];
   } else if ([self shouldChangeImageSource]) {
     [self reloadImage];
   }
 }
 
-- (void)dealloc {
-  [_imageLoader trackURLImageDidDestroy:_loaderRequest];
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+- (void)windowDidChangeBackingProperties:(NSNotification *)notification
+{
+  [self reloadImage];
 }
 
+- (RCTPlatformView *)reactAccessibilityElement
+{
+  return (RCTPlatformView *)_imageView.cell;
+}
+
+- (NSColor *)tintColor
+{
+  NSColor *tintColor = nil;
+  if (@available(macOS 10.14, *)) {
+    tintColor = _imageView.contentTintColor;
+  }
+  return tintColor;
+}
+
+- (void)setTintColor:(NSColor *)tintColor
+{
+  if (@available(macOS 10.14, *)) {
+    _imageView.contentTintColor = tintColor;
+  }
+}
+#endif // ]TODO(macOS ISS#2323203)
 @end

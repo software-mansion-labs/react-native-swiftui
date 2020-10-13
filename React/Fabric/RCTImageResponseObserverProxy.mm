@@ -7,6 +7,8 @@
 
 #import "RCTImageResponseObserverProxy.h"
 
+#import <React/RCTUIKit.h> // TODO(macOS ISS#2323203)
+
 #import <React/RCTUtils.h>
 #import <react/renderer/imagemanager/ImageResponse.h>
 #import <react/renderer/imagemanager/ImageResponseObserver.h>

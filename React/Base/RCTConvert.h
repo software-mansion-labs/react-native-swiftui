@@ -6,7 +6,7 @@
  */
 
 #import <QuartzCore/QuartzCore.h>
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h> // TODO(macOS ISS#2323203)
 
 #import <React/RCTAnimationType.h>
 #import <React/RCTBorderStyle.h>
@@ -14,8 +14,9 @@
 #import <React/RCTLog.h>
 #import <React/RCTPointerEvents.h>
 #import <React/RCTTextDecorationLineType.h>
+#import <React/RCTFontSmoothing.h> // TODO(OSS Candidate ISS#2710739)
 #import <yoga/Yoga.h>
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE && WEBKIT_IOS_10_APIS_AVAILABLE
 #import <WebKit/WebKit.h>
 #endif
 
@@ -64,6 +65,7 @@ typedef NSURL RCTFileURL;
 + (NSTextAlignment)NSTextAlignment:(id)json;
 + (NSUnderlineStyle)NSUnderlineStyle:(id)json;
 + (NSWritingDirection)NSWritingDirection:(id)json;
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 + (UITextAutocapitalizationType)UITextAutocapitalizationType:(id)json;
 + (UITextFieldViewMode)UITextFieldViewMode:(id)json;
 + (UIKeyboardType)UIKeyboardType:(id)json;
@@ -73,14 +75,19 @@ typedef NSURL RCTFileURL;
 + (UIDataDetectorTypes)UIDataDetectorTypes:(id)json;
 #endif
 
-#if TARGET_OS_IPHONE
-+ (WKDataDetectorTypes)WKDataDetectorTypes:(id)json API_AVAILABLE(ios(10.0));
+#if TARGET_OS_IPHONE && WEBKIT_IOS_10_APIS_AVAILABLE
++ (WKDataDetectorTypes)WKDataDetectorTypes:(id)json;
 #endif
 
 + (UIViewContentMode)UIViewContentMode:(id)json;
 #if !TARGET_OS_TV
 + (UIBarStyle)UIBarStyle:(id)json;
 #endif
+#endif // TODO(macOS ISS#2323203)
+
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
++ (NSTextCheckingTypes)NSTextCheckingTypes:(id)json;
+#endif // ]TODO(macOS ISS#2323203)
 
 + (CGFloat)CGFloat:(id)json;
 + (CGPoint)CGPoint:(id)json;
@@ -93,7 +100,8 @@ typedef NSURL RCTFileURL;
 
 + (CGAffineTransform)CGAffineTransform:(id)json;
 
-+ (UIColor *)UIColor:(id)json;
++ (RCTUIColor *)UIColor:(id)json; // TODO(OSS Candidate ISS#2710739)
++ (RCTUIColor *)NSColor:(id)json; // TODO(OSS Candidate ISS#2710739)
 + (CGColorRef)CGColor:(id)json CF_RETURNS_NOT_RETAINED;
 
 + (YGValue)YGValue:(id)json;
@@ -105,7 +113,10 @@ typedef NSURL RCTFileURL;
 + (NSArray<NSURL *> *)NSURLArray:(id)json;
 + (NSArray<RCTFileURL *> *)RCTFileURLArray:(id)json;
 + (NSArray<NSNumber *> *)NSNumberArray:(id)json;
-+ (NSArray<UIColor *> *)UIColorArray:(id)json;
++ (NSArray<RCTUIColor *> *)UIColorArray:(id)json; // TODO(OSS Candidate ISS#2710739)
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
++ (NSArray<NSPasteboardType> *)NSPasteboardTypeArray:(id)json;
+#endif // ]TODO(macOS ISS#2323203)
 
 typedef NSArray CGColorArray;
 + (CGColorArray *)CGColorArray:(id)json;
@@ -131,7 +142,11 @@ typedef BOOL css_backface_visibility_t;
 + (RCTAnimationType)RCTAnimationType:(id)json;
 + (RCTBorderStyle)RCTBorderStyle:(id)json;
 + (RCTTextDecorationLineType)RCTTextDecorationLineType:(id)json;
++ (RCTFontSmoothing)RCTFontSmoothing:(id)json; // TODO(OSS Candidate ISS#2710739)
 
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
++ (NSString *)accessibilityRoleFromTraits:(id)json;
+#endif // ]TODO(macOS ISS#2323203)
 @end
 
 @interface RCTConvert (Deprecated)

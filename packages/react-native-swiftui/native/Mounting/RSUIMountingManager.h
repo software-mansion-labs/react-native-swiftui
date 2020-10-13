@@ -1,9 +1,9 @@
 
-#import <React/RCTPrimitives.h>
-
 #import "RSUIMountingManagerDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+typedef NSInteger ReactTag;
 
 @class RCTComponentViewRegistry;
 

@@ -1,7 +1,7 @@
 
-#import <React/RCTPrimitives.h>
-
 NS_ASSUME_NONNULL_BEGIN
+
+typedef NSInteger ReactTag;
 
 @class RSUIMountingManager;
 

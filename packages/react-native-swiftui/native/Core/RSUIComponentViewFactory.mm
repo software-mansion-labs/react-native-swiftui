@@ -1,9 +1,6 @@
 
 #import <better/better.h>
 
-#import <React/RCTComponentViewProtocol.h>
-#import <React/RCTFabricComponentsPlugins.h>
-#import <React/UIView+ComponentViewProtocol.h>
 #import <React/RCTFollyConvert.h>
 
 #import <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
@@ -76,7 +73,7 @@ using namespace facebook::react;
 
 @end
 
-Class<RCTComponentViewProtocol> RSUIViewCls(void)
+Class RSUIViewCls(void)
 {
   return RSUIComponentViewFactory.class;
 }

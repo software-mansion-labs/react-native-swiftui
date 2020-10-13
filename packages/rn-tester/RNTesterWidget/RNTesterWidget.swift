@@ -12,14 +12,14 @@ struct Provider: IntentTimelineProvider {
   }
 
   func getSnapshot(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
       let entry = SimpleEntry(date: Date(), configuration: configuration)
       completion(entry)
     }
   }
 
   func getTimeline(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
       let entries = [SimpleEntry(date: Date(), configuration: configuration)]
       completion(
         Timeline(
@@ -50,7 +50,7 @@ struct RNTesterWidgetEntryView : View {
 struct RNTesterWidget: Widget {
   let kind: String = "RNTesterWidget"
 
-  var entryViewManager: RSUIEntryViewManager = RSUIEntryViewManager()
+  var entryViewManager: RSUIEntryViewManager = RSUIEntryViewManager(moduleName: "RNTesterWidget")
 
   var body: some WidgetConfiguration {
     let provider = Provider(entryViewManager: entryViewManager)

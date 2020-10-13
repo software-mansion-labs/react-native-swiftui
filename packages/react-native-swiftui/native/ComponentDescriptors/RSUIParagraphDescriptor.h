@@ -73,7 +73,7 @@ inline folly::dynamic toDynamic(RSUIParagraphState const &paragraphState) {
   return newState;
 }
 
-folly::dynamic RSUIParagraphState::getDynamic() const {
+inline folly::dynamic RSUIParagraphState::getDynamic() const {
   return toDynamic(*this);
 }
 

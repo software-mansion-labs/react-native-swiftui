@@ -53,7 +53,7 @@ class SwiftUIExamples extends React.PureComponent {
 
   render() {
     return (
-      <ScrollView style={{ flex: 1, justifyContent: 'flex-start', paddingTop: 44 }} axes="both" showsIndicators={true} ref={this.scrollRef}>
+      <ScrollView style={{ flex: 1, justifyContent: 'flex-start', paddingTop: 44, backgroundColor: 'cyan' }} axes="both" showsIndicators={true} ref={this.scrollRef}>
         <View style={{ marginVertical: 20, flexDirection: 'row' }}>
           <View
             style={{

@@ -2,11 +2,11 @@
 #import <ReactCommon/RuntimeExecutor.h>
 
 #import <React/RCTSurfacePresenterStub.h>
-#import <React/RCTScheduler.h>
 
 #import <react/utils/ContextContainer.h>
 
 #import "RSUISurface.h"
+#import "RSUIScheduler.h"
 #import "RSUIMountingManagerDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -15,7 +15,7 @@ typedef NSInteger ReactTag;
 
 using namespace facebook::react;
 
-@interface RSUISurfacePresenter : NSObject <RCTSurfacePresenterStub, RCTSchedulerDelegate, RSUIMountingManagerDelegate>
+@interface RSUISurfacePresenter : NSObject <RCTSurfacePresenterStub, RSUISchedulerDelegate, RSUIMountingManagerDelegate>
 
 - (instancetype)initWithContextContainer:(ContextContainer::Shared)contextContainer
                          runtimeExecutor:(RuntimeExecutor)runtimeExecutor;

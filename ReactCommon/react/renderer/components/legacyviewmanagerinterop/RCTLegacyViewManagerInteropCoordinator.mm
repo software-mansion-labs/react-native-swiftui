@@ -58,13 +58,13 @@ using namespace facebook::react;
   [_eventInterceptors removeObjectForKey:[NSNumber numberWithInteger:tag]];
 }
 
-- (UIView *)paperView
+- (RCTUIView *)paperView
 {
   // TODO: pass in the right tags?
   return [_componentData createViewWithTag:NULL rootTag:NULL];
 }
 
-- (void)setProps:(folly::dynamic const &)props forView:(UIView *)view
+- (void)setProps:(folly::dynamic const &)props forView:(RCTUIView *)view
 {
   NSDictionary<NSString *, id> *convertedProps = convertFollyDynamicToId(props);
   [_componentData setProps:convertedProps forView:view];

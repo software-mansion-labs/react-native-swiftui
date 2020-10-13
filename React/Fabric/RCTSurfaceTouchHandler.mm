@@ -9,7 +9,10 @@
 
 #import <React/RCTUtils.h>
 #import <React/RCTViewComponentView.h>
+
+#if !TARGET_OS_OSX
 #import <UIKit/UIGestureRecognizerSubclass.h>
+#endif
 
 #import "RCTConversions.h"
 #import "RCTTouchableComponentViewProtocol.h"
@@ -152,8 +155,10 @@ struct PointerHasher {
   }
 };
 
+#if !TARGET_OS_OSX
 @interface RCTSurfaceTouchHandler () <UIGestureRecognizerDelegate>
 @end
+#endif
 
 @implementation RCTSurfaceTouchHandler {
   std::unordered_map<__unsafe_unretained UITouch *, ActiveTouch, PointerHasher<__unsafe_unretained UITouch *>>
@@ -309,6 +314,8 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithTarget : (id)target action : (SEL)act
 
 #pragma mark - `UIResponder`-ish touch-delivery methods
 
+#if !TARGET_OS_OSX
+
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
   [super touchesBegan:touches withEvent:event];
@@ -403,5 +410,7 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithTarget : (id)target action : (SEL)act
   // Same condition for `failure of` as for `be prevented by`.
   return [self canBePreventedByGestureRecognizer:otherGestureRecognizer];
 }
+
+#endif // !TARGET_OS_OSX
 
 @end

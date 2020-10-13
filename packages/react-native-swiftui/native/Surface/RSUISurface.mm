@@ -70,7 +70,7 @@
 
 - (nonnull RSUISurfaceView *)view
 {
-#if __has_include(<UIKit/UIView.h>)
+#if !TARGET_OS_OSX
   RCTAssertMainQueue();
 
   if (!_view) {
@@ -141,10 +141,12 @@
 
 - (void)propagateStageChange:(RCTSurfaceStage)stage
 {
+#if !TARGET_OS_OSX
   // Updating the `view`
   RCTExecuteOnMainQueue(^{
     self->_view.stage = stage;
   });
+#endif
 
   // Notifying the `delegate`
   id<RCTSurfaceDelegate> delegate = self.delegate;

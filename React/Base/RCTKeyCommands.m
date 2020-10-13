@@ -7,14 +7,14 @@
 
 #import "RCTKeyCommands.h"
 
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h>
 
 #import <objc/message.h>
 #import <objc/runtime.h>
 #import "RCTDefines.h"
 #import "RCTUtils.h"
 
-#if RCT_DEV
+#if RCT_DEV && !TARGET_OS_OSX
 
 @interface UIEvent (UIPhysicalKeyboardEvent)
 

@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h>
 
 #include <react/renderer/textlayoutmanager/RCTFontProperties.h>
 #include <react/renderer/textlayoutmanager/RCTFontUtils.h>
@@ -96,7 +96,7 @@ inline static NSUnderlineStyle RCTNSUnderlineStyleFromStyleAndPattern(
   return style;
 }
 
-inline static UIColor *RCTUIColorFromSharedColor(const SharedColor &color)
+inline static RCTUIColor *RCTUIColorFromSharedColor(const SharedColor &color)
 {
-  return color ? [UIColor colorWithCGColor:color.get()] : nil;
+  return color ? [RCTUIColor colorWithCGColor:color.get()] : nil;
 }

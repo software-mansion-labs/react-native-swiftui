@@ -12,14 +12,9 @@
 #import <react/config/ReactNativeConfig.h>
 #import <react/renderer/scheduler/SynchronousEventBeat.h>
 #import <react/renderer/scheduler/AsynchronousEventBeat.h>
-#import <React/MainRunLoopEventBeat.h>
 
-#import <React/PlatformRunLoopObserver.h>
-#import <React/RCTComponentViewRegistry.h>
 #import <React/RCTUtils.h>
 #import <React/RCTSurfaceStage.h>
-#import <React/RCTMountingManager.h>
-#import <React/RuntimeEventBeat.h>
 #import <React/RCTUtils.h>
 #import <React/RCTI18nUtil.h>
 #import <React/RCTSurfaceRootView.h>
@@ -31,6 +26,9 @@
 #import "RSUISurfacePresenter.h"
 #import "RSUISurfaceRegistry.h"
 #import "RSUIMountingManager.h"
+#import "RSUIRuntimeEventBeat.h"
+#import "RSUIMainRunLoopEventBeat.h"
+#import "RSUIPlatformRunLoopObserver.h"
 
 #import <ReactSwiftUI-Swift.h>
 
@@ -75,7 +73,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
 
   // Protected by `_schedulerAccessMutex`.
   std::mutex _schedulerAccessMutex;
-  RCTScheduler *_Nullable _scheduler;
+  RSUIScheduler *_Nullable _scheduler;
 
   // Protected by `_observerListMutex`.
   better::shared_mutex _observerListMutex;
@@ -110,7 +108,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
 
 #pragma mark - Mutex-protected members
 
-- (nullable RCTScheduler *)_scheduler
+- (nullable RSUIScheduler *)_scheduler
 {
   std::lock_guard<std::mutex> lock(_schedulerAccessMutex);
   return _scheduler;
@@ -144,7 +142,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
 
 - (void)registerSurface:(RSUISurface *)surface
 {
-  RCTScheduler *scheduler = [self _scheduler];
+  RSUIScheduler *scheduler = [self _scheduler];
   [_surfaceRegistry registerSurface:surface];
   if (scheduler) {
     [self startSurface:surface scheduler:scheduler];
@@ -153,7 +151,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
 
 - (void)unregisterSurface:(RSUISurface *)surface
 {
-  RCTScheduler *scheduler = [self _scheduler];
+  RSUIScheduler *scheduler = [self _scheduler];
   if (scheduler) {
     [self stopSurface:surface scheduler:scheduler];
   }
@@ -162,7 +160,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
 
 - (void)setProps:(NSDictionary *)props surface:(RSUISurface *)surface
 {
-  RCTScheduler *scheduler = [self _scheduler];
+  RSUIScheduler *scheduler = [self _scheduler];
   if (scheduler) {
     [self stopSurface:surface scheduler:scheduler];
     [self startSurface:surface scheduler:scheduler];
@@ -178,7 +176,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
                       maximumSize:(CGSize)maximumSize
                           surface:(RSUISurface *)surface
 {
-  RCTScheduler *scheduler = [self _scheduler];
+  RSUIScheduler *scheduler = [self _scheduler];
   if (!scheduler) {
     return minimumSize;
   }
@@ -192,7 +190,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
 
 - (void)setMinimumSize:(CGSize)minimumSize maximumSize:(CGSize)maximumSize surface:(RSUISurface *)surface
 {
-  RCTScheduler *scheduler = [self _scheduler];
+  RSUIScheduler *scheduler = [self _scheduler];
   if (!scheduler) {
     return;
   }
@@ -213,7 +211,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
 
 - (BOOL)synchronouslyUpdateViewOnUIThread:(NSNumber *)reactTag props:(NSDictionary *)props
 {
-//  RCTScheduler *scheduler = [self _scheduler];
+//  RSUIScheduler *scheduler = [self _scheduler];
 //  if (!scheduler) {
 //    return NO;
 //  }
@@ -237,7 +235,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
 
 - (BOOL)synchronouslyWaitSurface:(RSUISurface *)surface timeout:(NSTimeInterval)timeout
 {
-  RCTScheduler *scheduler = [self _scheduler];
+  RSUIScheduler *scheduler = [self _scheduler];
   if (!scheduler) {
     return NO;
   }
@@ -257,7 +255,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
 {
   std::lock_guard<std::mutex> lock(_schedulerLifeCycleMutex);
 
-  RCTScheduler *scheduler;
+  RSUIScheduler *scheduler;
   {
     std::lock_guard<std::mutex> accessLock(_schedulerAccessMutex);
 
@@ -277,7 +275,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
 {
   std::lock_guard<std::mutex> lock(_schedulerLifeCycleMutex);
 
-  RCTScheduler *scheduler;
+  RSUIScheduler *scheduler;
   {
     std::lock_guard<std::mutex> accessLock(_schedulerAccessMutex);
 
@@ -311,7 +309,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
   [_observers removeObject: observer];
 }
 
-#pragma mark - RCTSchedulerDelegate
+#pragma mark - RSUISchedulerDelegate
 
 - (void)schedulerDidFinishTransaction:(const facebook::react::MountingCoordinator::Shared &)mountingCoordinator
 {
@@ -370,7 +368,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
 
 #pragma mark - Private
 
-- (nonnull RCTScheduler *)createScheduler
+- (nonnull RSUIScheduler *)createScheduler
 {
   auto reactNativeConfig = _contextContainer->at<std::shared_ptr<ReactNativeConfig const>>("ReactNativeConfig");
   auto componentRegistryFactory = [factory = wrapManagedObject(_mountingManager.componentViewFactory)](EventDispatcher::Weak const &eventDispatcher, ContextContainer::Shared const &contextContainer) {
@@ -409,13 +407,13 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
     };
   }
 
-  RCTScheduler *scheduler = [[RCTScheduler alloc] initWithToolbox:toolbox];
+  RSUIScheduler *scheduler = [[RSUIScheduler alloc] initWithToolbox:toolbox];
   scheduler.delegate = self;
 
   return scheduler;
 }
 
-- (void)startSurface:(RSUISurface *)surface scheduler:(RCTScheduler *)scheduler
+- (void)startSurface:(RSUISurface *)surface scheduler:(RSUIScheduler *)scheduler
 {
   RSUIMountingManager *mountingManager = _mountingManager;
   RCTExecuteOnMainQueue(^{
@@ -433,7 +431,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
                          layoutContext:layoutContext];
 }
 
-- (void)stopSurface:(RSUISurface *)surface scheduler:(RCTScheduler *)scheduler
+- (void)stopSurface:(RSUISurface *)surface scheduler:(RSUIScheduler *)scheduler
 {
   [scheduler stopSurfaceWithSurfaceId:(int)surface.rootTag];
 
@@ -450,7 +448,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
   [surface unsetStage:(RCTSurfaceStagePrepared | RCTSurfaceStageMounted)];
 }
 
-- (void)startAllSurfacesWithScheduler:(RCTScheduler *)scheduler
+- (void)startAllSurfacesWithScheduler:(RSUIScheduler *)scheduler
 {
   [_surfaceRegistry enumerateWithBlock:^(NSEnumerator<RSUISurface *> *enumerator) {
     for (RSUISurface *surface in enumerator) {
@@ -459,7 +457,7 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
   }];
 }
 
-- (void)stopAllSurfacesWithScheduler:(RCTScheduler *)scheduler
+- (void)stopAllSurfacesWithScheduler:(RSUIScheduler *)scheduler
 {
   [_surfaceRegistry enumerateWithBlock:^(NSEnumerator<RSUISurface *> *enumerator) {
     for (RSUISurface *surface in enumerator) {

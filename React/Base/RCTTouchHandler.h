@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h> // TODO(macOS ISS#2323203)
 
 #import <React/RCTFrameUpdate.h>
 
@@ -15,9 +15,12 @@
 
 - (instancetype)initWithBridge:(RCTBridge *)bridge NS_DESIGNATED_INITIALIZER;
 
-- (void)attachToView:(UIView *)view;
-- (void)detachFromView:(UIView *)view;
+- (void)attachToView:(RCTUIView *)view; // TODO(macOS ISS#3536887)
+- (void)detachFromView:(RCTUIView *)view; // TODO(macOS ISS#3536887)
 
 - (void)cancel;
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+- (void)willShowMenuWithEvent:(NSEvent*)event;
+#endif // ]TODO(macOS ISS#2323203)
 
 @end

@@ -16,28 +16,33 @@
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
+#if TARGET_OS_OSX
+  if (self = [super init]) {
+    self.backgroundColor = [NSColor clearColor];
+  }
+#else
   if ((self = [super initWithFrame:frame])) {
     self.windowLevel = UIWindowLevelStatusBar - 1;
     self.backgroundColor = [UIColor clearColor];
   }
+#endif
   return self;
 }
 
-- (void)createRootViewController:(UIView *)view
+- (void)createRootViewController:(RCTUIView *)view
 {
+#if !TARGET_OS_OSX
   UIViewController *_rootViewController = [UIViewController new];
   _rootViewController.view = view;
   _rootViewController.view.backgroundColor = [UIColor clearColor];
   _rootViewController.modalPresentationStyle = UIModalPresentationFullScreen;
   self.rootViewController = _rootViewController;
+#endif
 }
 
 - (instancetype)initWithFrame:(CGRect)frame bridge:(RCTBridge *)bridge
 {
-  if ((self = [super initWithFrame:frame])) {
-    self.windowLevel = UIWindowLevelStatusBar - 1;
-    self.backgroundColor = [UIColor clearColor];
-
+  if ((self = [self initWithFrame:frame])) {
     _surface = [[RCTSurface alloc] initWithBridge:bridge moduleName:@"LogBox" initialProperties:@{}];
 
     [_surface start];
@@ -47,20 +52,26 @@
       RCTLogInfo(@"Failed to mount LogBox within 1s");
     }
 
+#if !TARGET_OS_OSX
     [self createRootViewController:(UIView *)_surface.view];
+#endif
   }
   return self;
 }
 
 - (void)dealloc
 {
+#if !TARGET_OS_OSX
   [RCTSharedApplication().delegate.window makeKeyWindow];
+#endif
 }
 
 - (void)show
 {
   [self becomeFirstResponder];
+#if !TARGET_OS_OSX
   [self makeKeyAndVisible];
+#endif
 }
 
 @end

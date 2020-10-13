@@ -5,7 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <UIKit/UIKit.h>
+#if !TARGET_OS_OSX
+#import <React/RCTUIKit.h>
+#endif
 
 #import <React/RCTViewManager.h>
 

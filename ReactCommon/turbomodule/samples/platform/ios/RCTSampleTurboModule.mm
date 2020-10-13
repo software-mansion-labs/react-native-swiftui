@@ -8,7 +8,10 @@
 #import "RCTSampleTurboModule.h"
 
 #import <React/RCTUtils.h>
+
+#if !TARGET_OS_OSX
 #import <UIKit/UIKit.h>
+#endif
 
 using namespace facebook::react;
 
@@ -46,6 +49,9 @@ RCT_EXPORT_MODULE()
 
 - (NSDictionary *)getConstants
 {
+#if TARGET_OS_OSX
+  return @{};
+#else
   __block NSDictionary *constants;
   RCTUnsafeExecuteOnMainQueueSync(^{
     UIScreen *mainScreen = UIScreen.mainScreen;
@@ -59,6 +65,7 @@ RCT_EXPORT_MODULE()
   });
 
   return constants;
+#endif
 }
 
 // TODO: Remove once fully migrated to TurboModule.

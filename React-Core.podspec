@@ -59,7 +59,21 @@ Pod::Spec.new do |s|
                                 "React/Fabric/**/*",
                                 "React/Tests/**/*",
                                 "React/Inspector/**/*"
-    ss.ios.exclude_files      = "React/**/RCTTV*.*"
+    ss.ios.exclude_files      = "React/**/RCTTV*.*",
+    # [TODO(macOS ISS#2323203)
+                                "**/macOS/*"
+    ss.osx.exclude_files      = "React/Modules/RCTRedBoxExtraDataViewController.{h,m}",
+                                "React/CoreModules/RCTAccessibilityManager.m",
+                                "React/CoreModules/{RCTFPSGraph,RCTPerfMonitor}.*",
+                                "React/CoreModules/RCTLogBox{,View}.*",
+                                "React/Profiler/RCTProfileTrampoline-{arm,i386}.S",
+                                "React/Base/RCTKeyCommands.*",
+                                "React/Base/RCTTV*.*",
+                                "React/Views/{RCTModal*,RCTMasked*,RCTTV*,RCTWrapperViewController}.*",
+                                "React/Views/RefreshControl/*",
+                                "React/Views/SafeAreaView/*"
+    # ]TODO(macOS ISS#2323203)
+
     ss.tvos.exclude_files     = "React/Modules/RCTClipboard*",
                                 "React/Views/RCTDatePicker*",
                                 "React/Views/RCTPicker*",

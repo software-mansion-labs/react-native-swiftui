@@ -5,14 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RCTSurfaceTouchHandler : UIGestureRecognizer
 
-- (void)attachToView:(UIView *)view;
-- (void)detachFromView:(UIView *)view;
+- (void)attachToView:(RCTUIView *)view;
+- (void)detachFromView:(RCTUIView *)view;
 
 /*
  * Offset of the attached view relative to the root component in points.

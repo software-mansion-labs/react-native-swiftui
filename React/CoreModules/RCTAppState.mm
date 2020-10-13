@@ -7,6 +7,7 @@
 
 #import "RCTAppState.h"
 
+#import <React/RCTUIKit.h> // TODO(macOS ISS#2323203)
 #import <FBReactNativeSpec/FBReactNativeSpec.h>
 #import <React/RCTAssert.h>
 #import <React/RCTBridge.h>
@@ -17,17 +18,27 @@
 
 static NSString *RCTCurrentAppState()
 {
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   static NSDictionary *states;
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     states = @{@(UIApplicationStateActive) : @"active", @(UIApplicationStateBackground) : @"background"};
   });
-
   if (RCTRunningInAppExtension()) {
     return @"extension";
   }
-
   return states[@(RCTSharedApplication().applicationState)] ?: @"unknown";
+#else // [TODO(macOS ISS#2323203)
+
+  if (RCTSharedApplication().isActive) {
+    return @"active";
+  } else if (RCTSharedApplication().isHidden) {
+    return @"background";
+  }
+  return @"unknown";
+
+#endif // ]TODO(macOS ISS#2323203)
+
 }
 
 @interface RCTAppState () <NativeAppStateSpec>
@@ -88,10 +99,12 @@ RCT_EXPORT_MODULE()
                                                object:nil];
   }
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(handleMemoryWarning)
                                                name:UIApplicationDidReceiveMemoryWarningNotification
                                              object:nil];
+#endif // TODO(macOS ISS#2323203)
 }
 
 - (void)stopObserving
@@ -143,8 +156,7 @@ RCT_EXPORT_METHOD(getCurrentAppState : (RCTResponseSenderBlock)callback error : 
   callback(@[ @{@"app_state" : RCTCurrentAppState()} ]);
 }
 
-- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
-    (const facebook::react::ObjCTurboModule::InitParams &)params
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const facebook::react::ObjCTurboModule::InitParams &)params
 {
   return std::make_shared<facebook::react::NativeAppStateSpecJSI>(params);
 }

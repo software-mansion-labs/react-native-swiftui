@@ -37,6 +37,8 @@ Pod::Spec.new do |s|
                                "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/React/CoreModules\" \"$(PODS_ROOT)/Folly\""
                              }
 
+  s.osx.exclude_files     =  "{RCTLogBox,RCTFPSGraph,RCTPerfMonitor,RCTPlatform}.*"
+
   s.dependency "FBReactNativeSpec", version
   s.dependency "Folly", folly_version
   s.dependency "RCTTypeSafety", version

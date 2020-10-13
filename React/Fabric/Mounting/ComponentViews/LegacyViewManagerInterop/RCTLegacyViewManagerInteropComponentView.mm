@@ -89,6 +89,7 @@ static NSString *const kRCTLegacyInteropChildIndexKey = @"index";
   [super prepareForRecycle];
 }
 
+#if !TARGET_OS_OSX // TODO(macOS we don't use this class either way, so just remove this code)
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
   [_viewsToBeMounted addObject:@{
@@ -101,6 +102,7 @@ static NSString *const kRCTLegacyInteropChildIndexKey = @"index";
 {
   [_viewsToBeUnmounted addObject:childComponentView];
 }
+#endif
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
 {

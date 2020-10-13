@@ -5,17 +5,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h>
 
 #import <React/RCTBackedTextInputViewProtocol.h>
 #import <better/optional.h>
-#import <react/renderer/components/iostextinput/primitives.h>
+#import <react/renderer/attributedstring/primitives.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 void RCTCopyBackedTextInput(
-    UIView<RCTBackedTextInputViewProtocol> *fromTextInput,
-    UIView<RCTBackedTextInputViewProtocol> *toTextInput);
+    RCTUIView<RCTBackedTextInputViewProtocol> *fromTextInput,
+    RCTUIView<RCTBackedTextInputViewProtocol> *toTextInput);
 
 UITextAutocorrectionType RCTUITextAutocorrectionTypeFromOptionalBool(facebook::better::optional<bool> autoCorrect);
 
