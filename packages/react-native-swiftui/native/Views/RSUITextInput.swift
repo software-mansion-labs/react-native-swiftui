@@ -42,6 +42,7 @@ open class RSUITextInput: RSUIView, ObservableObject {
       }
     )
 
+    #if os(iOS)
     // TODO: Multiline text field requires more work.
     // Especially with updating the frame whenever the number of lines changes
     // and having a separate view/overlay for placeholder.
@@ -50,6 +51,7 @@ open class RSUITextInput: RSUIView, ObservableObject {
         return AnyView(TextEditor(text: binding))
       }
     }
+    #endif
 
     let placeholder = props.string("placeholder", "")
     let padding = props.cgFloat("padding")

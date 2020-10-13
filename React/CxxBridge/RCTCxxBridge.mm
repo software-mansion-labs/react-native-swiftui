@@ -27,6 +27,7 @@
 #import <React/RCTRedBox.h>
 #import <React/RCTReloadCommand.h>
 #import <React/RCTUtils.h>
+#import <React/RCTBundleURLProvider.h> // TODO(macOS ISS#2323203)
 #import <cxxreact/CxxNativeModule.h>
 #import <cxxreact/Instance.h>
 #import <cxxreact/JSBundleType.h>
@@ -35,9 +36,16 @@
 #import <cxxreact/RAMBundleRegistry.h>
 #import <cxxreact/ReactMarker.h>
 #import <jsireact/JSIExecutor.h>
-#import <reactperflogger/BridgeNativeModulePerfLogger.h>
 
+#if TARGET_OS_OSX && __has_include(<hermes/hermes.h>)
+#define RCT_USE_HERMES 1
+#endif
+#if RCT_USE_HERMES
+#import "HermesExecutorFactory.h"
+#else
 #import "JSCExecutorFactory.h"
+#endif
+
 #import "NSDataBigString.h"
 #import "RCTMessageThread.h"
 #import "RCTObjcExecutor.h"
@@ -68,12 +76,6 @@ typedef NS_ENUM(NSUInteger, RCTBridgeFields) {
 };
 
 namespace {
-
-int32_t getUniqueId()
-{
-  static std::atomic<int32_t> counter{0};
-  return counter++;
-}
 
 class GetDescAdapter : public JSExecutorFactory {
  public:
@@ -249,18 +251,22 @@ struct RCTInstanceCallback : public InstanceCallback {
 
     [RCTBridge setCurrentBridge:self];
 
+#if !TARGET_OS_OSX
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(handleMemoryWarning)
                                                  name:UIApplicationDidReceiveMemoryWarningNotification
                                                object:nil];
+#endif
   }
   return self;
 }
 
+#if !TARGET_OS_OSX
 - (void)dealloc
 {
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
+#endif
 
 + (void)runRunLoop
 {
@@ -625,7 +631,9 @@ struct RCTInstanceCallback : public InstanceCallback {
   // This can only be false if the bridge was invalidated before startup completed
   if (_reactInstance) {
 #if RCT_DEV
-    executorFactory = std::make_shared<GetDescAdapter>(self, executorFactory);
+    if ([[self devSettings] isDevModeEnabled]) { // TODO(OSS Candidate ISS#2710739)
+      executorFactory = std::make_shared<GetDescAdapter>(self, executorFactory);
+    } // TODO(OSS Candidate ISS#2710739)
 #endif
 
     [self _initializeBridgeLocked:executorFactory];
@@ -705,10 +713,7 @@ struct RCTInstanceCallback : public InstanceCallback {
 
     // Instantiate moduleData
     // TODO #13258411: can we defer this until config generation?
-    int32_t moduleDataId = getUniqueId();
-    BridgeNativeModulePerfLogger::moduleDataCreateStart([moduleName UTF8String], moduleDataId);
     moduleData = [[RCTModuleData alloc] initWithModuleClass:moduleClass bridge:self];
-    BridgeNativeModulePerfLogger::moduleDataCreateEnd([moduleName UTF8String], moduleDataId);
 
     _moduleDataByName[moduleName] = moduleData;
     [_moduleClassesByID addObject:moduleClass];
@@ -768,11 +773,7 @@ struct RCTInstanceCallback : public InstanceCallback {
     }
 
     // Instantiate moduleData container
-    int32_t moduleDataId = getUniqueId();
-    BridgeNativeModulePerfLogger::moduleDataCreateStart([moduleName UTF8String], moduleDataId);
     RCTModuleData *moduleData = [[RCTModuleData alloc] initWithModuleInstance:module bridge:self];
-    BridgeNativeModulePerfLogger::moduleDataCreateEnd([moduleName UTF8String], moduleDataId);
-
     _moduleDataByName[moduleName] = moduleData;
     [_moduleClassesByID addObject:moduleClass];
     [_moduleDataByID addObject:moduleData];
@@ -819,10 +820,7 @@ struct RCTInstanceCallback : public InstanceCallback {
         }
       }
 
-      int32_t moduleDataId = getUniqueId();
-      BridgeNativeModulePerfLogger::moduleDataCreateStart([moduleName UTF8String], moduleDataId);
       moduleData = [[RCTModuleData alloc] initWithModuleClass:moduleClass bridge:self];
-      BridgeNativeModulePerfLogger::moduleDataCreateEnd([moduleName UTF8String], moduleDataId);
 
       _moduleDataByName[moduleName] = moduleData;
       [_moduleClassesByID addObject:moduleClass];
@@ -987,7 +985,9 @@ struct RCTInstanceCallback : public InstanceCallback {
     [self enqueueApplicationScript:sourceCode url:self.bundleURL onComplete:completion];
   }
 
-  [self.devSettings setupHMRClientWithBundleURL:self.bundleURL];
+  if (self.devSettings.isDevModeEnabled) {
+    [self.devSettings setupHotModuleReloadClientIfApplicableForURL:self.bundleURL];
+  }
 }
 
 #if RCT_DEV_MENU
@@ -1013,7 +1013,9 @@ struct RCTInstanceCallback : public InstanceCallback {
         [self enqueueApplicationScript:source.data
                                    url:source.url
                             onComplete:^{
-                              [self.devSettings setupHMRClientWithAdditionalBundleURL:source.url];
+          if (self.devSettings.isDevModeEnabled) {
+                              [self.devSettings setupHotModuleReloadClientIfApplicableForURL:source.url];
+          }
                               onComplete();
                             }];
       }];

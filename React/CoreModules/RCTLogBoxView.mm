@@ -23,7 +23,7 @@
   return self;
 }
 
-- (void)createRootViewController:(UIView *)view
+- (void)createRootViewController:(RCTUIView *)view
 {
   UIViewController *_rootViewController = [UIViewController new];
   _rootViewController.view = view;

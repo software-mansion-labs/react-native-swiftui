@@ -58,7 +58,7 @@ using namespace facebook::react;
   [_eventInterceptors removeObjectForKey:[NSNumber numberWithInteger:tag]];
 }
 
-- (UIView *)paperView
+- (RCTUIView *)paperView
 {
   // TODO: pass in the right tags?
   return [_componentData createViewWithTag:NULL rootTag:NULL];

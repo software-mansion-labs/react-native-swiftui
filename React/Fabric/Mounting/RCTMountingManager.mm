@@ -32,8 +32,10 @@ static void RCTPerformMountInstructions(
 {
   SystraceSection s("RCTPerformMountInstructions");
 
+#if !TARGET_OS_OSX // TODO(macOS)
   [CATransaction begin];
   [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+#endif
   for (auto const &mutation : mutations) {
     switch (mutation.type) {
       case ShadowViewMutation::Create: {
@@ -42,7 +44,6 @@ static void RCTPerformMountInstructions(
             [registry dequeueComponentViewWithComponentHandle:newChildShadowView.componentHandle
                                                           tag:newChildShadowView.tag];
         observerCoordinator.registerViewComponentDescriptor(newChildViewDescriptor, surfaceId);
-        NSLog(@"Create %s with tag %d", newChildShadowView.componentName, newChildShadowView.tag);
         break;
       }
 
@@ -59,13 +60,12 @@ static void RCTPerformMountInstructions(
       }
 
       case ShadowViewMutation::Insert: {
+#if !TARGET_OS_OSX // TODO(macOS we don't use this class either way, so just remove this code)
         auto &oldChildShadowView = mutation.oldChildShadowView;
         auto &newChildShadowView = mutation.newChildShadowView;
         auto &parentShadowView = mutation.parentShadowView;
         auto &newChildViewDescriptor = [registry componentViewDescriptorWithTag:newChildShadowView.tag];
         auto &parentViewDescriptor = [registry componentViewDescriptorWithTag:parentShadowView.tag];
-
-        NSLog(@"Insert %s with tag %d", newChildShadowView.componentName, newChildShadowView.tag);
 
         UIView<RCTComponentViewProtocol> *newChildComponentView = newChildViewDescriptor.view;
 
@@ -77,6 +77,7 @@ static void RCTPerformMountInstructions(
         [newChildComponentView finalizeUpdates:RNComponentViewUpdateMaskAll];
 
         [parentViewDescriptor.view mountChildComponentView:newChildComponentView index:mutation.index];
+#endif
         break;
       }
 
@@ -90,6 +91,7 @@ static void RCTPerformMountInstructions(
       }
 
       case ShadowViewMutation::Update: {
+#if !TARGET_OS_OSX // TODO(macOS we don't use this class either way, so just remove this code)
         auto &oldChildShadowView = mutation.oldChildShadowView;
         auto &newChildShadowView = mutation.newChildShadowView;
         auto &newChildViewDescriptor = [registry componentViewDescriptorWithTag:newChildShadowView.tag];
@@ -122,12 +124,14 @@ static void RCTPerformMountInstructions(
         if (mask != RNComponentViewUpdateMaskNone) {
           [newChildComponentView finalizeUpdates:mask];
         }
-
+#endif
         break;
       }
     }
   }
+#if !TARGET_OS_OSX
   [CATransaction commit];
+#endif
 }
 
 @implementation RCTMountingManager {

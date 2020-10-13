@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h>
 
 #import <react/renderer/componentregistry/ComponentDescriptorProvider.h>
 #import <react/renderer/core/EventEmitter.h>
@@ -49,6 +49,7 @@ typedef NS_OPTIONS(NSInteger, RNComponentViewUpdateMask) {
  */
 + (std::vector<facebook::react::ComponentDescriptorProvider>)supplementalComponentDescriptorProviders;
 
+#if !TARGET_OS_OSX // TODO(macOS we don't use this class either way, so just remove this code)
 /*
  * Called for mounting (attaching) a child component view inside `self`
  * component view.
@@ -62,6 +63,7 @@ typedef NS_OPTIONS(NSInteger, RNComponentViewUpdateMask) {
  * Receiver must remove `childComponentView` as a subview.
  */
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index;
+#endif
 
 /*
  * Called for updating component's props.

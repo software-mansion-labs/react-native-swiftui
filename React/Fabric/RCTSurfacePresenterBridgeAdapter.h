@@ -6,7 +6,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h>
 
 #import <react/utils/ContextContainer.h>
 

@@ -6,7 +6,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h>
 #include <folly/dynamic.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -20,13 +20,13 @@ typedef void (^InterceptorBlock)(std::string eventName, folly::dynamic event);
 
 - (instancetype)initWithComponentData:(RCTComponentData *)componentData bridge:(RCTBridge *)bridge;
 
-- (UIView *)paperView;
+- (RCTUIView *)paperView;
 
 - (void)addObserveForTag:(NSInteger)tag usingBlock:(InterceptorBlock)block;
 
 - (void)removeObserveForTag:(NSInteger)tag;
 
-- (void)setProps:(folly::dynamic const &)props forView:(UIView *)view;
+- (void)setProps:(folly::dynamic const &)props forView:(RCTUIView *)view;
 
 - (NSString *)componentViewName;
 

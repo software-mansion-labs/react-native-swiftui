@@ -18,12 +18,13 @@
 #import <React/RCTInputAccessoryViewContent.h>
 #import <React/RCTTextAttributes.h>
 #import <React/RCTTextSelection.h>
+#import "RCTTextUIKit.h" // TODO(macOS ISS#2323203)
 
 @implementation RCTBaseTextInputView {
   __weak RCTBridge *_bridge;
   __weak RCTEventDispatcher *_eventDispatcher;
   BOOL _hasInputAccesoryView;
-  NSString *_Nullable _predictedText;
+  // TODO(OSS Candidate ISS#2710739): remove explicit _predictedText ivar declaration
   BOOL _didMoveToWindow;
 }
 
@@ -43,7 +44,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
 RCT_NOT_IMPLEMENTED(- (instancetype)initWithCoder:(NSCoder *)decoder)
 RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
 
-- (UIView<RCTBackedTextInputViewProtocol> *)backedTextInputView
+- (RCTUIView<RCTBackedTextInputViewProtocol> *)backedTextInputView // TODO(macOS ISS#3536887)
 {
   RCTAssert(NO, @"-[RCTBaseTextInputView backedTextInputView] must be implemented in subclass.");
   return nil;
@@ -66,30 +67,36 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
 
 - (void)enforceTextAttributesIfNeeded
 {
-  id<RCTBackedTextInputViewProtocol> backedTextInputView = self.backedTextInputView;
+  if (![self ignoresTextAttributes]) { // TODO(OSS Candidate ISS#2710739)
+    id<RCTBackedTextInputViewProtocol> backedTextInputView = self.backedTextInputView;
 
-  NSDictionary<NSAttributedStringKey,id> *textAttributes = [[_textAttributes effectiveTextAttributes] mutableCopy];
-  if ([textAttributes valueForKey:NSForegroundColorAttributeName] == nil) {
-      [textAttributes setValue:[UIColor blackColor] forKey:NSForegroundColorAttributeName];
-  }
+    NSDictionary<NSAttributedStringKey,id> *textAttributes = [[_textAttributes effectiveTextAttributes] mutableCopy];
+    if ([textAttributes valueForKey:NSForegroundColorAttributeName] == nil) {
+        [textAttributes setValue:[RCTUIColor blackColor] forKey:NSForegroundColorAttributeName]; // TODO(macOS ISS#2323203)
+    }
 
-  backedTextInputView.defaultTextAttributes = textAttributes;
+    backedTextInputView.defaultTextAttributes = textAttributes;
+  } // TODO(OSS Candidate ISS#2710739)
 }
 
 - (void)setReactPaddingInsets:(UIEdgeInsets)reactPaddingInsets
 {
   _reactPaddingInsets = reactPaddingInsets;
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   // We apply `paddingInsets` as `backedTextInputView`'s `textContainerInset`.
   self.backedTextInputView.textContainerInset = reactPaddingInsets;
   [self setNeedsLayout];
+#endif // TODO(macOS ISS#2323203)
 }
 
 - (void)setReactBorderInsets:(UIEdgeInsets)reactBorderInsets
 {
   _reactBorderInsets = reactBorderInsets;
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   // We apply `borderInsets` as `backedTextInputView` layout offset.
   self.backedTextInputView.frame = UIEdgeInsetsInsetRect(self.bounds, reactBorderInsets);
   [self setNeedsLayout];
+#endif // TODO(macOS ISS#2323203)
 }
 
 - (NSAttributedString *)attributedText
@@ -115,10 +122,14 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
   }];
 
   BOOL shouldFallbackToBareTextComparison =
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
     [self.backedTextInputView.textInputMode.primaryLanguage isEqualToString:@"dictation"] ||
     self.backedTextInputView.markedTextRange ||
     self.backedTextInputView.isSecureTextEntry ||
     fontHasBeenUpdatedBySystem;
+#else // [TODO(macOS ISS#2323203)
+    NO;
+#endif // ]TODO(macOS ISS#2323203)
 
   if (shouldFallbackToBareTextComparison) {
     return ([newText.string isEqualToString:oldText.string]);
@@ -144,11 +155,16 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
   textNeedsUpdate = ([self textOf:attributedTextCopy equals:backedTextInputViewTextCopy] == NO);
 
   if (eventLag == 0 && textNeedsUpdate) {
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
     UITextRange *selection = self.backedTextInputView.selectedTextRange;
+#else // [TODO(macOS ISS#2323203)
+    NSRange selection = [self.backedTextInputView selectedTextRange];
+#endif // ]TODO(macOS ISS#2323203)
     NSInteger oldTextLength = self.backedTextInputView.attributedText.string.length;
 
     self.backedTextInputView.attributedText = attributedText;
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
     if (selection.empty) {
       // Maintaining a cursor position relative to the end of the old text.
       NSInteger offsetStart =
@@ -162,6 +178,16 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
       [self.backedTextInputView setSelectedTextRange:[self.backedTextInputView textRangeFromPosition:position toPosition:position]
                                       notifyDelegate:YES];
     }
+#else // [TODO(macOS ISS#2323203)
+    if (selection.length == 0) {
+      // Maintaining a cursor position relative to the end of the old text.
+      NSInteger start = selection.location;
+      NSInteger offsetFromEnd = oldTextLength - start;
+      NSInteger newOffset = self.backedTextInputView.attributedText.length - offsetFromEnd;
+      [self.backedTextInputView setSelectedTextRange:NSMakeRange(newOffset, 0)
+                                      notifyDelegate:YES];
+    }
+#endif // ]TODO(macOS ISS#2323203)
 
     [self updateLocalData];
   } else if (eventLag > RCTTextUpdateLagWarningThreshold) {
@@ -172,9 +198,15 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
 - (RCTTextSelection *)selection
 {
   id<RCTBackedTextInputViewProtocol> backedTextInputView = self.backedTextInputView;
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   UITextRange *selectedTextRange = backedTextInputView.selectedTextRange;
   return [[RCTTextSelection new] initWithStart:[backedTextInputView offsetFromPosition:backedTextInputView.beginningOfDocument toPosition:selectedTextRange.start]
                                            end:[backedTextInputView offsetFromPosition:backedTextInputView.beginningOfDocument toPosition:selectedTextRange.end]];
+#else // [TODO(macOS ISS#2323203)
+  NSRange selectedTextRange = backedTextInputView.selectedTextRange;
+  return [[RCTTextSelection new] initWithStart:selectedTextRange.location
+                                           end:selectedTextRange.location + selectedTextRange.length];
+#endif // ]TODO(macOS ISS#2323203)
 }
 
 - (void)setSelection:(RCTTextSelection *)selection
@@ -185,13 +217,21 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
 
   id<RCTBackedTextInputViewProtocol> backedTextInputView = self.backedTextInputView;
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   UITextRange *previousSelectedTextRange = backedTextInputView.selectedTextRange;
   UITextPosition *start = [backedTextInputView positionFromPosition:backedTextInputView.beginningOfDocument offset:selection.start];
   UITextPosition *end = [backedTextInputView positionFromPosition:backedTextInputView.beginningOfDocument offset:selection.end];
   UITextRange *selectedTextRange = [backedTextInputView textRangeFromPosition:start toPosition:end];
+#else // [TODO(macOS ISS#2323203)
+  NSRange previousSelectedTextRange = backedTextInputView.selectedTextRange;
+  NSInteger start = MIN(selection.start, selection.end);
+  NSInteger end = MAX(selection.start, selection.end);
+  NSInteger length = end - selection.start;
+  NSRange selectedTextRange = NSMakeRange(start, length);
+#endif // ]TODO(macOS ISS#2323203)
 
   NSInteger eventLag = _nativeEventCount - _mostRecentEventCount;
-  if (eventLag == 0 && ![previousSelectedTextRange isEqual:selectedTextRange]) {
+  if (eventLag == 0 && !RCTTextSelectionEqual(previousSelectedTextRange, selectedTextRange)) { // TODO(macOS ISS#2323203)
     [backedTextInputView setSelectedTextRange:selectedTextRange notifyDelegate:NO];
   } else if (eventLag > RCTTextUpdateLagWarningThreshold) {
     RCTLog(@"Native TextInput(%@) is %lld events ahead of JS - try to make your JS faster.", backedTextInputView.attributedText.string, (long long)eventLag);
@@ -201,6 +241,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
 - (void)setSelectionStart:(NSInteger)start
              selectionEnd:(NSInteger)end
 {
+#if !TARGET_OS_OSX // [TODO(macOS v0.63)
   UITextPosition *startPosition = [self.backedTextInputView positionFromPosition:self.backedTextInputView.beginningOfDocument
                                                                           offset:start];
   UITextPosition *endPosition = [self.backedTextInputView positionFromPosition:self.backedTextInputView.beginningOfDocument
@@ -209,6 +250,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
     UITextRange *range = [self.backedTextInputView textRangeFromPosition:startPosition toPosition:endPosition];
     [self.backedTextInputView setSelectedTextRange:range notifyDelegate:NO];
   }
+#endif // ]TODO(macOS v0.63)
 }
 
 - (void)setTextContentType:(NSString *)type
@@ -275,6 +317,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
   #endif
 }
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 
 - (void)setPasswordRules:(NSString *)descriptor
 {
@@ -301,18 +344,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
     }
   }
 }
-
-- (void)setShowSoftInputOnFocus:(BOOL)showSoftInputOnFocus
-{
-  (void)_showSoftInputOnFocus;
-  if (showSoftInputOnFocus) {
-    // Resets to default keyboard.
-    self.backedTextInputView.inputView = nil;
-  } else {
-    // Hides keyboard, but keeps blinking cursor.
-    self.backedTextInputView.inputView = [[UIView alloc] init];
-  }
-}
+#endif // TODO(macOS ISS#2323203)
 
 #pragma mark - RCTBackedTextInputDelegate
 
@@ -333,7 +365,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
 
   [_eventDispatcher sendTextEventWithType:RCTTextEventTypeFocus
                                  reactTag:self.reactTag
-                                     text:[self.backedTextInputView.attributedText.string copy]
+                                     text:[self.backedTextInputView.attributedText.string copy] // [TODO(macOS Candidate ISS#2710739)
                                       key:nil
                                eventCount:_nativeEventCount];
 }
@@ -347,13 +379,13 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
 {
   [_eventDispatcher sendTextEventWithType:RCTTextEventTypeEnd
                                  reactTag:self.reactTag
-                                     text:[self.backedTextInputView.attributedText.string copy]
+                                     text:[self.backedTextInputView.attributedText.string copy] // [TODO(macOS Candidate ISS#2710739)
                                       key:nil
                                eventCount:_nativeEventCount];
 
   [_eventDispatcher sendTextEventWithType:RCTTextEventTypeBlur
                                  reactTag:self.reactTag
-                                     text:[self.backedTextInputView.attributedText.string copy]
+                                     text:[self.backedTextInputView.attributedText.string copy] // [TODO(macOS Candidate ISS#2710739)
                                       key:nil
                                eventCount:_nativeEventCount];
 }
@@ -365,11 +397,17 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
   // `onSubmitEditing` is called when "Submit" button
   // (the blue key on onscreen keyboard) did pressed
   // (no connection to any specific "submitting" process).
-  [_eventDispatcher sendTextEventWithType:RCTTextEventTypeSubmit
-                                 reactTag:self.reactTag
-                                     text:[self.backedTextInputView.attributedText.string copy]
-                                      key:nil
-                               eventCount:_nativeEventCount];
+#if TARGET_OS_OSX // [TODO(macOS Candidate ISS#2710739)
+  if (_blurOnSubmit) {
+#endif // ]TODO(macOS Candidate ISS#2710739)
+    [_eventDispatcher sendTextEventWithType:RCTTextEventTypeSubmit
+                                   reactTag:self.reactTag
+                                       text:[self.backedTextInputView.attributedText.string copy] // [TODO(macOS Candidate ISS#2710739)
+                                        key:nil
+                                 eventCount:_nativeEventCount];
+#if TARGET_OS_OSX // [TODO(macOS Candidate ISS#2710739)
+  }
+#endif // ]TODO(macOS Candidate ISS#2710739)
 
   return _blurOnSubmit;
 }
@@ -407,13 +445,18 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
           [newAttributedText replaceCharactersInRange:range withString:limitedString];
         }
         backedTextInputView.attributedText = newAttributedText;
-        _predictedText = newAttributedText.string;
+        [self setPredictedText:newAttributedText.string]; // TODO(OSS Candidate ISS#2710739)
 
         // Collapse selection at end of insert to match normal paste behavior.
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
         UITextPosition *insertEnd = [backedTextInputView positionFromPosition:backedTextInputView.beginningOfDocument
                                                                        offset:(range.location + allowedLength)];
         [backedTextInputView setSelectedTextRange:[backedTextInputView textRangeFromPosition:insertEnd toPosition:insertEnd]
                                    notifyDelegate:YES];
+#else // [TODO(macOS ISS#2323203)
+        [backedTextInputView setSelectedTextRange:NSMakeRange(range.location + allowedLength, 0)
+                                   notifyDelegate:YES];
+#endif // ]TODO(macOS ISS#2323203)
 
         [self textInputDidChange];
       }
@@ -422,7 +465,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
     }
   }
 
-  NSString *previousText = [backedTextInputView.attributedText.string copy] ?: @"";
+  NSString *previousText = [backedTextInputView.attributedText.string copy] ?: @""; // TODO(OSS Candidate ISS#2710739)
 
   if (range.location + range.length > backedTextInputView.attributedText.string.length) {
     _predictedText = backedTextInputView.attributedText.string;
@@ -457,18 +500,19 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
   // update the mismatched range.
   NSRange currentRange;
   NSRange predictionRange;
-  if (findMismatch(backedTextInputView.attributedText.string, _predictedText, &currentRange, &predictionRange)) {
+  if (findMismatch(backedTextInputView.attributedText.string, [self predictedText], &currentRange, &predictionRange)) { // TODO(OSS Candidate ISS#2710739)
     NSString *replacement = [backedTextInputView.attributedText.string substringWithRange:currentRange];
     [self textInputShouldChangeText:replacement inRange:predictionRange];
     // JS will assume the selection changed based on the location of our shouldChangeTextInRange, so reset it.
     [self textInputDidChangeSelection];
+    [self setPredictedText:backedTextInputView.attributedText.string]; // TODO(OSS Candidate ISS#2710739)
   }
 
   _nativeEventCount++;
 
   if (_onChange) {
     _onChange(@{
-       @"text": [self.attributedText.string copy],
+       @"text": [self.attributedText.string copy], // [TODO(macOS Candidate ISS#2710739)
        @"target": self.reactTag,
        @"eventCount": @(_nativeEventCount),
     });
@@ -490,6 +534,18 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
     },
   });
 }
+
+// [TODO(OSS Candidate ISS#2710739)
+- (BOOL)textInputShouldHandleDeleteBackward:(__unused id)sender {
+  return YES;
+}
+// ]TODO(OSS Candidate ISS#2710739)
+
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+- (BOOL)textInputShouldHandleDeleteForward:(__unused id)sender {
+  return YES;
+}
+#endif // ]TODO(macOS ISS#2323203)
 
 - (void)updateLocalData
 {
@@ -531,7 +587,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
 
 #pragma mark - Accessibility
 
-- (UIView *)reactAccessibilityElement
+- (RCTUIView *)reactAccessibilityElement // TODO(macOS ISS#3536887)
 {
   return self.backedTextInputView;
 }
@@ -572,7 +628,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
 
 - (void)setCustomInputAccessoryViewWithNativeID:(NSString *)nativeID
 {
-  #if !TARGET_OS_TV
+  #if !TARGET_OS_TV && !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   __weak RCTBaseTextInputView *weakSelf = self;
   [_bridge.uiManager rootViewForReactTag:self.reactTag withCompletion:^(UIView *rootView) {
     RCTBaseTextInputView *strongSelf = weakSelf;
@@ -585,18 +641,20 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
       }
     }
   }];
-  #endif /* !TARGET_OS_TV */
+  #endif /* !TARGET_OS_TV && !TARGET_OS_OSX TODO(macOS ISS#2323203) */
 }
 
 - (void)setDefaultInputAccessoryView
 {
-  #if !TARGET_OS_TV
+  #if !TARGET_OS_TV && !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   UIView<RCTBackedTextInputViewProtocol> *textInputView = self.backedTextInputView;
   UIKeyboardType keyboardType = textInputView.keyboardType;
 
   // These keyboard types (all are number pads) don't have a "Done" button by default,
   // so we create an `inputAccessoryView` with this button for them.
-  BOOL shouldHaveInputAccesoryView =
+  BOOL shouldHaveInputAccesoryView;
+  if (@available(iOS 10.0, *)) {
+      shouldHaveInputAccesoryView =
       (
        keyboardType == UIKeyboardTypeNumberPad ||
        keyboardType == UIKeyboardTypePhonePad ||
@@ -604,6 +662,15 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
        keyboardType == UIKeyboardTypeASCIICapableNumberPad
       ) &&
       textInputView.returnKeyType == UIReturnKeyDone;
+  } else {
+      shouldHaveInputAccesoryView =
+      (
+       keyboardType == UIKeyboardTypeNumberPad ||
+       keyboardType == UIKeyboardTypePhonePad ||
+       keyboardType == UIKeyboardTypeDecimalPad
+      ) &&
+      textInputView.returnKeyType == UIReturnKeyDone;
+  }
 
   if (_hasInputAccesoryView == shouldHaveInputAccesoryView) {
     return;
@@ -629,9 +696,10 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
     textInputView.inputAccessoryView = nil;
   }
   [self reloadInputViewsIfNecessary];
-  #endif /* !TARGET_OS_TV */
+  #endif /* !TARGET_OS_TV && !TARGET_OS_OSX TODO(macOS ISS#2323203) */
 }
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 - (void)reloadInputViewsIfNecessary
 {
   // We have to call `reloadInputViews` for focused text inputs to update an accessory view.
@@ -646,6 +714,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
     [self.backedTextInputView endEditing:YES];
   }
 }
+#endif // TODO(macOS ISS#2323203)
 
 #pragma mark - Helpers
 
@@ -677,5 +746,16 @@ static BOOL findMismatch(NSString *first, NSString *second, NSRange *firstRange,
   *secondRange = NSMakeRange(firstMismatch, ii - firstMismatch);
   return YES;
 }
+
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+
+#pragma mark - NSResponder chain
+
+- (BOOL)canBecomeKeyView
+{
+  return NO; // Enclosed backedTextInputView can become the key view
+}
+
+#endif // ]TODO(macOS ISS#2323203)
 
 @end

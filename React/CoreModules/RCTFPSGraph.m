@@ -9,6 +9,10 @@
 
 #import <React/RCTAssert.h>
 
+#if TARGET_OS_OSX
+#import <QuartzCore/CAShapeLayer.h>
+#endif
+
 #if RCT_DEV
 
 @interface RCTFPSGraph ()
@@ -23,7 +27,7 @@
   UILabel *_label;
 
   CGFloat *_frames;
-  UIColor *_color;
+  RCTUIColor *_color; // TODO(macOS ISS#2323203)
 
   NSTimeInterval _prevTime;
   NSUInteger _frameCount;
@@ -34,7 +38,7 @@
   NSUInteger _height;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame color:(UIColor *)color
+- (instancetype)initWithFrame:(CGRect)frame color:(RCTUIColor *)color // TODO(macOS ISS#2323203)
 {
   if ((self = [super initWithFrame:frame])) {
     _frameCount = -1;
@@ -77,7 +81,11 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithCoder : (NSCoder *)aDecoder)
   if (!_label) {
     _label = [[UILabel alloc] initWithFrame:self.bounds];
     _label.font = [UIFont boldSystemFontOfSize:13];
+#if TARGET_OS_OSX
+    _label.alignment = NSTextAlignmentCenter;
+#else
     _label.textAlignment = NSTextAlignmentCenter;
+#endif
   }
 
   return _label;
@@ -94,7 +102,12 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithCoder : (NSCoder *)aDecoder)
     _maxFPS = MAX(_maxFPS, _FPS);
 
     dispatch_async(dispatch_get_main_queue(), ^{
-      self->_label.text = [NSString stringWithFormat:@"%lu", (unsigned long)self->_FPS];
+      NSString *text = [NSString stringWithFormat:@"%lu", (unsigned long)self->_FPS];
+#if TARGET_OS_OSX
+      self->_label.stringValue = text;
+#else
+      self->_label.text = text;
+#endif
     });
 
     CGFloat scale = 60.0 / _height;

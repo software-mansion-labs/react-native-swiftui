@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h>
 
 #import <react/renderer/attributedstring/AttributedString.h>
 #import <react/renderer/attributedstring/ParagraphAttributes.h>

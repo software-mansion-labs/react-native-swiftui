@@ -7,33 +7,102 @@
 
 #import <React/RCTTextView.h>
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 #import <MobileCoreServices/UTCoreTypes.h>
+#else
+#import <Quartz/Quartz.h> // TODO(macOS ISS#2323203) for CATiledLayer
+#endif // TODO(macOS ISS#2323203)
 
+#import <React/RCTAssert.h> // TODO(macOS ISS#2323203)
 #import <React/RCTUtils.h>
 #import <React/UIView+React.h>
+#import <React/RCTFocusChangeEvent.h> // TODO(OSS Candidate ISS#2710739)
 
 #import <React/RCTTextShadowView.h>
+
+#import <QuartzCore/QuartzCore.h> // TODO(macOS ISS#2323203)
 
 @implementation RCTTextView
 {
   CAShapeLayer *_highlightLayer;
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   UILongPressGestureRecognizer *_longPressGestureRecognizer;
+#else // [TODO(macOS ISS#2323203)
+  NSString * _accessibilityLabel;
+#endif // ]TODO(macOS ISS#2323203)
 
-  NSArray<UIView *> *_Nullable _descendantViews;
+  RCTEventDispatcher *_eventDispatcher; // TODO(OSS Candidate ISS#2710739)
+  NSArray<RCTUIView *> *_Nullable _descendantViews; // TODO(macOS ISS#3536887)
   NSTextStorage *_Nullable _textStorage;
   CGRect _contentFrame;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame
+// [TODO(OSS Candidate ISS#2710739)
+- (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher
 {
-  if (self = [super initWithFrame:frame]) {
-    self.isAccessibilityElement = YES;
-    self.accessibilityTraits |= UIAccessibilityTraitStaticText;
-    self.opaque = NO;
-    self.contentMode = UIViewContentModeRedraw;
+  if ((self = [self initWithFrame:CGRectZero])) {
+    _eventDispatcher = eventDispatcher;
   }
   return self;
 }
+// ]TODO(OSS Candidate ISS#2710739)
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+  if (self = [super initWithFrame:frame]) {
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
+    self.isAccessibilityElement = YES;
+    self.accessibilityTraits |= UIAccessibilityTraitStaticText;
+#else // [TODO(macOS ISS#2323203)
+    self.accessibilityRole = NSAccessibilityStaticTextRole;
+#endif // ]TODO(macOS ISS#2323203)
+    self.opaque = NO;
+    RCTUIViewSetContentModeRedraw(self); // TODO(macOS ISS#2323203) and TODO(macOS ISS#3536887)
+  }
+  return self;
+}
+
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+- (void)dealloc
+{
+  [self removeAllTextStorageLayoutManagers];
+}
+
+- (void)removeAllTextStorageLayoutManagers
+{
+  // On macOS AppKit can throw an uncaught exception
+  // (-[NSConcretePointerArray pointerAtIndex:]: attempt to access pointer at index ...)
+  // during the dealloc of NSLayoutManager.  The _textStorage and its
+  // associated NSLayoutManager dealloc later in an autorelease pool.
+  // Manually removing the layout managers from _textStorage prior to release
+  // works around this issue in AppKit.
+  NSArray<NSLayoutManager *> *managers = [[_textStorage layoutManagers] copy];
+  for (NSLayoutManager *manager in managers) {
+    [_textStorage removeLayoutManager:manager];
+  }
+}
+
+- (BOOL)canBecomeKeyView
+{
+  // RCTText should not get any keyboard focus unless its `selectable` prop is true
+  return _selectable;
+}
+
+- (BOOL)enableFocusRing
+{
+  return _selectable;
+}
+
+- (void)drawFocusRingMask {
+  if ([self enableFocusRing]) {
+    NSRectFill([self bounds]);
+  }
+}
+
+- (NSRect)focusRingMaskBounds {
+  return [self bounds];
+}
+#endif // ]TODO(macOS ISS#2323203)
 
 - (NSString *)description
 {
@@ -51,14 +120,17 @@
 
   _selectable = selectable;
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   if (_selectable) {
     [self enableContextMenu];
   }
   else {
     [self disableContextMenu];
   }
+#endif // TODO(macOS ISS#2323203)
 }
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 - (void)reactSetFrame:(CGRect)frame
 {
   // Text looks super weird if its frame is animated.
@@ -67,6 +139,7 @@
     [super reactSetFrame:frame];
   }];
 }
+#endif // TODO(macOS ISS#2323203)
 
 - (void)didUpdateReactSubviews
 {
@@ -75,19 +148,23 @@
 
 - (void)setTextStorage:(NSTextStorage *)textStorage
           contentFrame:(CGRect)contentFrame
-       descendantViews:(NSArray<UIView *> *)descendantViews
+       descendantViews:(NSArray<RCTUIView *> *)descendantViews // TODO(macOS ISS#3536887)
 {
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+  [self removeAllTextStorageLayoutManagers];
+#endif // ]TODO(macOS ISS#2323203)
+
   _textStorage = textStorage;
   _contentFrame = contentFrame;
 
   // FIXME: Optimize this.
-  for (UIView *view in _descendantViews) {
+  for (RCTUIView *view in _descendantViews) { // TODO(macOS ISS#3536887)
     [view removeFromSuperview];
   }
 
   _descendantViews = descendantViews;
 
-  for (UIView *view in descendantViews) {
+  for (RCTUIView *view in descendantViews) { // TODO(macOS ISS#3536887)
     [self addSubview:view];
   }
 
@@ -106,12 +183,40 @@
   NSTextContainer *textContainer = layoutManager.textContainers.firstObject;
 
   NSRange glyphRange = [layoutManager glyphRangeForTextContainer:textContainer];
-  [layoutManager drawBackgroundForGlyphRange:glyphRange atPoint:_contentFrame.origin];
-  [layoutManager drawGlyphsForGlyphRange:glyphRange atPoint:_contentFrame.origin];
-
-  __block UIBezierPath *highlightPath = nil;
   NSRange characterRange = [layoutManager characterRangeForGlyphRange:glyphRange
                                                      actualGlyphRange:NULL];
+  // [TODO(OSS Candidate ISS#2710739)
+  [_textStorage enumerateAttribute:RCTTextAttributesFontSmoothingAttributeName
+                           inRange:characterRange
+                           options:0
+                        usingBlock:
+    ^(NSNumber *value, NSRange range, __unused BOOL *stop) {
+    RCTFontSmoothing smoothing = value.integerValue;
+    if (smoothing == RCTFontSmoothingAuto) {
+      smoothing = [RCTTextAttributes fontSmoothingDefault];
+    }
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSaveGState(context);
+    switch (smoothing) {
+      case RCTFontSmoothingNone:
+        CGContextSetShouldAntialias(context, false);
+        break;
+      case RCTFontSmoothingAntialiased:
+        CGContextSetAllowsFontSmoothing(context, false);
+        CGContextSetShouldSmoothFonts(context, false);
+        break;
+      case RCTFontSmoothingAuto:
+      case RCTFontSmoothingSubpixelAntialiased:
+        break;
+    }
+    NSRange subGlyphRange = [layoutManager glyphRangeForCharacterRange:range actualCharacterRange:nil];
+    [layoutManager drawBackgroundForGlyphRange:subGlyphRange atPoint:_contentFrame.origin];
+    [layoutManager drawGlyphsForGlyphRange:subGlyphRange atPoint:_contentFrame.origin];
+    CGContextRestoreGState(context);
+  }];
+  // ]TODO(OSS Candidate ISS#2710739)
+
+  __block UIBezierPath *highlightPath = nil;
   [_textStorage enumerateAttribute:RCTTextAttributesIsHighlightedAttributeName
                            inRange:characterRange
                            options:0
@@ -126,9 +231,13 @@
                                           inTextContainer:textContainer
                                                usingBlock:
         ^(CGRect enclosingRect, __unused BOOL *anotherStop) {
-          UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectInset(enclosingRect, -2, -2) cornerRadius:2];
+#if !TARGET_OS_OSX // TODO(macOS ISS#3536887)
+        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectInset(enclosingRect, -2, -2) cornerRadius:2];
+#else // TODO(macOS ISS#3536887)
+        NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:CGRectInset(enclosingRect, -2, -2) xRadius:2 yRadius:2];
+#endif // TODO(macOS ISS#3536887)
           if (highlightPath) {
-            [highlightPath appendPath:path];
+            UIBezierPathAppendPath(highlightPath, path); // TODO(macOS ISS#2323203)
           } else {
             highlightPath = path;
           }
@@ -139,11 +248,11 @@
   if (highlightPath) {
     if (!_highlightLayer) {
       _highlightLayer = [CAShapeLayer layer];
-      _highlightLayer.fillColor = [UIColor colorWithWhite:0 alpha:0.25].CGColor;
+      _highlightLayer.fillColor = [RCTUIColor colorWithWhite:0 alpha:0.25].CGColor; // TODO(OSS Candidate ISS#2710739)
       [self.layer addSublayer:_highlightLayer];
     }
     _highlightLayer.position = _contentFrame.origin;
-    _highlightLayer.path = highlightPath.CGPath;
+    _highlightLayer.path = UIBezierPathCreateCGPathRef(highlightPath); // TODO(macOS ISS#2323203)
   } else {
     [_highlightLayer removeFromSuperlayer];
     _highlightLayer = nil;
@@ -188,6 +297,28 @@
 
 #pragma mark - Accessibility
 
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+
+// This code is here to cover for a mismatch in the what accessibilityLabels and accessibilityValues mean in iOS versus macOS.
+// In macOS a text element will always read its accessibilityValue, but will only read it's accessibilityLabel if it's value is set.
+// In iOS a text element will only read it's accessibilityValue if it has no accessibilityLabel, and will always read its accessibilityLabel.
+// This code replicates the expected behavior in macOS by:
+// 1) Setting the accessibilityValue = the react-native accessibilityLabel prop if one exists and setting it equal to the text's contents otherwise.
+// 2) Making sure that its accessibilityLabel is always nil, so that it doesn't read out the label twice.
+
+- (void)setAccessibilityLabel:(NSString *)label
+{
+  _accessibilityLabel = [label copy];
+}
+
+- (NSString *)accessibilityValue
+{
+  if (_accessibilityLabel) {
+    return _accessibilityLabel;
+  }
+  return _textStorage.string;
+}
+#else // ]TODO(macOS ISS#2323203)
 - (NSString *)accessibilityLabel
 {
   NSString *superAccessibilityLabel = [super accessibilityLabel];
@@ -196,9 +327,11 @@
   }
   return _textStorage.string;
 }
+#endif // TODO(macOS ISS#2323203)
 
 #pragma mark - Context Menu
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 - (void)enableContextMenu
 {
   _longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
@@ -229,12 +362,73 @@
   [menuController setMenuVisible:YES animated:YES];
 #endif
 }
+#else // [TODO(macOS ISS#2323203)
+
+- (void)rightMouseDown:(NSEvent *)event
+{
+  if (_selectable == NO) {
+    [super rightMouseDown:event];
+    return;
+  }
+  NSText *fieldEditor = [self.window fieldEditor:YES forObject:self];
+  NSMenu *fieldEditorMenu = [fieldEditor menuForEvent:event];
+
+  RCTAssert(fieldEditorMenu, @"Unable to obtain fieldEditor's context menu");
+
+  if (fieldEditorMenu) {
+    NSMenu *menu = [[NSMenu alloc] initWithTitle:@""];
+
+    for (NSMenuItem *fieldEditorMenuItem in fieldEditorMenu.itemArray) {
+      if (fieldEditorMenuItem.action == @selector(copy:)) {
+        NSMenuItem *item = [fieldEditorMenuItem copy];
+
+        item.target = self;
+        [menu addItem:item];
+
+        break;
+      }
+    }
+
+    RCTAssert(menu.numberOfItems > 0, @"Unable to create context menu with \"Copy\" item");
+
+    if (menu.numberOfItems > 0) {
+      [NSMenu popUpContextMenu:menu withEvent:event forView:self];
+    }
+  }
+}
+
+- (BOOL)becomeFirstResponder
+{
+  if (![super becomeFirstResponder]) {
+    return NO;
+  }
+
+  // If we've gained focus, notify listeners
+  [_eventDispatcher sendEvent:[RCTFocusChangeEvent focusEventWithReactTag:self.reactTag]];
+
+  return YES;
+}
+
+- (BOOL)resignFirstResponder
+{
+  if (![super resignFirstResponder]) {
+    return NO;
+  }
+
+  // If we've lost focus, notify listeners
+  [_eventDispatcher sendEvent:[RCTFocusChangeEvent blurEventWithReactTag:self.reactTag]];
+
+  return YES;
+}
+
+#endif // ]TODO(macOS ISS#2323203)
 
 - (BOOL)canBecomeFirstResponder
 {
   return _selectable;
 }
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
   if (_selectable && action == @selector(copy:)) {
@@ -243,17 +437,18 @@
 
   return [self.nextResponder canPerformAction:action withSender:sender];
 }
+#endif // TODO(macOS ISS#2323203)
 
 - (void)copy:(id)sender
 {
 #if !TARGET_OS_TV
   NSAttributedString *attributedText = _textStorage;
 
-  NSMutableDictionary *item = [NSMutableDictionary new];
-
   NSData *rtf = [attributedText dataFromRange:NSMakeRange(0, attributedText.length)
                            documentAttributes:@{NSDocumentTypeDocumentAttribute: NSRTFDTextDocumentType}
                                         error:nil];
+#if TARGET_OS_IPHONE // TODO(macOS ISS#2323203)
+  NSMutableDictionary *item = [NSMutableDictionary new]; // TODO(macOS ISS#2323203)
 
   if (rtf) {
     [item setObject:rtf forKey:(id)kUTTypeFlatRTFD];
@@ -263,6 +458,11 @@
 
   UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
   pasteboard.items = @[item];
+#elif TARGET_OS_OSX // TODO(macOS ISS#2323203)
+  NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+  [pasteboard clearContents];
+  [pasteboard writeObjects:[NSArray arrayWithObjects:attributedText.string, rtf, nil]];
+#endif // TODO(macOS ISS#2323203)
 #endif
 }
 

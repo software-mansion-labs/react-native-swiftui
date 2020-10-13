@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <UIKit/UIScrollView.h>
+#import <React/RCTUIKit.h> // TODO(macOS ISS#2323203)
 
 #import <React/RCTAutoInsetsProtocol.h>
 #import <React/RCTEventDispatcher.h>
@@ -14,9 +14,16 @@
 
 @protocol UIScrollViewDelegate;
 
-@interface RCTScrollView : RCTView <UIScrollViewDelegate, RCTScrollableProtocol, RCTAutoInsetsProtocol>
+@interface RCTScrollView : RCTView <
+#if TARGET_OS_IPHONE // [TODO(macOS ISS#2323203)
+  UIScrollViewDelegate,
+#endif
+  RCTScrollableProtocol, RCTAutoInsetsProtocol
+> // ]TODO(macOS ISS#2323203)
 
 - (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher NS_DESIGNATED_INITIALIZER;
+
+@property (nonatomic, readonly) RCTBridge *bridge;
 
 /**
  * The `RCTScrollView` may have at most one single subview. This will ensure
@@ -25,7 +32,7 @@
  * efficiently since it will have already been computed by the off-main-thread
  * layout system.
  */
-@property (nonatomic, readonly) UIView *contentView;
+@property (nonatomic, readonly) RCTUIView *contentView; // TODO(macOS ISS#3536887)
 
 /**
  * If the `contentSize` is not specified (or is specified as {0, 0}, then the
@@ -36,7 +43,7 @@
 /**
  * The underlying scrollView (TODO: can we remove this?)
  */
-@property (nonatomic, readonly) UIScrollView *scrollView;
+@property (nonatomic, readonly) RCTUIScrollView *scrollView; // TODO(macOS ISS#3536887)
 
 @property (nonatomic, assign) UIEdgeInsets contentInset;
 @property (nonatomic, assign) BOOL automaticallyAdjustContentInsets;
@@ -62,6 +69,10 @@
 @property (nonatomic, copy) RCTDirectEventBlock onScrollEndDrag;
 @property (nonatomic, copy) RCTDirectEventBlock onMomentumScrollBegin;
 @property (nonatomic, copy) RCTDirectEventBlock onMomentumScrollEnd;
+@property (nonatomic, copy) RCTDirectEventBlock onScrollKeyDown; // TODO(macOS ISS#2323203)
+@property (nonatomic, copy) RCTDirectEventBlock onPreferredScrollerStyleDidChange; // TODO(macOS ISS#2323203)
+
+- (void)flashScrollIndicators; // TODO(macOS ISS#2323203)
 
 @end
 

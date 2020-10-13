@@ -5,9 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <UIKit/UIKit.h>
-
 #import <React/RCTBridge.h>
+
+#if !TARGET_OS_OSX // [TODO(macOS ISS#2323203) - RCTExportedDimensions is needed in RCTRootContentView
+NSDictionary *RCTExportedDimensions(RCTBridge *bridge);
+#else
+#ifdef __cplusplus
+extern "C"
+#endif
+NSDictionary *RCTExportedDimensions(RCTPlatformView *rootView);
+#endif // ]TODO(macOS ISS#2323203)
 
 @interface RCTDeviceInfo : NSObject <RCTBridgeModule>
 

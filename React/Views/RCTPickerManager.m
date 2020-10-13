@@ -16,7 +16,7 @@
 
 RCT_EXPORT_MODULE()
 
-- (UIView *)view
+- (RCTPlatformView *)view // TODO(macOS ISS#2323203)
 {
   return [RCTPicker new];
 }
@@ -46,8 +46,8 @@ RCT_CUSTOM_VIEW_PROPERTY(fontFamily, NSString, RCTPicker)
 
 RCT_EXPORT_METHOD(setNativeSelectedIndex : (nonnull NSNumber *)viewTag toIndex : (nonnull NSNumber *)index)
 {
-  [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
-    UIView *view = viewRegistry[viewTag];
+  [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *, RCTUIView *> *viewRegistry) { // TODO(macOS ISS#2323203)
+    RCTPlatformView *view = viewRegistry[viewTag]; // TODO(macOS ISS#2323203)
 
     if ([view isKindOfClass:[RCTPicker class]]) {
       [(RCTPicker *)view setSelectedIndex:index.integerValue];
@@ -55,7 +55,7 @@ RCT_EXPORT_METHOD(setNativeSelectedIndex : (nonnull NSNumber *)viewTag toIndex :
       // This component is used in Fabric through LegacyInteropLayer.
       // `RCTPicker` view is subview of `RCTLegacyViewManagerInteropComponentView`.
       // `viewTag` passed as parameter to this method is tag of the `RCTLegacyViewManagerInteropComponentView`.
-      UIView *subview = [uiManager viewForReactTag:viewTag].subviews.firstObject;
+      RCTPlatformView *subview = view.subviews.firstObject; // TODO(macOS ISS#2323203)
       if ([subview isKindOfClass:[RCTPicker class]]) {
         [(RCTPicker *)subview setSelectedIndex:index.integerValue];
       } else {

@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h> // TODO(macOS ISS#2323203)
 
 #import <React/RCTBorderStyle.h>
 #import <React/RCTDefines.h>
@@ -56,6 +56,7 @@ RCTPathCreateWithRoundedRect(CGRect bounds, RCTCornerInsets cornerInsets, const 
  * by inspecting the image's `capInsets`.
  *
  * `borderInsets` defines the border widths for each edge.
+ * `scaleFactor` defines the backing scale factor of the device for supporting high-resolution drawing.
  */
 RCT_EXTERN UIImage *RCTGetBorderImage(
     RCTBorderStyle borderStyle,
@@ -64,4 +65,5 @@ RCT_EXTERN UIImage *RCTGetBorderImage(
     UIEdgeInsets borderInsets,
     RCTBorderColors borderColors,
     CGColorRef backgroundColor,
-    BOOL drawToEdge);
+    BOOL drawToEdge,
+    CGFloat scaleFactor); // TODO(macOS ISS#2323203)

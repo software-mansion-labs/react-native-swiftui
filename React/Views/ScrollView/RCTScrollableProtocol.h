@@ -6,7 +6,7 @@
  */
 
 #import <React/RCTComponent.h>
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h> // TODO(macOS ISS#2323203)
 
 /**
  * Contains any methods related to scrolling. Any `RCTView` that has scrolling
@@ -25,8 +25,10 @@
 - (void)scrollToEnd:(BOOL)animated;
 - (void)zoomToRect:(CGRect)rect animated:(BOOL)animated;
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 - (void)addScrollListener:(NSObject<UIScrollViewDelegate> *)scrollListener;
 - (void)removeScrollListener:(NSObject<UIScrollViewDelegate> *)scrollListener;
+#endif // TODO(macOS ISS#2323203)
 
 @end
 
@@ -37,8 +39,5 @@
 
 @property (nonatomic, copy) RCTDirectEventBlock onRefresh;
 @property (nonatomic, readonly, getter=isRefreshing) BOOL refreshing;
-
-@optional
-@property (nonatomic, weak) UIScrollView *scrollView;
 
 @end

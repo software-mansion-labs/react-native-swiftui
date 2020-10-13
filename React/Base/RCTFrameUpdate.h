@@ -6,6 +6,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "RCTPlatformDisplayLink.h" // TODO(macOS ISS#2323203)
 
 @class CADisplayLink;
 
@@ -24,7 +25,7 @@
  */
 @property (nonatomic, readonly) NSTimeInterval deltaTime;
 
-- (instancetype)initWithDisplayLink:(CADisplayLink *)displayLink NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithDisplayLink:(RCTPlatformDisplayLink *)displayLink NS_DESIGNATED_INITIALIZER;
 
 @end
 

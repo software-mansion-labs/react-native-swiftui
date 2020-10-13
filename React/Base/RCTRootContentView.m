@@ -8,6 +8,7 @@
 #import "RCTRootContentView.h"
 
 #import "RCTBridge.h"
+#import "RCTDeviceInfo.h" // TODO(macOS ISS#2323203)
 #import "RCTPerformanceLogger.h"
 #import "RCTRootView.h"
 #import "RCTRootViewInternal.h"
@@ -16,6 +17,11 @@
 #import "UIView+React.h"
 
 @implementation RCTRootContentView
+{ // [TODO(macOS ISS#2323203)
+#if TARGET_OS_OSX
+  BOOL _subscribedToWindowNotifications;
+#endif
+} // ]TODO(macOS ISS#2323203)
 
 - (instancetype)initWithFrame:(CGRect)frame
                        bridge:(RCTBridge *)bridge
@@ -29,6 +35,10 @@
     _touchHandler = [[RCTTouchHandler alloc] initWithBridge:_bridge];
     [_touchHandler attachToView:self];
     [_bridge.uiManager registerRootView:self];
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+    self.postsFrameChangedNotifications = YES;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendFrameChangedEvent:) name:NSViewFrameDidChangeNotification object:self];
+#endif // ]TODO(macOS ISS#2323203)
   }
   return self;
 }
@@ -36,13 +46,54 @@
 RCT_NOT_IMPLEMENTED(-(instancetype)initWithFrame : (CGRect)frame)
 RCT_NOT_IMPLEMENTED(-(instancetype)initWithCoder : (nonnull NSCoder *)aDecoder)
 
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+- (void)dealloc
+{
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)viewWillMoveToWindow:(nullable NSWindow *)newWindow
+{
+  if (_subscribedToWindowNotifications &&
+      self.window != nil &&
+      self.window != newWindow) {
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSWindowDidChangeBackingPropertiesNotification
+                                                  object:self.window];
+    _subscribedToWindowNotifications = NO;
+  }
+}
+
+- (void)viewDidMoveToWindow
+{
+  if (!_subscribedToWindowNotifications &&
+      self.window != nil) {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(sendFrameChangedEvent:)
+                                                 name:NSWindowDidChangeBackingPropertiesNotification
+                                               object:self.window];
+    _subscribedToWindowNotifications = YES;
+  }
+}
+
+- (void)sendFrameChangedEvent:(__unused NSNotification *)notification
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  [_bridge.eventDispatcher sendDeviceEventWithName:@"didUpdateDimensions"
+                                              body:RCTExportedDimensions(self)];
+#pragma clang diagnostic pop
+}
+
+#endif // ]TODO(macOS ISS#2323203)
+
 - (void)layoutSubviews
 {
   [super layoutSubviews];
   [self updateAvailableSize];
 }
 
-- (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)atIndex
+- (void)insertReactSubview:(RCTUIView *)subview atIndex:(NSInteger)atIndex // TODO(macOS ISS#3536887)
 {
   [super insertReactSubview:subview atIndex:atIndex];
   [_bridge.performanceLogger markStopForTag:RCTPLTTI];
@@ -81,10 +132,10 @@ RCT_NOT_IMPLEMENTED(-(instancetype)initWithCoder : (nonnull NSCoder *)aDecoder)
   [_bridge.uiManager setAvailableSize:self.availableSize forRootView:self];
 }
 
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+- (RCTUIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event // TODO(macOS ISS#3536887)
 {
   // The root content view itself should never receive touches
-  UIView *hitView = [super hitTest:point withEvent:event];
+  RCTUIView *hitView = [super hitTest:point withEvent:event]; // TODO(macOS ISS#3536887)
   if (_passThroughTouches && hitView == self) {
     return nil;
   }

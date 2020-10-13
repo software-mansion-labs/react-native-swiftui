@@ -7,7 +7,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h>
 
 #import <XCTest/XCTest.h>
 

@@ -15,8 +15,10 @@
 
 @implementation RCTUITextView
 {
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   UILabel *_placeholderView;
   UITextView *_detachedTextView;
+#endif // TODO(macOS ISS#2323203)
   RCTBackedTextViewDelegateAdapter *_textInputDelegateAdapter;
   NSDictionary<NSAttributedStringKey, id> *_defaultTextAttributes;
 }
@@ -26,10 +28,9 @@ static UIFont *defaultPlaceholderFont()
   return [UIFont systemFontOfSize:17];
 }
 
-static UIColor *defaultPlaceholderColor()
+static RCTUIColor *defaultPlaceholderColor() // TODO(OSS Candidate ISS#2710739)
 {
-  // Default placeholder color from UITextField.
-  return [UIColor colorWithRed:0 green:0 blue:0.0980392 alpha:0.22];
+  return [RCTUIColor placeholderTextColor]; // TODO(OSS Candidate ISS#2710739)
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -39,19 +40,24 @@ static UIColor *defaultPlaceholderColor()
                                              selector:@selector(textDidChange)
                                                  name:UITextViewTextDidChangeNotification
                                                object:self];
-
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
     _placeholderView = [[UILabel alloc] initWithFrame:self.bounds];
     _placeholderView.isAccessibilityElement = NO;
     _placeholderView.numberOfLines = 0;
     [self addSubview:_placeholderView];
+#else // [TODO(macOS ISS#2323203)
+    NSTextCheckingTypes checkingTypes = 0;
+    self.enabledTextCheckingTypes = checkingTypes;
+    self.insertionPointColor = [NSColor selectedControlColor];
+#endif // ]TODO(macOS ISS#2323203)
 
     _textInputDelegateAdapter = [[RCTBackedTextViewDelegateAdapter alloc] initWithTextView:self];
 
-    self.backgroundColor = [UIColor clearColor];
-    self.textColor = [UIColor blackColor];
+    self.backgroundColor = [RCTUIColor clearColor]; // TODO(macOS ISS#2323203)
+    self.textColor = [RCTUIColor blackColor]; // TODO(macOS ISS#2323203)
     // This line actually removes 5pt (default value) left and right padding in UITextView.
     self.textContainer.lineFragmentPadding = 0;
-#if !TARGET_OS_TV
+#if !TARGET_OS_OSX && !TARGET_OS_TV // TODO(macOS ISS#2323203)
     self.scrollsToTop = NO;
 #endif
     self.scrollEnabled = YES;
@@ -96,11 +102,66 @@ static UIColor *defaultPlaceholderColor()
   [self _updatePlaceholder];
 }
 
-- (void)setPlaceholderColor:(UIColor *)placeholderColor
+- (void)setPlaceholderColor:(RCTUIColor *)placeholderColor // TODO(OSS Candidate ISS#2710739)
 {
   _placeholderColor = placeholderColor;
   [self _updatePlaceholder];
 }
+
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+- (void)setSelectionColor:(RCTUIColor *)selectionColor
+{
+  NSMutableDictionary *selectTextAttributes = self.selectedTextAttributes.mutableCopy;
+  selectTextAttributes[NSBackgroundColorAttributeName] = selectionColor ?: [NSColor selectedControlColor];
+  self.selectedTextAttributes = selectTextAttributes.copy;
+  self.insertionPointColor = self.selectionColor ?: [NSColor selectedControlColor];
+}
+
+- (RCTUIColor*)selectionColor
+{
+  return (RCTUIColor*)self.selectedTextAttributes[NSBackgroundColorAttributeName];
+}
+
+- (void)setEnabledTextCheckingTypes:(NSTextCheckingTypes)checkingType
+{
+  [super setEnabledTextCheckingTypes:checkingType];
+  self.automaticDataDetectionEnabled = checkingType != 0;
+}
+
+- (NSTextAlignment)textAlignment
+{
+  return self.alignment;
+}
+
+- (NSString*)text
+{
+  return self.string;
+}
+
+- (void)setText:(NSString *)text
+{
+  self.string = text;
+}
+
+- (NSAttributedString*)attributedText
+{
+  return self.textStorage;
+}
+
+- (BOOL)becomeFirstResponder
+{
+  BOOL success =  [[self window] makeFirstResponder:self];
+
+  if (success) {
+    id<RCTBackedTextInputDelegate> textInputDelegate = [self textInputDelegate];
+    if ([textInputDelegate respondsToSelector:@selector(textInputDidBeginEditing)]) {
+      [textInputDelegate textInputDidBeginEditing];
+    }
+  }
+
+  return success;
+}
+#endif // ]TODO(macOS ISS#2323203)
 
 - (void)setDefaultTextAttributes:(NSDictionary<NSAttributedStringKey, id> *)defaultTextAttributes
 {
@@ -134,8 +195,13 @@ static UIColor *defaultPlaceholderColor()
 
 - (void)setTextAlignment:(NSTextAlignment)textAlignment
 {
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   [super setTextAlignment:textAlignment];
   _placeholderView.textAlignment = textAlignment;
+#else // [TODO(macOS ISS#2323203)
+  self.alignment = textAlignment;
+  [self setNeedsDisplay:YES];
+#endif // ]TODO(macOS ISS#2323203)
 }
 
 - (void)setAttributedText:(NSAttributedString *)attributedText
@@ -146,6 +212,7 @@ static UIColor *defaultPlaceholderColor()
 
   // We try to avoid calling this method as much as we can.
   // If the text has changed, there is nothing we can do.
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   if (![super.attributedText.string isEqualToString:attributedText.string]) {
     [super setAttributedText:attributedText];
   } else {
@@ -154,13 +221,31 @@ static UIColor *defaultPlaceholderColor()
       [self copyTextAttributesFrom:attributedText];
     }
   }
-
+#else // [TODO(macOS ISS#2323203)
+  if (![self.textStorage isEqualTo:attributedText.string]) {
+    if (attributedText != nil) {
+      [self.textStorage setAttributedString:attributedText];
+    } else {
+      // Avoid Exception thrown while executing UI block: *** -[NSBigMutableString replaceCharactersInRange:withString:]: nil argument
+      [self.textStorage setAttributedString:[NSAttributedString new]];
+    }
+  } else {
+    // But if the text is preserved, we just copy the attributes from the source string.
+    if (![self.textStorage isEqualToAttributedString:attributedText]) {
+      [self copyTextAttributesFrom:attributedText];
+    }
+  }
+#endif // ]TODO(macOS ISS#2323203)
   [self textDidChange];
 }
 
 #pragma mark - Overrides
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 - (void)setSelectedTextRange:(UITextRange *)selectedTextRange notifyDelegate:(BOOL)notifyDelegate
+#else // [TODO(macOS ISS#2323203)
+- (void)setSelectedTextRange:(NSRange)selectedTextRange notifyDelegate:(BOOL)notifyDelegate
+#endif // ]TODO(macOS ISS#2323203)
 {
   if (!notifyDelegate) {
     // We have to notify an adapter that following selection change was initiated programmatically,
@@ -168,8 +253,19 @@ static UIColor *defaultPlaceholderColor()
     [_textInputDelegateAdapter skipNextTextInputDidChangeSelectionEventWithTextRange:selectedTextRange];
   }
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   [super setSelectedTextRange:selectedTextRange];
+#else // [TODO(macOS ISS#2323203)
+  [super setSelectedRange:selectedTextRange];
+#endif // ]TODO(macOS ISS#2323203)
 }
+
+#if TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+- (NSRange)selectedTextRange
+{
+  return [super selectedRange];
+}
+#endif // ]TODO(macOS ISS#2323203)
 
 - (void)paste:(id)sender
 {
@@ -177,22 +273,80 @@ static UIColor *defaultPlaceholderColor()
   _textWasPasted = YES;
 }
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 - (void)setContentOffset:(CGPoint)contentOffset animated:(__unused BOOL)animated
 {
   // Turning off scroll animation.
   // This fixes the problem also known as "flaky scrolling".
   [super setContentOffset:contentOffset animated:NO];
 }
+#endif // [TODO(macOS ISS#2323203)
+
+#if TARGET_OS_OSX
+
+#pragma mark - Placeholder
+
+- (NSAttributedString*)placeholderTextAttributedString
+{
+  if (self.placeholder == nil) {
+    return nil;
+  }
+  NSMutableDictionary *placeholderAttributes = [self.typingAttributes mutableCopy];
+  if (placeholderAttributes == nil) {
+    placeholderAttributes = [NSMutableDictionary dictionary];
+  }
+  placeholderAttributes[NSForegroundColorAttributeName] = self.placeholderColor ?: defaultPlaceholderColor();
+  placeholderAttributes[NSFontAttributeName] = self.font ?: defaultPlaceholderFont();
+  return [[NSAttributedString alloc] initWithString:self.placeholder attributes:placeholderAttributes];
+}
+
+- (void)drawRect:(NSRect)dirtyRect
+{
+  [super drawRect:dirtyRect];
+
+  if (self.text.length == 0 && self.placeholder) {
+    NSAttributedString *attributedPlaceholderString = self.placeholderTextAttributedString;
+
+    if (attributedPlaceholderString) {
+      NSTextStorage *textStorage = [[NSTextStorage alloc] initWithAttributedString:attributedPlaceholderString];
+      NSTextContainer *textContainer = [[NSTextContainer alloc] initWithContainerSize:self.textContainer.containerSize];
+      NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
+
+      textContainer.lineFragmentPadding = self.textContainer.lineFragmentPadding;
+      [layoutManager addTextContainer:textContainer];
+      [textStorage addLayoutManager:layoutManager];
+
+      NSRange glyphRange = [layoutManager glyphRangeForTextContainer:textContainer];
+      [layoutManager drawGlyphsForGlyphRange:glyphRange atPoint:self.textContainerOrigin];
+    }
+  }
+}
+
+#pragma mark - Text Insets
+
+- (void)setTextContainerInsets:(UIEdgeInsets)textContainerInsets
+{
+  // NSTextView             has a NSSize       textContainerInset  property
+  // UITextview             has a UIEdgeInsets textContainerInset  property
+  // RCTUITextView mac only has a UIEdgeInsets textContainerInsets property
+  // UI/NSTextField do NOT have textContainerInset properties
+  _textContainerInsets = textContainerInsets;
+  super.textContainerInset = NSMakeSize(MIN(textContainerInsets.left, textContainerInsets.right), MIN(textContainerInsets.top, textContainerInsets.bottom));
+}
+
+#endif // ]TODO(macOS ISS#2323203)
 
 - (void)selectAll:(id)sender
 {
   [super selectAll:sender];
 
+#if !TARGET_OS_OSX // [TODO(macOS v0.63)
   // `selectAll:` does not work for UITextView when it's being called inside UITextView's delegate methods.
   dispatch_async(dispatch_get_main_queue(), ^{
     UITextRange *selectionRange = [self textRangeFromPosition:self.beginningOfDocument toPosition:self.endOfDocument];
     [self setSelectedTextRange:selectionRange notifyDelegate:NO];
   });
+#endif // ]TODO(macOS v0.63)
 }
 
 #pragma mark - Layout
@@ -205,11 +359,22 @@ static UIColor *defaultPlaceholderColor()
 
 - (CGSize)placeholderSize
 {
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   UIEdgeInsets textContainerInset = self.textContainerInset;
+#else // [TODO(macOS ISS#2323203)
+  UIEdgeInsets textContainerInset = self.textContainerInsets;
+#endif // ]TODO(macOS ISS#2323203)
   NSString *placeholder = self.placeholder ?: @"";
+
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   CGSize maxPlaceholderSize = CGSizeMake(UIEdgeInsetsInsetRect(self.bounds, textContainerInset).size.width, CGFLOAT_MAX);
   CGSize placeholderSize = [placeholder boundingRectWithSize:maxPlaceholderSize options:NSStringDrawingUsesLineFragmentOrigin attributes:[self _placeholderTextAttributes] context:nil].size;
   placeholderSize = CGSizeMake(RCTCeilPixelValue(placeholderSize.width), RCTCeilPixelValue(placeholderSize.height));
+#else // [TODO(macOS ISS#2323203)
+  CGFloat scale = self.window.backingScaleFactor;
+  CGSize placeholderSize = [placeholder sizeWithAttributes:@{NSFontAttributeName: self.font ?: defaultPlaceholderFont()}];
+  placeholderSize = CGSizeMake(RCTCeilPixelValue(placeholderSize.width, scale), RCTCeilPixelValue(placeholderSize.height, scale));
+#endif // ]TODO(macOS ISS#2323203)
   placeholderSize.width += textContainerInset.left + textContainerInset.right;
   placeholderSize.height += textContainerInset.top + textContainerInset.bottom;
   // Returning size DOES contain `textContainerInset` (aka `padding`; as `sizeThatFits:` does).
@@ -218,8 +383,13 @@ static UIColor *defaultPlaceholderColor()
 
 - (CGSize)contentSize
 {
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   CGSize contentSize = super.contentSize;
   CGSize placeholderSize = _placeholderView.isHidden ? CGSizeZero : self.placeholderSize;
+#else // [TODO(macOS ISS#2323203)
+  CGSize contentSize = super.intrinsicContentSize;
+  CGSize placeholderSize = self.placeholderSize;
+#endif // ]TODO(macOS ISS#2323203)
   // When a text input is empty, it actually displays a placehoder.
   // So, we have to consider `placeholderSize` as a minimum `contentSize`.
   // Returning size DOES contain `textContainerInset` (aka `padding`).
@@ -228,6 +398,7 @@ static UIColor *defaultPlaceholderColor()
     MAX(contentSize.height, placeholderSize.height));
 }
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 - (void)layoutSubviews
 {
   [super layoutSubviews];
@@ -237,6 +408,7 @@ static UIColor *defaultPlaceholderColor()
   textFrame.size.height = MIN(placeholderHeight, textFrame.size.height);
   _placeholderView.frame = textFrame;
 }
+#endif // TODO(macOS ISS#2323203)
 
 - (CGSize)intrinsicContentSize
 {
@@ -247,7 +419,13 @@ static UIColor *defaultPlaceholderColor()
 - (CGSize)sizeThatFits:(CGSize)size
 {
   // Returned fitting size depends on text size and placeholder size.
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   CGSize textSize = [super sizeThatFits:size];
+#else
+  [self.layoutManager glyphRangeForTextContainer:self.textContainer];
+  NSRect rect = [self.layoutManager usedRectForTextContainer:self.textContainer];
+  CGSize textSize = CGSizeMake(MIN(rect.size.width, size.width), rect.size.height);
+#endif // TODO(macOS ISS#2323203)
   CGSize placeholderSize = self.placeholderSize;
   // Returning size DOES contain `textContainerInset` (aka `padding`).
   return CGSizeMake(MAX(textSize.width, placeholderSize.width), MAX(textSize.height, placeholderSize.height));
@@ -255,6 +433,7 @@ static UIColor *defaultPlaceholderColor()
 
 #pragma mark - Context Menu
 
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
   if (_contextMenuHidden) {
@@ -263,18 +442,36 @@ static UIColor *defaultPlaceholderColor()
 
   return [super canPerformAction:action withSender:sender];
 }
+#endif // TODO(macOS ISS#2323203)
 
 #pragma mark - Placeholder
 
 - (void)_invalidatePlaceholderVisibility
 {
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   BOOL isVisible = _placeholder.length != 0 && self.attributedText.length == 0;
   _placeholderView.hidden = !isVisible;
+#else // [TODO(macOS ISS#2323203)
+  [self setNeedsDisplay:YES];
+#endif // ]TODO(macOS ISS#2323203)
 }
+
+#if !TARGET_OS_OSX // [TODO(OSS Candidate ISS#2710739)
+- (void)deleteBackward {
+  id<RCTBackedTextInputDelegate> textInputDelegate = [self textInputDelegate];
+  if ([textInputDelegate textInputShouldHandleDeleteBackward:self]) {
+    [super deleteBackward];
+  }
+}
+#endif // ]TODO(OSS Candidate ISS#2710739)
 
 - (void)_updatePlaceholder
 {
+#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   _placeholderView.attributedText = [[NSAttributedString alloc] initWithString:_placeholder ?: @"" attributes:[self _placeholderTextAttributes]];
+#else // [TODO(macOS ISS#2323203)
+  [self setNeedsDisplay:YES];
+#endif // ]TODO(macOS ISS#2323203)
 }
 
 - (NSDictionary<NSAttributedStringKey, id> *)_placeholderTextAttributes

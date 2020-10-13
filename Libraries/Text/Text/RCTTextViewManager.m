@@ -50,7 +50,7 @@ RCT_EXPORT_VIEW_PROPERTY(selectable, BOOL)
                                                     lazilyLoadIfNecessary:YES]];
 }
 
-- (UIView *)view
+- (RCTUIView *)view
 {
   return [RCTTextView new];
 }

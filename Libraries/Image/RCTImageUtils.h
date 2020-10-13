@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h> // TODO(macOS ISS#2323203)
 
 #import <React/RCTDefines.h>
 #import <React/RCTResizeMode.h>
@@ -89,5 +89,10 @@ RCT_EXTERN UIImage *__nullable RCTTransformImage(UIImage *image,
  * Return YES if image has an alpha component
  */
 RCT_EXTERN BOOL RCTImageHasAlpha(CGImageRef image);
+
+/*
+ * Return YES if image has an alpha component
+ */
+RCT_EXTERN BOOL RCTUIImageHasAlpha(UIImage *image); // TODO(macOS ISS#2323203)
 
 NS_ASSUME_NONNULL_END

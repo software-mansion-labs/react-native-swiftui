@@ -19,15 +19,21 @@ open class RSUISwitchView: RSUIView {
       }
     )
 
+    #if canImport(UIKit)
     let offColor = props.color("tintColor", Color(UIColor.systemGray5))
+    #else
+    let offColor = props.color("tintColor", Color(NSColor.systemGray))
+    #endif
 
+    #if os(iOS)
     if #available(iOS 14.0, *) {
       return AnyView(
         Toggle(isOn: valueBinding) { Children() }
           .toggleStyle(SwitchToggleStyle(tint: offColor))
       )
-    } else {
-      return AnyView(Toggle(isOn: valueBinding) { Children() })
     }
+    #endif
+
+    return AnyView(Toggle(isOn: valueBinding) { Children() })
   }
 }

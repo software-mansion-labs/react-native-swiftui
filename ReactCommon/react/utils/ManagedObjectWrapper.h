@@ -8,7 +8,7 @@
 #pragma once
 
 #if defined(__OBJC__) && defined(__cplusplus)
-#if TARGET_OS_MAC && TARGET_OS_IPHONE
+//#if TARGET_OS_MAC && TARGET_OS_IPHONE
 
 #include <memory>
 
@@ -72,5 +72,5 @@ inline id unwrapManagedObjectWeakly(std::shared_ptr<void> const &object) noexcep
 } // namespace react
 } // namespace facebook
 
-#endif
+//#endif
 #endif

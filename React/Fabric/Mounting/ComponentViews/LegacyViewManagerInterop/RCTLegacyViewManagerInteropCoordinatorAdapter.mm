@@ -28,7 +28,7 @@
   [_coordinator removeObserveForTag:_tag];
 }
 
-- (UIView *)paperView
+- (RCTUIView *)paperView
 {
   if (!_paperView) {
     _paperView = _coordinator.paperView;

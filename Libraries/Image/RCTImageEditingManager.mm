@@ -15,7 +15,7 @@
 #import <React/RCTImageLoaderProtocol.h>
 #import <React/RCTLog.h>
 #import <React/RCTUtils.h>
-#import <UIKit/UIKit.h>
+#import <React/RCTUIKit.h> // TODO(macOS ISS#2323203)
 
 #import "RCTImagePlugins.h"
 
@@ -53,7 +53,7 @@ RCT_EXPORT_METHOD(cropImage:(NSURLRequest *)imageRequest
       @"height": @(cropData.size().height()),
     }]
   };
-  
+
   // We must keep a copy of cropData so that we can access data from it at a later time
   JS::NativeImageEditor::Options cropDataCopy = cropData;
 
@@ -68,7 +68,7 @@ RCT_EXPORT_METHOD(cropImage:(NSURLRequest *)imageRequest
      CGSize targetSize = rect.size;
      CGRect targetRect = {{-rect.origin.x, -rect.origin.y}, image.size};
      CGAffineTransform transform = RCTTransformFromTargetRect(image.size, targetRect);
-     UIImage *croppedImage = RCTTransformImage(image, targetSize, image.scale, transform);
+     UIImage *croppedImage = RCTTransformImage(image, targetSize, UIImageGetScale(image), transform); // TODO(macOS ISS#2323203)
 
      // Scale image
      if (cropDataCopy.displaySize()) {
@@ -76,7 +76,7 @@ RCT_EXPORT_METHOD(cropImage:(NSURLRequest *)imageRequest
        RCTResizeMode resizeMode = [RCTConvert RCTResizeMode:cropDataCopy.resizeMode() ?: @"contain"];
        targetRect = RCTTargetRect(croppedImage.size, targetSize, 1, resizeMode);
        transform = RCTTransformFromTargetRect(croppedImage.size, targetRect);
-       croppedImage = RCTTransformImage(croppedImage, targetSize, image.scale, transform);
+       croppedImage = RCTTransformImage(croppedImage, targetSize, UIImageGetScale(image), transform); // TODO(macOS ISS#2323203)
      }
 
      // Store image

@@ -14,6 +14,7 @@
 #import <FBReactNativeSpec/FBReactNativeSpec.h>
 #import <React/RCTConvert.h>
 #import <React/RCTDefines.h>
+#import <React/RCTDevSettings.h> // TODO(macOS ISS#2323203) - Expose DevSettings in release builds
 #import <React/RCTImageCache.h>
 #import <React/RCTImageLoader.h>
 #import <React/RCTImageLoaderWithAttributionProtocol.h>
@@ -21,6 +22,7 @@
 #import <React/RCTLog.h>
 #import <React/RCTNetworking.h>
 #import <React/RCTUtils.h>
+#import <React/RCTUIKit.h> // TODO(macOS ISS#2323203)
 
 #import "RCTImagePlugins.h"
 
@@ -40,9 +42,32 @@ void RCTEnableImageLoadingPerfInstrumentation(BOOL enabled)
 
 static NSInteger RCTImageBytesForImage(UIImage *image)
 {
-  NSInteger singleImageBytes = image.size.width * image.size.height * image.scale * image.scale * 4;
+  CGFloat imageScale = 1.0;
+#if !TARGET_OS_OSX // [TODO(macOS ISS#2323203)
+  imageScale = image.scale; // [TODO(macOS ISS#2323203) // no .scale prop on NSImage
+#endif // [TODO(macOS ISS#2323203)
+  NSInteger singleImageBytes = image.size.width * image.size.height * imageScale * imageScale * 4;
+#if !TARGET_OS_OSX // [TODO(macOS ISS#2323203)
   return image.images ? image.images.count * singleImageBytes : singleImageBytes;
+#else // [TODO(macOS ISS#2323203)
+    return singleImageBytes; // [TODO(macOS ISS#2323203)
+#endif // [TODO(macOS ISS#2323203)
 }
+
+#if TARGET_OS_OSX
+static NSData *NSImageDataForFileType(NSImage *image, NSBitmapImageFileType fileType, NSDictionary<NSString *, id> *properties)
+{
+  RCTAssert(image.representations.count == 1, @"Expected only a single representation since UIImage only supports one.");
+
+  NSBitmapImageRep *imageRep = (NSBitmapImageRep *)image.representations.firstObject;
+  if (![imageRep isKindOfClass:[NSBitmapImageRep class]]) {
+    RCTAssert([imageRep isKindOfClass:[NSBitmapImageRep class]], @"We need an NSBitmapImageRep to create an image.");
+    return nil;
+  }
+
+  return [imageRep representationUsingType:fileType properties:properties];
+}
+#endif // TARGET_OS_OSX
 
 static uint64_t monotonicTimeGetCurrentNanoseconds(void)
 {
@@ -247,7 +272,7 @@ RCT_EXPORT_MODULE()
       _decoders = [_bridge modulesConformingToProtocol:@protocol(RCTImageDataDecoder)];
     }
 
-    _decoders = [[_bridge modulesConformingToProtocol:@protocol(RCTImageDataDecoder)] sortedArrayUsingComparator:^NSComparisonResult(id<RCTImageDataDecoder> a, id<RCTImageDataDecoder> b) {
+    _decoders = [_decoders sortedArrayUsingComparator:^NSComparisonResult(id<RCTImageDataDecoder> a, id<RCTImageDataDecoder> b) {
       float priorityA = [a respondsToSelector:@selector(decoderPriority)] ? [a decoderPriority] : 0;
       float priorityB = [b respondsToSelector:@selector(decoderPriority)] ? [b decoderPriority] : 0;
       if (priorityA > priorityB) {
@@ -443,6 +468,12 @@ static UIImage *RCTResizeImageIfNeeded(UIImage *image,
     }
   });
 }
+
+// [TODO(OSS Candidate ISS#2710739)
+- (NSInteger)activeTasks {
+  return _activeTasks;
+}
+// ]TODO(OSS Candidate ISS#2710739)
 
 /**
  * This returns either an image, or raw image data, depending on the loading
@@ -825,14 +856,13 @@ static UIImage *RCTResizeImageIfNeeded(UIImage *image,
     return;
   }
 
-  // This delegate method is Fabric-only
   id<RCTImageURLLoader> loadHandler = [self imageURLLoaderForURL:loaderRequest.imageURL];
   if ([loadHandler respondsToSelector:@selector(trackURLImageContentDidSetForRequest:)]) {
     [(id<RCTImageURLLoaderWithAttribution>)loadHandler trackURLImageContentDidSetForRequest:loaderRequest];
   }
 }
 
-- (void)trackURLImageVisibilityForRequest:(RCTImageURLLoaderRequest *)loaderRequest imageView:(UIView *)imageView
+- (void)trackURLImageVisibilityForRequest:(RCTImageURLLoaderRequest *)loaderRequest imageView:(RCTUIView *)imageView // TODO(macOS ISS#2323203)
 {
   if (!loaderRequest || !imageView) {
     return;
@@ -844,24 +874,11 @@ static UIImage *RCTResizeImageIfNeeded(UIImage *image,
   }
 }
 
-- (void)trackURLImageRequestDidDestroy:(RCTImageURLLoaderRequest *)loaderRequest
-{
-  if (!loaderRequest) {
-    return;
-  }
-
-  id<RCTImageURLLoader> loadHandler = [self imageURLLoaderForURL:loaderRequest.imageURL];
-  if ([loadHandler respondsToSelector:@selector(trackURLImageRequestDidDestroy:)]) {
-    [(id<RCTImageURLLoaderWithAttribution>)loadHandler trackURLImageRequestDidDestroy:loaderRequest];
-  }
-}
-
 - (void)trackURLImageDidDestroy:(RCTImageURLLoaderRequest *)loaderRequest
 {
   if (!loaderRequest) {
     return;
   }
-
   id<RCTImageURLLoader> loadHandler = [self imageURLLoaderForURL:loaderRequest.imageURL];
   if ([loadHandler respondsToSelector:@selector(trackURLImageDidDestroy:)]) {
     [(id<RCTImageURLLoaderWithAttribution>)loadHandler trackURLImageDidDestroy:loaderRequest];
@@ -919,14 +936,16 @@ static UIImage *RCTResizeImageIfNeeded(UIImage *image,
           // Decompress the image data (this may be CPU and memory intensive)
           UIImage *image = RCTDecodeImageWithData(data, size, scale, resizeMode);
 
-#if RCT_DEV
-          CGSize imagePixelSize = RCTSizeInPixels(image.size, image.scale);
-          CGSize screenPixelSize = RCTSizeInPixels(RCTScreenSize(), RCTScreenScale());
-          if (imagePixelSize.width * imagePixelSize.height >
-              screenPixelSize.width * screenPixelSize.height) {
-            RCTLogInfo(@"[PERF ASSETS] Loading image at size %@, which is larger "
-                       "than the screen size %@", NSStringFromCGSize(imagePixelSize),
-                       NSStringFromCGSize(screenPixelSize));
+#if !TARGET_OS_OSX && RCT_DEV // TODO(macOS ISS#2323203)
+          if ([[self->_bridge devSettings] isDevModeEnabled]) { // TODO(OSS Candidate ISS#2710739)
+            CGSize imagePixelSize = RCTSizeInPixels(image.size, UIImageGetScale(image)); // TODO(macOS ISS#2323203)
+            CGSize screenPixelSize = RCTSizeInPixels(RCTScreenSize(), RCTScreenScale());
+            if (imagePixelSize.width * imagePixelSize.height >
+                screenPixelSize.width * screenPixelSize.height) {
+              RCTLogInfo(@"[PERF ASSETS] Loading image at size %@, which is larger "
+                        "than the screen size %@", NSStringFromCGSize(imagePixelSize),
+                        NSStringFromCGSize(screenPixelSize));
+            }
           }
 #endif
 
@@ -1009,9 +1028,15 @@ static UIImage *RCTResizeImageIfNeeded(UIImage *image,
       }
     } else {
       UIImage *image = imageOrData;
+ #if !TARGET_OS_OSX
+      CGFloat imageScale = image.scale;
+#else
+      // Trust -[NSImage size] on macOS since an image is a collection of representations instead of a thin wrapper around a CGImage
+      CGFloat imageScale = 1.0;
+#endif // TARGET_OS_OSX
       size = (CGSize){
-        image.size.width * image.scale,
-        image.size.height * image.scale,
+        image.size.width * imageScale, // TODO(macOS ISS#2323203)
+        image.size.height * imageScale, // TODO(macOS ISS#2323203)
       };
     }
     callback(error, size);
@@ -1109,12 +1134,22 @@ static UIImage *RCTResizeImageIfNeeded(UIImage *image,
 
     NSString *mimeType = nil;
     NSData *imageData = nil;
-    if (RCTImageHasAlpha(image.CGImage)) {
+    if (RCTUIImageHasAlpha(image)) { // TODO(macOS ISS#2323203)
       mimeType = @"image/png";
+#if TARGET_OS_OSX
+      imageData = NSImageDataForFileType(image, NSBitmapImageFileTypePNG, @{});
+#else
       imageData = UIImagePNGRepresentation(image);
+#endif // !TARGET_OS_OSX
     } else {
       mimeType = @"image/jpeg";
+#if TARGET_OS_OSX
+      imageData = NSImageDataForFileType(image,
+                                         NSBitmapImageFileTypeJPEG,
+                                         @{NSImageCompressionFactor : @(1.0)});
+#else
       imageData = UIImageJPEGRepresentation(image, 1.0);
+#endif // !TARGET_OS_OSX
     }
 
     NSURLResponse *response = [[NSURLResponse alloc] initWithURL:request.URL
@@ -1211,7 +1246,7 @@ RCT_EXPORT_METHOD(queryCache:(NSArray *)uris
 - (RCTImageLoader *)imageLoader
 {
   RCTLogWarn(@"Calling bridge.imageLoader is deprecated and will not work in newer versions of RN. Please update to the "
-             "moduleForClass API or turboModuleRegistry API.");
+             "moduleForClass API or turboModuleLookupDelegate API.");
   return [self moduleForClass:[RCTImageLoader class]];
 }
 

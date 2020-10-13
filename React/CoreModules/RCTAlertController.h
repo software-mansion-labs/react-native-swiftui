@@ -5,10 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <UIKit/UIKit.h>
-
-@interface RCTAlertController : UIAlertController
-
-- (void)show:(BOOL)animated completion:(void (^)(void))completion;
-
-@end
+//#import <React/RCTUIKit.h>
+//
+//@interface RCTAlertController : UIAlertController
+//
+//- (void)show:(BOOL)animated completion:(void (^)(void))completion;
+//
+//@end
