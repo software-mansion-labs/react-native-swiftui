@@ -17,10 +17,10 @@ def pods()
   # Enable TurboModule
   prefix_path = "../.."
   use_react_native!(path:prefix_path, fabric_enabled: true)
-#  pod 'ReactCommon/turbomodule/samples', :path => "#{prefix_path}/ReactCommon"
+  pod 'ReactCommon/turbomodule/samples', :path => "#{prefix_path}/ReactCommon"
 
   # Additional Pods which aren't included in the default Podfile
-#  pod 'React-RCTPushNotification', :path => "#{prefix_path}/Libraries/PushNotificationIOS"
+ pod 'React-RCTPushNotification', :path => "#{prefix_path}/Libraries/PushNotificationIOS"
   pod 'Yoga',:path => "#{prefix_path}/ReactCommon/yoga"
   # Additional Pods which are classed as unstable
   #

@@ -11,7 +11,7 @@ open class RSUITextView: RSUIView {
     switch ellipsizeMode {
     case "head":
       return .head
-    case "center":
+    case "middle":
       return .middle
     default:
       return .tail
@@ -19,7 +19,7 @@ open class RSUITextView: RSUIView {
   }
 
   public override func render() -> AnyView {
-    let numberOfLines = props.int("numberOfLines", 1)
+    let numberOfLines = props.int("numberOfLines", -1)
     let ellipsizeMode = props.string("ellipsizeMode")
     let attributedString = self.descriptor.state.dictionary("attributedString") ?? [:]
     let fragments = attributedString["fragments"] as! Array<Dictionary<String, Any>>
@@ -33,7 +33,7 @@ open class RSUITextView: RSUIView {
 
         Text(text)
           .font(.system(size: fontSize))
-          .lineLimit(numberOfLines)
+          .lineLimit(numberOfLines >= 0 ? numberOfLines : nil)
           .truncationMode(ellipsizeModeToTruncationMode(ellipsizeMode))
       }
     )

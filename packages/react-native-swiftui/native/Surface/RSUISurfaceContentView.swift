@@ -68,5 +68,6 @@ public class RSUISurfaceContentView: UIView {
 
   private func createHostingRootView() -> some View {
     return RSUIViewWrapper(descriptor: surfaceDescriptor!)
+      .edgesIgnoringSafeArea(.all)
   }
 }
