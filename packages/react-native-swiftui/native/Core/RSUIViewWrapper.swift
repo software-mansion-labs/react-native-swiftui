@@ -18,7 +18,11 @@ public struct RSUIViewWrapper: View, Identifiable {
   @ObservedObject
   var descriptor: RSUIViewDescriptor
 
-  var props: RSUIViewProps { descriptor.props }
+  // Computed properties for easier access to descriptor properties
+  internal var props: RSUIViewProps { descriptor.props }
+  internal var state: RSUIViewProps { descriptor.state }
+  internal var eventEmitter: RSUIEventEmitter { descriptor.eventEmitter }
+  internal var layoutMetrics: RSUILayoutMetrics { descriptor.layoutMetrics }
 
   func layout<InputType: View>(_ view: InputType) -> some View {
     let layoutMetrics = descriptor.layoutMetrics

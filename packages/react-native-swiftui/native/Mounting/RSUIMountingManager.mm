@@ -177,7 +177,11 @@ using namespace facebook::react;
         [viewDescriptor updateLayoutMetricsWithX:layoutMetrics.frame.origin.x
                                                y:layoutMetrics.frame.origin.y
                                            width:layoutMetrics.frame.size.width
-                                          height:layoutMetrics.frame.size.height];
+                                          height:layoutMetrics.frame.size.height
+                                contentLeftInset:layoutMetrics.contentInsets.left
+                                 contentTopInset:layoutMetrics.contentInsets.top
+                               contentRightInset:layoutMetrics.contentInsets.right
+                              contentBottomInset:layoutMetrics.contentInsets.bottom];
 
         [viewDescriptor.eventEmitter setInternalEventEmitter:newChildShadowView.eventEmitter.get()];
 
@@ -244,7 +248,11 @@ using namespace facebook::react;
           [viewDescriptor updateLayoutMetricsWithX:layoutMetrics.frame.origin.x
                                                  y:layoutMetrics.frame.origin.y
                                              width:layoutMetrics.frame.size.width
-                                            height:layoutMetrics.frame.size.height];
+                                            height:layoutMetrics.frame.size.height
+                                  contentLeftInset:layoutMetrics.contentInsets.left
+                                   contentTopInset:layoutMetrics.contentInsets.top
+                                 contentRightInset:layoutMetrics.contentInsets.right
+                                contentBottomInset:layoutMetrics.contentInsets.bottom];
           mask |= RNComponentViewUpdateMaskLayoutMetrics;
         }
         if (mask != RNComponentViewUpdateMaskNone) {

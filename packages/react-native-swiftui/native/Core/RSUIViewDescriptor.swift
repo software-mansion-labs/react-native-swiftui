@@ -81,11 +81,26 @@ public class RSUIViewDescriptor: NSObject, ObservableObject {
   // MARK: Layout management
 
   @objc
-  public func updateLayoutMetrics(x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat) {
-    layoutMetrics.x = x
-    layoutMetrics.y = y
-    layoutMetrics.width = width
-    layoutMetrics.height = height
+  public func updateLayoutMetrics(
+    x: CGFloat,
+    y: CGFloat,
+    width: CGFloat,
+    height: CGFloat,
+    contentLeftInset: CGFloat,
+    contentTopInset: CGFloat,
+    contentRightInset: CGFloat,
+    contentBottomInset: CGFloat
+  ) {
+    layoutMetrics = RSUILayoutMetrics(
+      x: x,
+      y: y,
+      width: width,
+      height: height,
+      contentLeftInset: contentLeftInset,
+      contentTopInset: contentTopInset,
+      contentRightInset: contentRightInset,
+      contentBottomInset: contentBottomInset
+    )
   }
 
   // MARK: Finalizing updates

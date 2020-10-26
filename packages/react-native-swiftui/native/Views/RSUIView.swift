@@ -12,6 +12,7 @@ open class RSUIView: RSUIViewProtocol {
   internal var props: RSUIViewProps { descriptor.props }
   internal var state: RSUIViewProps { descriptor.state }
   internal var eventEmitter: RSUIEventEmitter { descriptor.eventEmitter }
+  internal var layoutMetrics: RSUILayoutMetrics { descriptor.layoutMetrics }
 
   public required init(_ descriptor: RSUIViewDescriptor) {
     self.descriptor = descriptor
