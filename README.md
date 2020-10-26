@@ -60,6 +60,14 @@ This project is to research what we can do to take advantage of using SwiftUI as
 - Events
   - [x] `onChange`
 
+### ScrollView
+
+- A lot of properties known from `UIScrollView` are missing in SwiftUI, so we have our own `ScrollView` component.
+- There is no convenient way to get `onScroll` event other than just adding drag gesture.
+- Props
+  - [x] `axes` that takes `vertical`/`horizontal`/`both` as an argument.
+  - [x] `showsIndicators` — as opposed to `UIScrollView`, for 2-directional scroll views, we cannot specify different arguments for specific axis.
+
 ## Graphical Effects
 
 ### Shadow

@@ -3,6 +3,7 @@ import Circle from './js/Circle';
 import Mask from './js/Mask';
 import Rect from './js/Rect';
 import Shadow from './js/Shadow';
+import ScrollView from './js/ScrollView';
 
 export {
   Button,
@@ -10,4 +11,5 @@ export {
   Mask,
   Rect,
   Shadow,
+  ScrollView,
 };

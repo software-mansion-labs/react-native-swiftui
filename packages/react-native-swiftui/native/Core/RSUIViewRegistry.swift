@@ -28,6 +28,7 @@ public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
     register(viewType: RSUIMask.self)
     register(viewType: RSUIRect.self)
     register(viewType: RSUICircle.self)
+    register(viewType: RSUIScrollView.self)
   }
 
   @objc

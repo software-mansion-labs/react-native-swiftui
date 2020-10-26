@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet, Switch } from 'react-native';
 
-import { Button, Shadow, Mask, Rect, Circle } from 'react-native-swiftui';
+import { Button, Shadow, Mask, Rect, Circle, ScrollView } from 'react-native-swiftui';
 
 const colors = ['black', 'blue', 'orange', 'green', 'pink', 'yellow', 'purple', 'red', 'transparent'];
 
@@ -46,7 +46,7 @@ class SwiftUIExamples extends React.PureComponent {
 
   render() {
     return (
-      <View style={{ flex: 1, justifyContent: 'flex-start', paddingTop: 44 }}>
+      <ScrollView style={{ flex: 1, justifyContent: 'flex-start', paddingTop: 44 }} axes="vertical" showsIndicators={true}>
         <View style={{ marginVertical: 20, flexDirection: 'row' }}>
           <View
             style={{
@@ -190,7 +190,9 @@ class SwiftUIExamples extends React.PureComponent {
             </Mask>
           </Shadow>
         </View>
-      </View>
+
+        {colors.map(color => <View key={color} style={{ height: 150, backgroundColor: color }} />)}
+      </ScrollView>
     );
   }
 }
