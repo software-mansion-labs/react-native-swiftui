@@ -64,9 +64,12 @@ This project is to research what we can do to take advantage of using SwiftUI as
 
 - A lot of properties known from `UIScrollView` are missing in SwiftUI, so we have our own `ScrollView` component.
 - There is no convenient way to get `onScroll` event other than just adding drag gesture.
+- Scroll to specified point within the view is not provided yet. However, as it let us scroll to a subview with specified ID, we can omit this limitation by rendering empty points filling the entire axis with an ID being its (X,Y) position which is how `scrollTo` command is implemented.
 - Props
   - [x] `axes` that takes `vertical`/`horizontal`/`both` as an argument.
   - [x] `showsIndicators` — as opposed to `UIScrollView`, for 2-directional scroll views, we cannot specify different arguments for specific axis.
+- Commands
+  - `scrollTo(options: { y: number, animated: boolean })` — works only for vertical scrolls, as it would be a significant performance hit in the current implementation to support both axes.
 
 ## Graphical Effects
 

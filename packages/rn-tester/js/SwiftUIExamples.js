@@ -6,6 +6,8 @@ import { Button, Shadow, Mask, Rect, Circle, ScrollView } from 'react-native-swi
 const colors = ['black', 'blue', 'orange', 'green', 'pink', 'yellow', 'purple', 'red', 'transparent'];
 
 class SwiftUIExamples extends React.PureComponent {
+  scrollRef = React.createRef()
+
   state = {
     colorIndex: 0,
     isButtonPressed: false,
@@ -29,9 +31,14 @@ class SwiftUIExamples extends React.PureComponent {
     alert('Button has been pressed');
   }
 
+  onRandomScroll = () => {
+    const scrollX = Math.round(Math.random() * 500);
+    const scrollY = Math.round(Math.random() * 1000);
+    this.scrollRef.current.scrollTo({ x: scrollX, y: scrollY, animated: true });
+  }
+
   onActiveStateChange = ({ nativeEvent }) => {
     this.setState({ isButtonPressed: nativeEvent.state });
-    // console.log('active state change:', nativeEvent.state);
   }
 
   onTextChange = ({ nativeEvent }) => {
@@ -46,7 +53,7 @@ class SwiftUIExamples extends React.PureComponent {
 
   render() {
     return (
-      <ScrollView style={{ flex: 1, justifyContent: 'flex-start', paddingTop: 44 }} axes="vertical" showsIndicators={true}>
+      <ScrollView style={{ flex: 1, justifyContent: 'flex-start', paddingTop: 44 }} axes="both" showsIndicators={true} ref={this.scrollRef}>
         <View style={{ marginVertical: 20, flexDirection: 'row' }}>
           <View
             style={{
@@ -111,11 +118,16 @@ class SwiftUIExamples extends React.PureComponent {
         <View style={{ margin: 20, flexDirection: 'row', alignItems: 'center' }}>
           <Button onPress={this.onPress} onActiveStateChange={this.onActiveStateChange}>
             <Text style={{
-              margin: 15,
+              margin: 10,
               color: this.state.isButtonPressed ? 'gray' : 'black',
-              fontSize: 20,
+              fontSize: 18,
             }}>
               Press me!
+            </Text>
+          </Button>
+          <Button onPress={this.onRandomScroll}>
+            <Text style={{ margin: 10, color: 'blue', fontSize: 18 }}>
+              Scroll to random
             </Text>
           </Button>
           <Switch
