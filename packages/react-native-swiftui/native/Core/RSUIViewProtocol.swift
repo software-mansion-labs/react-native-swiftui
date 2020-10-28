@@ -6,6 +6,8 @@ public enum RSUIViewTrait {
   case Styleable
 }
 
+public typealias RSUICommand = ([AnyObject]) -> Void
+
 public typealias RSUIViewTraits = [RSUIViewTrait]
 
 public protocol RSUIViewProtocol {
@@ -16,6 +18,8 @@ public protocol RSUIViewProtocol {
   static func traits() -> RSUIViewTraits
 
   init(_ descriptor: RSUIViewDescriptor)
+
+  var commands: [String: RSUICommand] { get }
 
   func render() -> Self.RenderReturnType
 }

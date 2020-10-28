@@ -103,6 +103,17 @@ public class RSUIViewDescriptor: NSObject, ObservableObject {
     )
   }
 
+  // MARK: Dispatching commands
+
+  @objc
+  public func dispatchCommand(_ commandName: String, withArgs args: [AnyObject]) {
+    guard let command = view.commands[commandName] else {
+      // TODO: throw an exception
+      return
+    }
+    command(args)
+  }
+
   // MARK: Finalizing updates
 
   @objc

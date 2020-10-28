@@ -146,9 +146,11 @@ using namespace facebook::react;
                                    commandName:(NSString *)commandName
                                           args:(NSArray *)args
 {
-//  RCTAssertMainQueue();
+  RCTAssertMainQueue();
 //  UIView<RCTComponentViewProtocol> *componentView = [_componentViewRegistry findComponentViewWithTag:reactTag];
 //  [componentView handleCommand:commandName args:args];
+  RSUIViewDescriptor *viewDescriptor = [_viewRegistry viewDescriptorForTag:reactTag];
+  [viewDescriptor dispatchCommand:commandName withArgs:args];
 }
 
 #pragma mark - Performing mutations

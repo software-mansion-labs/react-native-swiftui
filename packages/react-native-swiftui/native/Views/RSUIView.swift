@@ -18,6 +18,8 @@ open class RSUIView: RSUIViewProtocol {
     self.descriptor = descriptor
   }
 
+  public var commands: [String: RSUICommand] { [:] }
+
   /**
    * Lifecycle method that gets called each time the view receives new props.
    */
