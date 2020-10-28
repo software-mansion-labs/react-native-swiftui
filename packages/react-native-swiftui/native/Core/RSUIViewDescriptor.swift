@@ -6,6 +6,7 @@ public class RSUIViewDescriptor: NSObject, ObservableObject {
   let viewType: RSUIView.Type
   let viewRegistry: RSUIViewRegistry
 
+  lazy var state = RSUIState()
   lazy var view: RSUIView = viewType.init(self)
 
   @objc
@@ -16,7 +17,7 @@ public class RSUIViewDescriptor: NSObject, ObservableObject {
   }
 
   @objc
-  public let state: RSUIViewProps
+  public let shadowNodeState: RSUIViewProps
 
   @objc
   public let eventEmitter: RSUIEventEmitter
@@ -37,7 +38,7 @@ public class RSUIViewDescriptor: NSObject, ObservableObject {
     self.viewType = viewType
     self.viewRegistry = viewRegistry
     self.props = RSUIViewProps()
-    self.state = RSUIViewProps()
+    self.shadowNodeState = RSUIViewProps()
     self.eventEmitter = RSUIEventEmitter()
     super.init()
   }

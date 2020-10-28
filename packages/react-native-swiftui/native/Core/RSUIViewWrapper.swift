@@ -20,7 +20,8 @@ public struct RSUIViewWrapper: View, Identifiable {
 
   // Computed properties for easier access to descriptor properties
   internal var props: RSUIViewProps { descriptor.props }
-  internal var state: RSUIViewProps { descriptor.state }
+  internal var state: RSUIState { descriptor.state }
+  internal var shadowNodeState: RSUIViewProps { descriptor.shadowNodeState }
   internal var eventEmitter: RSUIEventEmitter { descriptor.eventEmitter }
   internal var layoutMetrics: RSUILayoutMetrics { descriptor.layoutMetrics }
 

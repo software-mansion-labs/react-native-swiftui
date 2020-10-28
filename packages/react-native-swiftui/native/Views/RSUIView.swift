@@ -10,7 +10,8 @@ open class RSUIView: RSUIViewProtocol {
 
   // Computed properties for easier access to descriptor properties
   internal var props: RSUIViewProps { descriptor.props }
-  internal var state: RSUIViewProps { descriptor.state }
+  internal var state: RSUIState { descriptor.state }
+  internal var shadowNodeState: RSUIViewProps { descriptor.shadowNodeState }
   internal var eventEmitter: RSUIEventEmitter { descriptor.eventEmitter }
   internal var layoutMetrics: RSUILayoutMetrics { descriptor.layoutMetrics }
 
@@ -37,6 +38,25 @@ open class RSUIView: RSUIViewProtocol {
         self.eventEmitter.dispatchEvent("longPress")
       }
     )
+  }
+
+  // MARK: State
+
+  public final func setState(_ updater: (inout RSUIState) -> Void) {
+    updater(&descriptor.state)
+    descriptor.commitUpdates()
+  }
+
+  public final func setState(_ key: String, value: Any?) {
+    setState { $0[key] = value }
+  }
+
+  public final func setState(_ patch: [String: Any?]) {
+    setState {
+      for (key, value) in patch {
+        $0[key] = value
+      }
+    }
   }
 
   // MARK: View helpers

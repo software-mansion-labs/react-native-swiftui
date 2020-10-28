@@ -174,7 +174,7 @@ using namespace facebook::react;
         [viewDescriptor.props updateObject:newProps];
 
         folly::dynamic const &newState = [RSUIComponentViewFactory dynamicStateForState:newChildShadowView.state];
-        [viewDescriptor.state updateObject:newState];
+        [viewDescriptor.shadowNodeState updateObject:newState];
 
         [viewDescriptor updateLayoutMetricsWithX:layoutMetrics.frame.origin.x
                                                y:layoutMetrics.frame.origin.y
@@ -233,7 +233,7 @@ using namespace facebook::react;
         if (oldChildShadowView.state != newChildShadowView.state) {
           NSLog(@"Update %s state with tag %d", newChildShadowView.componentName, newChildShadowView.tag);
           folly::dynamic const &newState = [RSUIComponentViewFactory dynamicStateForState:newChildShadowView.state];
-          [viewDescriptor.state updateObject:newState];
+          [viewDescriptor.shadowNodeState updateObject:newState];
           mask |= RNComponentViewUpdateMaskState;
         }
 
