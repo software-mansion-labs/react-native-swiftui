@@ -68,32 +68,74 @@ open class RSUIView: RSUIViewProtocol {
   func AlignHorizontally<Content: View>(alignment: HorizontalAlignment, content: () -> Content) -> AnyView {
     switch alignment {
     case .leading:
-      return AnyView(HStack { content(); Spacer() })
+      return AnyView(
+        HStack(spacing: 0) {
+          content()
+          Spacer(minLength: 0)
+        }
+      )
     case .center:
-      return AnyView(HStack { Spacer(); content(); Spacer() })
+      return AnyView(
+        HStack(spacing: 0) {
+          Spacer(minLength: 0)
+          content()
+          Spacer(minLength: 0)
+        }
+      )
     case .trailing:
-      return AnyView(HStack { Spacer(); content() })
+      return AnyView(
+        HStack(spacing: 0) {
+          Spacer(minLength: 0)
+          content()
+        }
+      )
     default:
-      return AnyView(HStack { content() })
+      return AnyView(
+        HStack(spacing: 0) {
+          content()
+        }
+      )
     }
   }
 
   func AlignVertically<Content: View>(alignment: VerticalAlignment, content: () -> Content) -> AnyView {
     switch alignment {
     case .top:
-      return AnyView(VStack { content(); Spacer() })
+      return AnyView(
+        VStack(spacing: 0) {
+          content()
+          Spacer(minLength: 0)
+        }
+      )
     case .center:
-      return AnyView(VStack { Spacer(); content(); Spacer() })
+      return AnyView(
+        VStack(spacing: 0) {
+          Spacer(minLength: 0)
+          content()
+          Spacer(minLength: 0)
+        }
+      )
     case .bottom:
-      return AnyView(VStack { Spacer(); content() })
+      return AnyView(
+        VStack(spacing: 0) {
+          Spacer(minLength: 0)
+          content()
+        }
+      )
     default:
-      return AnyView(VStack { content() })
+      return AnyView(
+        VStack(spacing: 0) {
+          content()
+        }
+      )
     }
   }
 
   func AlignContainer<Content: View>(alignment: Alignment, content: () -> Content) -> AnyView {
-    return AnyView(AlignHorizontally(alignment: alignment.horizontal) {
-      AlignVertically(alignment: alignment.vertical, content: content)
-    })
+    return AnyView(
+      AlignHorizontally(alignment: alignment.horizontal) {
+        AlignVertically(alignment: alignment.vertical, content: content)
+      }
+    )
   }
 }

@@ -60,7 +60,7 @@ public class RSUIViewProps: RSUIDynamicObject {
     case "bottomRight":
       return .bottomTrailing
     default:
-      return .center
+      return fallback
     }
   }
 

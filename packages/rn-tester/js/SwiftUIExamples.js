@@ -53,7 +53,7 @@ class SwiftUIExamples extends React.PureComponent {
 
   render() {
     return (
-      <ScrollView style={{ flex: 1, justifyContent: 'flex-start', paddingTop: 44, backgroundColor: 'cyan' }} axes="both" showsIndicators={true} ref={this.scrollRef}>
+      <ScrollView style={{ flex: 1, justifyContent: 'flex-start', paddingTop: 44, backgroundColor: 'white' }} axes="both" showsIndicators={true} ref={this.scrollRef}>
         <View style={{ marginVertical: 20, flexDirection: 'row' }}>
           <View
             style={{
@@ -87,19 +87,19 @@ class SwiftUIExamples extends React.PureComponent {
         </View>
 
         <View style={{ marginVertical: 20, flexDirection: 'row', alignItems: 'flex-start' }}>
-          <View style={{ width: 50, height: 50, backgroundColor: 'yellow' }}>
+          <View style={{ width: 50, height: 50, backgroundColor: 'yellow', textAlign: 'center' }}>
             <Text style={{ color: 'black' }}>50x50</Text>
           </View>
           <Text style={{ width: 70, backgroundColor: 'orange', color: 'white' }} numberOfLines={6}>
             (up to 6 lines, width 70) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           </Text>
-          <View style={{ width: 32, height: 15, backgroundColor: 'yellow' }}>
+          <View style={{ width: 32, height: 15, backgroundColor: 'yellow', textAlign: 'center' }}>
             <Text style={{ color: 'black', fontSize: 10 }}>32x15</Text>
           </View>
           <Text style={{ flex: 1, backgroundColor: 'green', color: 'white' }} numberOfLines={2}>
             (up to 2 lines, flex width) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           </Text>
-          <View style={{ width: 60, height: 70, backgroundColor: 'yellow' }}>
+          <View style={{ width: 60, height: 70, backgroundColor: 'yellow', textAlign: 'center' }}>
             <Text style={{ color: 'black' }}>60x70</Text>
           </View>
         </View>
