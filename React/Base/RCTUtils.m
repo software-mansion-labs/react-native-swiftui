@@ -304,7 +304,7 @@ CGFloat RCTScreenScale()
 
   return scale;
 #else
-  return 1.0;
+  return [NSScreen mainScreen].backingScaleFactor;
 #endif
 }
 

@@ -284,11 +284,7 @@ UIImage *__nullable RCTDecodeImageWithData(NSData *data,
       destScale = 1;
     }
   } else if (!destScale) {
-#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
     destScale = RCTScreenScale();
-#else // [TODO(macOS ISS#2323203)
-    destScale = 1.0; // It's not possible to derive the correct scale on macOS, but it's not necessary for NSImage anyway
-#endif // ]TODO(macOS ISS#2323203)
   }
 
   if (resizeMode == UIViewContentModeScaleToFill) {

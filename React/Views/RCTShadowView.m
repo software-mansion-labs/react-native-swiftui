@@ -49,11 +49,7 @@ typedef NS_ENUM(unsigned int, meta_prop_t) {
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     yogaConfig = YGConfigNew();
-#if !TARGET_OS_OSX // [TODO(macOS ISS#2323203)
     float pixelsInPoint = RCTScreenScale();
-#else
-    float pixelsInPoint = 0; // TODO(ISS#1656079): Turn off pixel rounding for macOS until we can get screen resolution passed here
-#endif // ]TODO(macOS ISS#2323203)
     YGConfigSetPointScaleFactor(yogaConfig, pixelsInPoint);
     YGConfigSetUseLegacyStretchBehaviour(yogaConfig, true);
   });

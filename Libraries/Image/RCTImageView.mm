@@ -356,11 +356,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
     return nil;
   }
 
-#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
   const CGFloat scale = RCTScreenScale();
-#else // [TODO(macOS ISS#2323203)
-  const CGFloat scale = self.window != nil ? self.window.backingScaleFactor : [NSScreen mainScreen].backingScaleFactor;
-#endif // ]TODO(macOS ISS#2323203)
   const CGFloat targetImagePixels = size.width * size.height * scale * scale;
 
   RCTImageSource *bestSource = nil;
@@ -423,11 +419,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
     };
 
     CGSize imageSize = self.bounds.size;
-#if !TARGET_OS_OSX // TODO(macOS ISS#2323203)
     CGFloat imageScale = RCTScreenScale();
-#else // [TODO(macOS ISS#2323203)
-    CGFloat imageScale = self.window != nil ? self.window.backingScaleFactor : [NSScreen mainScreen].backingScaleFactor;
-#endif // ]TODO(macOS ISS#2323203)
     if (!UIEdgeInsetsEqualToEdgeInsets(_capInsets, UIEdgeInsetsZero)) {
       // Don't resize images that use capInsets
       imageSize = CGSizeZero;
@@ -534,11 +526,10 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
   } else if ([self shouldReloadImageSourceAfterResize]) {
     CGSize imageSize = self.image.size;
     CGFloat imageScale = UIImageGetScale(self.image); // [TODO(macOS ISS#2323203)
-#if !TARGET_OS_OSX // [TODO(macOS ISS#2323203)
     CGFloat windowScale = RCTScreenScale();
+#if !TARGET_OS_OSX // [TODO(macOS ISS#2323203)
     RCTResizeMode resizeMode = (RCTResizeMode)_imageView.contentMode;
 #else // [TODO(macOS ISS#2323203)
-    CGFloat windowScale = self.window != nil ? self.window.backingScaleFactor : [NSScreen mainScreen].backingScaleFactor;
     RCTResizeMode resizeMode = self.resizeMode;
 
     // self.contentMode on iOS is translated to RCTResizeModeRepeat in -setResizeMode:
