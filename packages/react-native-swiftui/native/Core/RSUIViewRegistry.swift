@@ -29,6 +29,8 @@ public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
     register(viewType: RSUIRect.self)
     register(viewType: RSUICircle.self)
     register(viewType: RSUIScrollView.self)
+    register(viewType: RSUIImage.self)
+    register(viewType: RSUIImage.self, name: "Image")
   }
 
   @objc

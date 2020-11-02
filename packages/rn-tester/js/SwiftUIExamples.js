@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet, Switch } from 'react-native';
 
-import { Button, Shadow, Mask, Rect, Circle, ScrollView } from 'react-native-swiftui';
+import { Button, Shadow, Mask, Rect, Circle, ScrollView, Image } from 'react-native-swiftui';
 
 const colors = ['black', 'blue', 'orange', 'green', 'pink', 'yellow', 'purple', 'red', 'transparent'];
 
@@ -201,6 +201,15 @@ class SwiftUIExamples extends React.PureComponent {
               </View>
             </Mask>
           </Shadow>
+        </View>
+
+        <View style={{ marginVertical: 20, justifyContent: 'center', flexDirection: 'row' }}>
+          <Image
+            style={{ width: 156, height: 104 }}
+            source={{ uri: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BBKHUZJ.img?h=104&w=199&m=6&q=60&u=t&o=f&l=f&x=1700&y=1854' }} />
+          <Image
+            style={{ width: 120, height: 120 }}
+            source={require('./assets/bunny.png')} />
         </View>
 
         {colors.map(color => <View key={color} style={{ height: 150, backgroundColor: color }} />)}

@@ -72,6 +72,11 @@ This project is to research what we can do to take advantage of using SwiftUI as
 - Commands
   - `scrollTo(options: { y: number, animated: boolean })` — works only for vertical scrolls, as it would be a significant performance hit in the current implementation to support both axes.
 
+### Image
+
+- Implemented only for network assets.
+- Only `source` property is supported. Accepts the same value types as `Image` from React Native.
+
 ## Graphical Effects
 
 ### Shadow

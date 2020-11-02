@@ -187,8 +187,7 @@ using namespace facebook::react;
         NSLog(@"Create %s with tag %d", newChildShadowView.componentName, newChildShadowView.tag);
         RSUIViewDescriptor *viewDescriptor = [_viewRegistry create:newChildShadowView.tag name:@(newChildShadowView.componentName)];
 
-        folly::dynamic const &newProps = [RSUIComponentViewFactory dynamicPropsValueForProps:newChildShadowView.props];
-        [viewDescriptor.props updateObject:newProps];
+        [self updateViewDescriptor:viewDescriptor withNewProps:newChildShadowView.props];
 
         folly::dynamic const &newState = [RSUIComponentViewFactory dynamicStateForState:newChildShadowView.state];
         [viewDescriptor.shadowNodeState updateObject:newState];
