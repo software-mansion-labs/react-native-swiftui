@@ -81,6 +81,14 @@ This project is to research what we can do to take advantage of using SwiftUI as
 
 ## Graphical Effects
 
+### Animation
+
+Animates changes to all animatable values within this view (including its subviews).
+
+- Props
+  - [x] `type` (`easeIn`, `easeOut`, `easeInOut`, `linear`)
+  - [x] `duration` (in seconds)
+
 ### Shadow
 
 Adds a shadow with given `radius`, `offsetX`, `offsetY`, `opacity` and `color` to children views.
