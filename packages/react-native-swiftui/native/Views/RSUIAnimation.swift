@@ -30,10 +30,8 @@ open class RSUIAnimation: RSUIView {
 
   public override func render() -> AnyView {
     return AnyView(
-      ZStack(alignment: .topLeading) {
-        Children()
-      }
-      .animation(createAnimation())
+      Children()
+        .animation(createAnimation())
     )
   }
 }

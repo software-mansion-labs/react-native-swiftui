@@ -32,6 +32,7 @@ public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
     register(viewType: RSUIImage.self)
     register(viewType: RSUIImage.self, name: "Image")
     register(viewType: RSUIAnimation.self)
+    register(viewType: RSUIBlur.self)
   }
 
   @objc

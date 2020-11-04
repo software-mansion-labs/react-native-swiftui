@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet, Switch } from 'react-native';
 
-import { Button, Shadow, Mask, Rect, Circle, ScrollView, Image, Animation } from 'react-native-swiftui';
+import { Button, Shadow, Mask, Rect, Circle, ScrollView, Image, Animation, Blur } from 'react-native-swiftui';
 
 const colors = ['black', 'blue', 'orange', 'green', 'pink', 'yellow', 'purple', 'red'];
 
@@ -261,6 +261,14 @@ class SwiftUIExamples extends React.PureComponent {
               <Text style={{ fontSize: 9 }}>View masked by circles</Text>
             </View>
           </Mask>
+        </ExampleSection>
+
+        <ExampleSection header="Blur">
+          <Blur radius={5.0}>
+            <Image
+              style={{ width: 120, height: 120, marginHorizontal: 10 }}
+              source={require('./assets/bunny.png')} />
+          </Blur>
         </ExampleSection>
 
         <View style={{ height: 100 }} />
