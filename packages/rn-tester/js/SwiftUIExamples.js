@@ -1,9 +1,26 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet, Switch } from 'react-native';
 
-import { Button, Shadow, Mask, Rect, Circle, ScrollView, Image } from 'react-native-swiftui';
+import { Button, Shadow, Mask, Rect, Circle, ScrollView, Image, Animation } from 'react-native-swiftui';
 
-const colors = ['black', 'blue', 'orange', 'green', 'pink', 'yellow', 'purple', 'red', 'transparent'];
+const colors = ['black', 'blue', 'orange', 'green', 'pink', 'yellow', 'purple', 'red'];
+
+class ExampleSection extends React.PureComponent {
+  render() {
+    return (
+      <View style={[styles.exampleSection, this.props.style]}>
+        <View style={styles.exampleSectionHeader}>
+          <Text style={styles.exampleSectionHeaderText}>
+            {this.props.header}
+          </Text>
+        </View>
+        <View style={[styles.exampleSectionContent, { flexDirection: this.props.direction ?? 'row', alignItems: this.props.align ?? 'stretch' }]}>
+          {this.props.children}
+        </View>
+      </View>
+    );
+  }
+}
 
 class SwiftUIExamples extends React.PureComponent {
   scrollRef = React.createRef()
@@ -19,7 +36,7 @@ class SwiftUIExamples extends React.PureComponent {
     this.interval = setInterval(() => {
       const colorIndex = (this.state.colorIndex + 1) % colors.length;
       this.setState({ colorIndex });
-    }, 500);
+    }, 1000);
   }
 
   componentWillUnmount() {
@@ -33,7 +50,7 @@ class SwiftUIExamples extends React.PureComponent {
 
   onRandomScroll = () => {
     const scrollX = Math.round(Math.random() * 500);
-    const scrollY = Math.round(Math.random() * 1000);
+    const scrollY = Math.round(Math.random() * 500);
     this.scrollRef.current.scrollTo({ x: scrollX, y: scrollY, animated: true });
   }
 
@@ -53,8 +70,12 @@ class SwiftUIExamples extends React.PureComponent {
 
   render() {
     return (
-      <ScrollView style={{ flex: 1, justifyContent: 'flex-start', paddingTop: 44, backgroundColor: 'white' }} axes="both" showsIndicators={true} ref={this.scrollRef}>
-        <View style={{ marginVertical: 20, flexDirection: 'row' }}>
+      <ScrollView style={styles.scrollView} axes="both" showsIndicators={true} ref={this.scrollRef}>
+        <ExampleSection header="View">
+          <View style={{ width: 50, height: 70, backgroundColor: 'yellow', textAlign: 'center' }}>
+            <Text style={{ color: 'black' }}>50x70</Text>
+          </View>
+
           <View
             style={{
               width: 200,
@@ -65,57 +86,65 @@ class SwiftUIExamples extends React.PureComponent {
               borderColor: 'royalblue',
               borderLeftWidth: 3,
               borderRightWidth: 1,
-              backgroundColor: '#fa5637',
+              backgroundColor: 'orange',
             }}>
             <Text>View with specified width, margins, border and background</Text>
           </View>
+        </ExampleSection>
 
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: 120,
-              height: 30,
-              backgroundColor: colors[this.state.colorIndex],
-              borderWidth: 3,
-              borderColor: 'peachpuff',
-              marginLeft: 30,
-            }}>
-            <Text>State change</Text>
-          </View>
-        </View>
+        <ExampleSection header="Animation">
+          <Animation type="easeInOut" duration={0.5} style={{ width: 400, height: 60, justifyContent: 'center' }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: 200 + 200 * Math.random(),
+                height: 30 + 30 * Math.random(),
+                backgroundColor: colors[this.state.colorIndex],
+                borderWidth: 1,
+                borderColor: 'black',
+              }}>
+              <Text>View with animated changes</Text>
+            </View>
+          </Animation>
+        </ExampleSection>
 
-        <View style={{ marginVertical: 20, flexDirection: 'row', alignItems: 'flex-start' }}>
-          <View style={{ width: 50, height: 50, backgroundColor: 'yellow', textAlign: 'center' }}>
-            <Text style={{ color: 'black' }}>50x50</Text>
+        <ExampleSection header="Text" direction="column">
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10 }}>
+            <Text style={{ width: 120, backgroundColor: 'pink' }} numberOfLines={6}>
+              (up to 6 lines, width 120) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </Text>
+            <Text style={{ flex: 1, backgroundColor: 'green' }} numberOfLines={2}>
+              (up to 2 lines, flex width) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </Text>
           </View>
-          <Text style={{ width: 70, backgroundColor: 'orange', color: 'white' }} numberOfLines={6}>
-            (up to 6 lines, width 70) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </Text>
-          <View style={{ width: 32, height: 15, backgroundColor: 'yellow', textAlign: 'center' }}>
-            <Text style={{ color: 'black', fontSize: 10 }}>32x15</Text>
+          <View style={{ flexDirection: 'row' }}>
+            <Text style={{ flex: 1, textAlign: 'left', color: 'black', borderWidth: 1, borderColor: 'gray', margin: 5 }}>
+              textAlign = left
+            </Text>
+            <Text style={{ flex: 1, textAlign: 'center', color: 'black', borderWidth: 1, borderColor: 'gray', margin: 5 }}>
+              textAlign = center
+            </Text>
+            <Text style={{ flex: 1, textAlign: 'right', color: 'black', borderWidth: 1, borderColor: 'gray', margin: 5 }}>
+              textAlign = right
+            </Text>
           </View>
-          <Text style={{ flex: 1, backgroundColor: 'green', color: 'white' }} numberOfLines={2}>
-            (up to 2 lines, flex width) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </Text>
-          <View style={{ width: 60, height: 70, backgroundColor: 'yellow', textAlign: 'center' }}>
-            <Text style={{ color: 'black' }}>60x70</Text>
+          <View style={{ flexDirection: 'row', marginVertical: 5 }}>
+            <Text style={{ width: 170, color: 'black' }}>ellipsizeMode = head:</Text>
+            <Text style={{ width: 250, color: 'black', fontStyle: 'italic' }} numberOfLines={1} ellipsizeMode="head">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Text>
           </View>
-        </View>
+          <View style={{ flexDirection: 'row', marginVertical: 5 }}>
+            <Text style={{ width: 170, color: 'black' }}>ellipsizeMode = middle:</Text>
+            <Text style={{ width: 250, color: 'black', fontStyle: 'italic' }} numberOfLines={1} ellipsizeMode="middle">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Text>
+          </View>
+          <View style={{ flexDirection: 'row', marginVertical: 5 }}>
+            <Text style={{ width: 170, color: 'black' }}>ellipsizeMode = tail:</Text>
+            <Text style={{ width: 250, color: 'black', fontStyle: 'italic' }} numberOfLines={1} ellipsizeMode="tail">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Text>
+          </View>
+        </ExampleSection>
 
-        <View style={{ marginVertical: 20 }}>
-          <View style={{ marginBottom: 5, alignSelf: 'center' }}>
-            <Text style={{ color: 'black' }}>Text's ellipsizeMode: head, middle, tail</Text>
-          </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-            <Text style={{ width: 100, fontSize: 13, backgroundColor: 'darkslategrey' }} numberOfLines={1} ellipsizeMode="head">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Text>
-            <Text style={{ width: 100, fontSize: 13, backgroundColor: 'maroon' }} numberOfLines={1} ellipsizeMode="middle">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Text>
-            <Text style={{ width: 100, fontSize: 13, backgroundColor: 'midnightblue' }} numberOfLines={1} ellipsizeMode="tail">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Text>
-          </View>
-        </View>
-
-        <View style={{ margin: 20, flexDirection: 'row', alignItems: 'center' }}>
+        <ExampleSection header="Button">
           <Button onPress={this.onPress} onActiveStateChange={this.onActiveStateChange}>
             <Text style={{
               margin: 10,
@@ -130,34 +159,59 @@ class SwiftUIExamples extends React.PureComponent {
               Scroll to random
             </Text>
           </Button>
+        </ExampleSection>
+
+        <ExampleSection header="Switch">
           <Switch
-            style={{ margin: 10 }}
             trackColor={{ false: 'red' }}
             value={this.state.switchValue}
             onChange={this.onSwitchChange} />
-        </View>
+          <Text style={{ color: 'black', marginVertical: 6, marginHorizontal: 20 }}>
+            Current value: {`${this.state.switchValue}`}
+          </Text>
+        </ExampleSection>
 
-        <TextInput
-          style={{ minWidth: 150, padding: 10, marginHorizontal: 10, marginVertical: 5, color: 'royalblue', borderWidth: 1, borderColor: 'lightgray' }}
-          placeholder="Uncontrolled TextInput"
-          onChange={this.onTextChange}
-          onFocus={() => console.log('focus')}
-          onBlur={() => console.log('blur')}
-          onEndEditing={() => console.log('end editing')} />
+        <ExampleSection header="TextInput" direction="column">
+          <TextInput
+            style={{ minWidth: 150, padding: 10, marginVertical: 5, color: 'royalblue', borderWidth: 1, borderColor: 'lightgray' }}
+            placeholder="Uncontrolled TextInput"
+            onChange={this.onTextChange}
+            onFocus={() => console.log('focus')}
+            onBlur={() => console.log('blur')}
+            onEndEditing={() => console.log('end editing')} />
 
-        <TextInput
-          style={{ minWidth: 150, padding: 10, marginHorizontal: 10, marginVertical: 5, color: 'royalblue', borderWidth: 1, borderColor: 'lightgray' }}
-          placeholder="Controlled TextInput"
-          value={this.state.textInputValue} />
+          <TextInput
+            style={{ minWidth: 150, padding: 10, marginVertical: 5, color: 'royalblue', borderWidth: 1, borderColor: 'lightgray' }}
+            placeholder="Controlled TextInput"
+            value={this.state.textInputValue} />
+        </ExampleSection>
 
-        <View style={{ marginVertical: 20, flexDirection: 'row' }}>
-          <Shadow radius={20} offsetX={-10} offsetY={50}>
-            <View style={{ margin: 10, width: 100, height: 50, backgroundColor: 'magenta' }}>
-              <Text numberOfLines={3}>Rectangle with shadow</Text>
-            </View>
-          </Shadow>
+        <ExampleSection header="Image">
+          <View style={{ alignItems: 'center' }}>
+            <Text style={{ color: 'black', marginBottom: 5 }}>from external server</Text>
+            <Image
+              style={{ width: 156, height: 104, marginHorizontal: 10 }}
+              source={{ uri: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BBKHUZJ.img?h=104&w=199&m=6&q=60&u=t&o=f&l=f&x=1700&y=1854' }} />
+          </View>
+          <View style={{ alignItems: 'center' }}>
+            <Text style={{ color: 'black', marginBottom: 5 }}>local asset</Text>
+            <Image
+              style={{ width: 120, height: 120, marginHorizontal: 10 }}
+              source={require('./assets/bunny.png')} />
+          </View>
+        </ExampleSection>
 
-          <View style={{ width: 100, height: 100, borderWidth: 1, borderColor: 'lightgray' }}>
+        <ExampleSection header="Shapes">
+          <View style={{ width: 100, height: 100, marginHorizontal: 10 }}>
+            <Circle
+              fill="lavender"
+              stroke="purple"
+              strokeWidth={7}
+              strokeDashes={[16, 13]}
+              strokeLineCap="round"
+              radius={32} />
+          </View>
+          <View style={{ width: 100, height: 100, marginHorizontal: 10, borderWidth: 1, borderColor: 'lightgray' }}>
             <Rect
               fill="pink"
               width={50}
@@ -169,9 +223,7 @@ class SwiftUIExamples extends React.PureComponent {
               offsetX={5}
               offsetY={5}
               alignment="topLeft">
-              <Shadow radius={5} opacity={0.5} offsetX={5} style={StyleSheet.absoluteFill}>
-                <Circle fill="#7c238c" radius={10} />
-              </Shadow>
+              <Circle fill="#7c238c" radius={10} />
             </Rect>
             <Circle
               fill="cyan"
@@ -188,34 +240,60 @@ class SwiftUIExamples extends React.PureComponent {
               </Circle>
             </Circle>
           </View>
+        </ExampleSection>
 
-          <Shadow radius={2} offsetX={20} offsetY={20} style={{ marginLeft: 10 }}>
-            <Mask
-              shape={
-                <Circle radius={20} alignment="left">
-                  <Circle radius={34} alignment="right" offsetX={50} />
-                </Circle>
-              }>
-              <View style={{ height: 50, justifyContent: 'center', backgroundColor: 'black', borderWidth: 2, borderColor: 'red' }}>
-                <Text style={{ fontSize: 9 }}>View masked by circles</Text>
-              </View>
-            </Mask>
+        <ExampleSection header="Shadow" style={{ paddingBottom: 55 }}>
+          <Shadow radius={20} offsetX={-10} offsetY={50}>
+            <View style={{ margin: 10, width: 100, height: 50, backgroundColor: 'magenta' }}>
+              <Text numberOfLines={3}>Rectangle with shadow</Text>
+            </View>
           </Shadow>
-        </View>
+        </ExampleSection>
 
-        <View style={{ marginVertical: 20, justifyContent: 'center', flexDirection: 'row' }}>
-          <Image
-            style={{ width: 156, height: 104 }}
-            source={{ uri: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BBKHUZJ.img?h=104&w=199&m=6&q=60&u=t&o=f&l=f&x=1700&y=1854' }} />
-          <Image
-            style={{ width: 120, height: 120 }}
-            source={require('./assets/bunny.png')} />
-        </View>
+        <ExampleSection header="Mask">
+          <Mask
+            shape={
+              <Circle radius={20} alignment="left">
+                <Circle radius={34} alignment="right" offsetX={50} />
+              </Circle>
+            }>
+            <View style={{ height: 50, justifyContent: 'center', backgroundColor: 'black', borderWidth: 2, borderColor: 'red' }}>
+              <Text style={{ fontSize: 9 }}>View masked by circles</Text>
+            </View>
+          </Mask>
+        </ExampleSection>
 
-        {colors.map(color => <View key={color} style={{ height: 150, backgroundColor: color }} />)}
+        <View style={{ height: 100 }} />
       </ScrollView>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    paddingTop: 44,
+    backgroundColor: 'white',
+  },
+  exampleSection: {
+    borderTopColor: '#00000030',
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  exampleSectionHeader: {
+    paddingVertical: 7,
+    paddingHorizontal: 10,
+    backgroundColor: '#00000008',
+  },
+  exampleSectionHeaderText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: 'black',
+  },
+  exampleSectionContent: {
+    marginVertical: 10,
+    marginHorizontal: 10,
+  },
+});
 
 export default SwiftUIExamples;
