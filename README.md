@@ -18,6 +18,8 @@ This project is to research what we can do to take advantage of using SwiftUI as
 
 - Styles excluding these inherited from `View`
   - [x] `fontSize`
+  - [x] `fontWeight`
+  - [x] `fontStyle` (only `italic` so far)
   - [x] `textAlign` (no `justify` support)
 - Props
   - [x] `numberOfLines` prop
