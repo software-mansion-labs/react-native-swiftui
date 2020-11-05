@@ -3,7 +3,7 @@ import { View, Text, TextInput, StyleSheet, Switch } from 'react-native';
 
 import { Button, Shadow, Mask, Rect, Circle, ScrollView, Image, Animation, Blur, LinearGradient } from 'react-native-swiftui';
 
-const colors = ['black', 'blue', 'orange', 'green', 'pink', 'yellow', 'purple', 'red'];
+const colors = ['black', '#188FA7', '#769FB6', '#D5D6AA', '#8B635C', '#7CE577', '#7BC950', '#F19A3E'];
 
 class ExampleSection extends React.PureComponent {
   render() {
@@ -72,8 +72,8 @@ class SwiftUIExamples extends React.PureComponent {
     return (
       <ScrollView style={styles.scrollView} axes="both" showsIndicators={true} ref={this.scrollRef}>
         <ExampleSection header="View">
-          <View style={{ width: 50, height: 70, backgroundColor: 'yellow', textAlign: 'center' }}>
-            <Text style={{ color: 'black' }}>50x70</Text>
+          <View style={{ width: 100, height: 70, backgroundColor: '#43AA8B' }}>
+            <Text style={{ textAlign: 'center' }}>100x70</Text>
           </View>
 
           <View
@@ -112,10 +112,10 @@ class SwiftUIExamples extends React.PureComponent {
 
         <ExampleSection header="Text" direction="column">
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10 }}>
-            <Text style={{ width: 120, backgroundColor: 'pink' }} numberOfLines={6}>
+            <Text style={{ width: 120, backgroundColor: '#F4BFDB' }} numberOfLines={6}>
               (up to 6 lines, width 120) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
             </Text>
-            <Text style={{ flex: 1, backgroundColor: 'green' }} numberOfLines={2}>
+            <Text style={{ flex: 1, backgroundColor: '#87BAAB' }} numberOfLines={2}>
               (up to 2 lines, flex width) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
             </Text>
           </View>
@@ -242,23 +242,29 @@ class SwiftUIExamples extends React.PureComponent {
           </View>
         </ExampleSection>
 
-        <ExampleSection header="Shadow" style={{ paddingBottom: 55 }}>
+        <ExampleSection header="Shadow" style={{ paddingBottom: 45 }}>
           <Shadow radius={20} offsetX={-10} offsetY={50}>
-            <View style={{ margin: 10, width: 100, height: 50, backgroundColor: 'magenta' }}>
-              <Text numberOfLines={3}>Rectangle with shadow</Text>
+            <View style={{ margin: 10, width: 100, height: 50, backgroundColor: '#8ED081' }}>
+              <Text numberOfLines={3}>Rectangle with offsetted shadow</Text>
+            </View>
+          </Shadow>
+          <Shadow radius={20} color="green" opacity={0.9}>
+            <View style={{ margin: 15, width: 100, height: 60 }}>
+              <Circle radius={30} fill="green" />
             </View>
           </Shadow>
         </ExampleSection>
 
         <ExampleSection header="Mask">
           <Mask
-            shape={
-              <Circle radius={20} alignment="left">
-                <Circle radius={34} alignment="right" offsetX={50} />
-              </Circle>
-            }>
-            <View style={{ height: 50, justifyContent: 'center', backgroundColor: 'black', borderWidth: 2, borderColor: 'red' }}>
-              <Text style={{ fontSize: 9 }}>View masked by circles</Text>
+            style={{ width: 200, height: 50 }}
+            shape={<Text style={{ fontSize: 33, color: 'black', textAlign: 'center' }}>Masking text</Text>}
+            >
+            <View style={{ flexDirection: 'row' }}>
+              <View style={{ flex: 1, height: 100, backgroundColor: '#324376' }} />
+              <View style={{ flex: 1, height: 100, backgroundColor: '#F5DD90' }} />
+              <View style={{ flex: 1, height: 100, backgroundColor: '#F76C5E' }} />
+              <View style={{ flex: 1, height: 100, backgroundColor: '#e1e1e1' }} />
             </View>
           </Mask>
         </ExampleSection>
@@ -268,6 +274,13 @@ class SwiftUIExamples extends React.PureComponent {
             <Image
               style={{ width: 120, height: 120, marginHorizontal: 10 }}
               source={require('./assets/bunny.png')} />
+          </Blur>
+          <Blur radius={2.0}>
+            <Shadow radius={20} color="orange" opacity={0.9}>
+              <View style={{ margin: 15, width: 100, height: 60 }}>
+                <Circle radius={30} fill="orange" />
+              </View>
+            </Shadow>
           </Blur>
         </ExampleSection>
 

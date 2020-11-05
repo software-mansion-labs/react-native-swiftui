@@ -13,6 +13,7 @@ open class RSUIMask: RSUIView {
 
     return AnyView(
       ForEach(children[1..<children.count]) { $0 }
+        .frame(width: layoutMetrics.width, height: layoutMetrics.height)
         .mask(children.first)
     )
   }
