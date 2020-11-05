@@ -7,9 +7,9 @@ open class RSUIShadow: RSUIView {
   public override class func traits() -> RSUIViewTraits { [.Layoutable] }
 
   public override func render() -> AnyView {
-    let radius = props.cgFloat("radius")
-    let offsetX = props.cgFloat("offsetX")
-    let offsetY = props.cgFloat("offsetY")
+    let radius = props.cgFloat("radius", 0.0)
+    let offsetX = props.cgFloat("offsetX", 0.0)
+    let offsetY = props.cgFloat("offsetY", 0.0)
     let color = props.color("color", Color.black)
     let opacity = props.double("opacity", 0.33)
 

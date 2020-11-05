@@ -54,7 +54,7 @@ open class RSUITextInput: RSUIView, ObservableObject {
     #endif
 
     let placeholder = props.string("placeholder", "")
-    let padding = props.cgFloat("padding")
+    let padding = props.cgFloat("padding", 0.0)
 
     return AnyView(
       TextField(

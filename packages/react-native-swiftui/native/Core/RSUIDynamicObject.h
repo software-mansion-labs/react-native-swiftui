@@ -3,23 +3,27 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RSUIDynamicObject : NSObject
 
+- (instancetype)initWithDynamicObject:(RSUIDynamicObject *)object;
+
 #pragma mark - public getters
 
-- (nullable id)rawValue:(NSString *)key;
+- (nullable id)rawValue:(nullable NSString *)key;
 
 - (nonnull NSDictionary<NSString *, id> *)dictionary;
 
-- (BOOL)boolean:(NSString *)key :(BOOL)fallback;
+- (BOOL)boolean:(nullable NSString *)key :(BOOL)fallback;
 
-- (NSInteger)int:(NSString *)key :(NSInteger)fallback;
+- (NSInteger)int:(nullable NSString *)key :(NSInteger)fallback;
 
-- (double)double:(NSString *)key :(double)fallback;
+- (double)double:(nullable NSString *)key :(double)fallback;
 
-- (nullable NSString *)string:(NSString *)key;
+- (nullable NSString *)string:(nullable NSString *)key;
 
-- (nullable NSArray *)array:(NSString *)key;
+- (nullable NSArray *)array:(nullable NSString *)key;
 
-- (nullable NSDictionary<NSString *, id> *)dictionary:(NSString *)key;
+- (nullable NSArray<RSUIDynamicObject *> *)deepArray:(nullable NSString *)key;
+
+- (nullable NSDictionary<NSString *, id> *)dictionary:(nullable NSString *)key;
 
 @end
 

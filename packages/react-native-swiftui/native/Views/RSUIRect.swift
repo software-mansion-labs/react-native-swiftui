@@ -7,8 +7,8 @@ open class RSUIRect: RSUIView {
   public override class func traits() -> RSUIViewTraits { [] }
 
   public override func render() -> AnyView {
-    let offsetX = props.cgFloat("offsetX")
-    let offsetY = props.cgFloat("offsetY")
+    let offsetX = props.cgFloat("offsetX", 0.0)
+    let offsetY = props.cgFloat("offsetY", 0.0)
     let alignment = props.alignment("alignment", .center)
 
     return AnyView(

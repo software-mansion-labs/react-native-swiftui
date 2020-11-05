@@ -7,9 +7,9 @@ open class RSUICircle: RSUIView {
   public override class func traits() -> RSUIViewTraits { [] }
 
   public override func render() -> AnyView {
-    let offsetX = props.cgFloat("offsetX")
-    let offsetY = props.cgFloat("offsetY")
-    let radius = props.cgFloat("radius")
+    let offsetX = props.cgFloat("offsetX", 0.0)
+    let offsetY = props.cgFloat("offsetY", 0.0)
+    let radius = props.cgFloat("radius", 0.0)
     let width = radius.isZero ? descriptor.layoutMetrics.width : radius * 2.0
     let height = radius.isZero ? descriptor.layoutMetrics.height : radius * 2.0
     let alignment = props.alignment("alignment", .center)

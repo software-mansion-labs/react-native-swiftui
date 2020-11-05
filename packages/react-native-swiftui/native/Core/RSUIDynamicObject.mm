@@ -17,10 +17,18 @@ using namespace facebook::react;
 
 - (instancetype)init
 {
-  return [self initWithDynamicObject:folly::dynamic::object()];
+  return [self initWithFollyObject:folly::dynamic::object()];
 }
 
-- (instancetype)initWithDynamicObject:(folly::dynamic)object
+- (instancetype)initWithDynamicObject:(RSUIDynamicObject *)object
+{
+  if (self = [super init]) {
+    _object = [object get:nil];
+  }
+  return self;
+}
+
+- (instancetype)initWithFollyObject:(folly::dynamic)object
 {
   if (self = [super init]) {
     _object = object;
@@ -30,7 +38,7 @@ using namespace facebook::react;
 
 - (instancetype)mergeWith:(folly::dynamic)object
 {
-  return [[self.class alloc] initWithDynamicObject:folly::dynamic::merge(_object, object)];
+  return [[self.class alloc] initWithFollyObject:folly::dynamic::merge(_object, object)];
 }
 
 - (void)updateObject:(folly::dynamic)patch
@@ -44,7 +52,7 @@ using namespace facebook::react;
 
 #pragma mark - public getters
 
-- (nullable id)rawValue:(NSString *)key
+- (nullable id)rawValue:(nullable NSString *)key
 {
   return convertFollyDynamicToId([self get:key]);
 }
@@ -54,13 +62,13 @@ using namespace facebook::react;
   return convertFollyDynamicToId(_object) ?: @{};
 }
 
-- (BOOL)boolean:(NSString *)key :(BOOL)fallback
+- (BOOL)boolean:(nullable NSString *)key :(BOOL)fallback
 {
   folly::dynamic value = [self get:key];
   return value.isBool() ? value.asBool() : fallback;
 }
 
-- (NSInteger)int:(NSString *)key :(NSInteger)fallback
+- (NSInteger)int:(nullable NSString *)key :(NSInteger)fallback
 {
   folly::dynamic value = [self get:key];
   if (value.isNumber()) {
@@ -70,13 +78,13 @@ using namespace facebook::react;
   }
 }
 
-- (double)double:(NSString *)key :(double)fallback
+- (double)double:(nullable NSString *)key :(double)fallback
 {
   folly::dynamic value = [self get:key];
   return value.isDouble() ? value.asDouble() : fallback;
 }
 
-- (nullable NSString *)string:(NSString *)key
+- (nullable NSString *)string:(nullable NSString *)key
 {
   folly::dynamic value = [self get:key];
   if (!value.isString()) {
@@ -89,9 +97,12 @@ using namespace facebook::react;
                                 encoding:NSUTF8StringEncoding];
 }
 
-- (nullable NSArray *)array:(NSString *)key
+- (nullable NSArray *)array:(nullable NSString *)key
 {
   folly::dynamic value = [self get:key];
+  if (!value.isArray()) {
+    return nil;
+  }
   NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:value.size()];
   for (auto &item : value) {
     [array addObject:convertFollyDynamicToId(item)];
@@ -99,12 +110,25 @@ using namespace facebook::react;
   return array;
 }
 
-- (nullable NSDictionary<NSString *, id> *)dictionary:(NSString *)key
+- (nullable NSArray<RSUIDynamicObject *> *)deepArray:(nullable NSString *)key
 {
-  if (!_object.isObject()) {
+  folly::dynamic value = [self get:key];
+  if (!value.isArray()) {
     return nil;
   }
+  NSMutableArray<RSUIDynamicObject *> *array = [[NSMutableArray alloc] initWithCapacity:value.size()];
+  for (auto &item : value) {
+    [array addObject:[[self.class alloc] initWithFollyObject:item]];
+  }
+  return array;
+}
+
+- (nullable NSDictionary<NSString *, id> *)dictionary:(nullable NSString *)key
+{
   folly::dynamic value = [self get:key];
+  if (!value.isObject()) {
+    return nil;
+  }
   NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithCapacity:value.size()];
   for (auto &item : value.items()) {
     dict[convertFollyDynamicToId(item.first)] = convertFollyDynamicToId(item.second);
@@ -114,10 +138,13 @@ using namespace facebook::react;
 
 #pragma mark - private getters
 
-- (folly::dynamic)get:(NSString *)key
+- (folly::dynamic)get:(nullable NSString *)key
 {
   if (_object == nil) {
     return folly::dynamic();
+  }
+  if (key == nil) {
+    return _object;
   }
   std::string keyString(key.UTF8String);
 

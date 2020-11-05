@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet, Switch } from 'react-native';
 
-import { Button, Shadow, Mask, Rect, Circle, ScrollView, Image, Animation, Blur } from 'react-native-swiftui';
+import { Button, Shadow, Mask, Rect, Circle, ScrollView, Image, Animation, Blur, LinearGradient } from 'react-native-swiftui';
 
 const colors = ['black', 'blue', 'orange', 'green', 'pink', 'yellow', 'purple', 'red'];
 
@@ -269,6 +269,26 @@ class SwiftUIExamples extends React.PureComponent {
               style={{ width: 120, height: 120, marginHorizontal: 10 }}
               source={require('./assets/bunny.png')} />
           </Blur>
+        </ExampleSection>
+
+        <ExampleSection header="LinearGradient">
+          <View style={{ width: 150, height: 100 }}>
+            {/* This gradient fills in the entire parent's frame */}
+            <LinearGradient
+              colors={['#EE6352', '#59CD90', '#3FA7D6', '#FAC05E', '#F79D84']}
+              locations={[0.2, 0.5, 0.6, 0.9, 1.0]}
+              from="topLeft"
+              to="bottomRight" />
+            <Text style={{ fontSize: 18, textAlign: 'center' }}>Linear gradient inside a view</Text>
+          </View>
+
+          <View style={{ width: 90, marginLeft: 25 }}>
+            <Circle radius={45}>
+              {/* Linear gradient masked by circle shape */}
+              <LinearGradient colors={['#CF9893', '#BC7C9C', '#A96DA3', '#7A5980', '#3B3B58']} />
+              <Text style={{ textAlign: 'center' }}>Gradient in the circle</Text>
+            </Circle>
+          </View>
         </ExampleSection>
 
         <View style={{ height: 100 }} />

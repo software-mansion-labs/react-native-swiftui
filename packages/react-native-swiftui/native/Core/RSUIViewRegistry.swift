@@ -33,6 +33,7 @@ public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
     register(viewType: RSUIImage.self, name: "Image")
     register(viewType: RSUIAnimation.self)
     register(viewType: RSUIBlur.self)
+    register(viewType: RSUILinearGradient.self)
   }
 
   @objc
