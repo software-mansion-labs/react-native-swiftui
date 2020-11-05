@@ -32,7 +32,13 @@ open class RSUICircle: RSUIView {
                 )
               )
           )
-          .overlay(Children())
+          .overlay(
+            ZStack(alignment: alignment) {
+              Children()
+                .frame(width: width, height: height)
+            }
+            .mask(Circle())
+          )
       }
       .offset(x: offsetX, y: offsetY)
     )
