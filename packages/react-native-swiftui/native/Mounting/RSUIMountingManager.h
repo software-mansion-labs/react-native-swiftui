@@ -22,7 +22,7 @@ typedef NSInteger ReactTag;
  * Schedule a mounting transaction to be performed on the main thread.
  * Can be called from any thread.
  */
-//- (void)scheduleTransaction:(facebook::react::MountingCoordinator::Shared const &)mountingCoordinator;
+- (void)scheduleTransaction:(facebook::react::MountingCoordinator::Shared const &)mountingCoordinator;
 
 /**
  * Dispatch a command to be performed on the main thread.

@@ -54,13 +54,6 @@ static inline LayoutContext RCTGetLayoutContext(CGPoint viewportOffset)
   };
 }
 
-@interface RSUIMountingManager ()
-- (void)scheduleTransaction:(MountingCoordinator::Shared const &)mountingCoordinator;
-- (void)synchronouslyUpdateViewOnUIThread:(ReactTag)reactTag
-                             changedProps:(NSDictionary *)props
-                      componentDescriptor:(const ComponentDescriptor &)componentDescriptor;
-@end
-
 @interface RSUIComponentViewFactory ()
 - (ComponentDescriptorRegistry::Shared)createComponentDescriptorRegistryWithParameters:(ComponentDescriptorParameters)parameters;
 @end

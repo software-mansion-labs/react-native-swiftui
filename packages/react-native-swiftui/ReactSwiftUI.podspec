@@ -16,7 +16,8 @@ Pod::Spec.new do |s|
   s.private_header_files = [
     'native/Surface/RSUI{Surface,SurfacePresenter}.h',
     'native/Core/RSUI{Scheduler,Conversions,MainRunLoopEventBeat,PlatformRunLoopObserver,RuntimeEventBeat}.h',
-    'native/ComponentDescriptors/**'
+    'native/ComponentDescriptors/**',
+    'native/Mounting/**'
   ]
   s.pod_target_xcconfig  = {
     'DEFINES_MODULE' => 'YES',
