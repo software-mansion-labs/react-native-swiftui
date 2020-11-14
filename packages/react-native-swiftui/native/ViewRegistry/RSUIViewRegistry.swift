@@ -7,7 +7,7 @@ public typealias ViewName = String
 @objc
 public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
   var descriptors: [ViewTag: RSUIViewDescriptor] = [:]
-  var viewTypes: [ViewName: RSUIView.Type] = [:]
+  var viewTypes: [ViewName: RSUIAnyView.Type] = [:]
   let factory: RSUIComponentViewFactory
 
   // MARK: public
@@ -18,7 +18,7 @@ public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
     super.init()
 
     register(viewType: RSUIHostingView.self)
-    register(viewType: RSUIView.self)
+    register(viewType: RSUIBaseView.self)
     register(viewType: RSUITextView.self)
     register(viewType: RSUIRawTextView.self)
     register(viewType: RSUIButton.self)
@@ -50,7 +50,7 @@ public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
       descriptors[tag] = RSUIViewDescriptor(
         tag: tag,
         name: name,
-        viewType: viewType,
+        viewType: viewType.self,
         viewRegistry: self
       )
     }
@@ -66,7 +66,9 @@ public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
 
   @objc
   public func delete(_ tag: ViewTag) {
-    descriptors.removeValue(forKey: tag)
+    if let descriptor = descriptors.removeValue(forKey: tag) {
+      descriptor.view.viewWillDestroy()
+    }
   }
 
   @objc
@@ -82,7 +84,7 @@ public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
   }
 
   @objc
-  public func props(forTag tag: ViewTag) -> RSUIViewProps? {
+  public func props(forTag tag: ViewTag) -> RSUIProps? {
     return descriptors[tag]?.props
   }
 
@@ -90,9 +92,9 @@ public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
     guard let descriptor = descriptors[tag] else {
       return []
     }
-    return descriptor.children
-      .filter { descriptors[$0] != nil }
-      .map { descriptors[$0]!.createView() }
+    return descriptor.children.compactMap {
+      descriptors[$0]?.createView()
+    }
   }
 
   subscript(key: ViewTag) -> RSUIViewDescriptor? {
@@ -101,8 +103,8 @@ public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
 
   // MARK: internal
 
-  internal func register(viewType: RSUIView.Type, name: String? = nil) {
-    let name = name ?? viewType.viewName
+  internal func register<ViewType: RSUIAnyView>(viewType: ViewType.Type, name: String? = nil) {
+    let name = name ?? viewType.name
     viewTypes[name] = viewType.self
   }
 }

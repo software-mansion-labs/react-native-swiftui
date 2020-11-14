@@ -18,13 +18,6 @@ public struct RSUIViewWrapper: View, Identifiable {
   @ObservedObject
   var descriptor: RSUIViewDescriptor
 
-  // Computed properties for easier access to descriptor properties
-  internal var props: RSUIViewProps { descriptor.props }
-  internal var state: RSUIState { descriptor.state }
-  internal var shadowNodeState: RSUIViewProps { descriptor.shadowNodeState }
-  internal var eventEmitter: RSUIEventEmitter { descriptor.eventEmitter }
-  internal var layoutMetrics: RSUILayoutMetrics { descriptor.layoutMetrics }
-
   func layout<InputType: View>(_ view: InputType) -> some View {
     let layoutMetrics = descriptor.layoutMetrics
     return view
@@ -36,6 +29,7 @@ public struct RSUIViewWrapper: View, Identifiable {
   }
 
   func style<InputType: View>(_ view: InputType) -> some View {
+    let props = descriptor.props
     let backgroundColor = props.color("backgroundColor", .clear)
     let foregroundColor = props.color("color", .white)
     let opacity = props.double("opacity", 1.0)
@@ -65,7 +59,7 @@ public struct RSUIViewWrapper: View, Identifiable {
 
   public var body: some View {
     let traits = descriptor.traits()
-    var result = descriptor.view.render()
+    var result = descriptor.view.renderAny(props: descriptor.props)
 
     result = maybeApplyFrame(result, traits: traits)
     result = maybeApplyStyles(result, traits: traits)

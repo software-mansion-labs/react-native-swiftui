@@ -2,12 +2,12 @@
 import SwiftUI
 import Combine
 
-open class RSUITextInput: RSUIView, ObservableObject {
-  public override class var viewName: String { "TextInput" }
+final class RSUITextInput: RSUIView {
+  static var name: String { "TextInput" }
 
   var textInput: String = ""
 
-  public override func propsWillChange(newProps: RSUIViewProps) {
+  func propsWillChange(newProps: RSUIProps) {
     if let newValue = newProps.string("text"), props.string("text") != newValue {
       textInput = newValue
     }
@@ -67,13 +67,11 @@ open class RSUITextInput: RSUIView, ObservableObject {
     )
   }
 
-  public override func render() -> AnyView {
+  func render(props: RSUIProps) -> some View {
     let color = props.color("color", .black)
     
-    return AnyView(
-      renderTextField()
-        .foregroundColor(color)
-        .font(.system(size: 14))
-    )
+    return renderTextField()
+      .foregroundColor(color)
+      .font(.system(size: 14))
   }
 }

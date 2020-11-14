@@ -1,12 +1,12 @@
 
 import SwiftUI
 
-open class RSUISwitchView: RSUIView {
-  public override class var viewName: String { "Switch" }
+final class RSUISwitchView: RSUIView {
+  static var name: String { "Switch" }
 
   var isOn: Bool = false
 
-  public override func render() -> AnyView {
+  func render(props: RSUIProps) -> some View {
     let valueBinding = Binding<Bool>(
       get: {
         return self.props.boolean("value", self.isOn)
@@ -28,12 +28,12 @@ open class RSUISwitchView: RSUIView {
     #if os(iOS)
     if #available(iOS 14.0, *) {
       return AnyView(
-        Toggle(isOn: valueBinding) { Children() }
+        Toggle(isOn: valueBinding) { Children(self) }
           .toggleStyle(SwitchToggleStyle(tint: offColor))
       )
     }
     #endif
 
-    return AnyView(Toggle(isOn: valueBinding) { Children() })
+    return AnyView(Toggle(isOn: valueBinding) { Children(self) })
   }
 }

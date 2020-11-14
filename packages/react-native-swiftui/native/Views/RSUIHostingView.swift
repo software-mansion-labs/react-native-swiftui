@@ -1,11 +1,10 @@
 
 import SwiftUI
 
-open class RSUIHostingView: RSUIView {
-  public override class var viewName: String { "RootView" }
+final class RSUIHostingView: RSUIView {
+  static var name: String { "RootView" }
 
-  public override func render() -> AnyView {
-    let _ = print("RSUIHostingView, children count", descriptor.children.count)
-    return AnyView(Children())
+  func render(props: RSUIProps) -> some View {
+    Children(self)
   }
 }

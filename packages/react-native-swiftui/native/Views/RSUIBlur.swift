@@ -1,15 +1,13 @@
 
 import SwiftUI
 
-open class RSUIBlur: RSUIView {
-  public override class var viewName: String { "RSUIBlur" }
+final class RSUIBlur: RSUIView {
+  static var name: String { "RSUIBlur" }
 
-  public override func render() -> AnyView {
-    return AnyView(
-      Children()
-        .blur(
-          radius: props.cgFloat("radius", 1.0)
-        )
-    )
+  func render(props: RSUIProps) -> some View {
+    return Children(self)
+      .blur(
+        radius: props.cgFloat("radius", 1.0)
+      )
   }
 }

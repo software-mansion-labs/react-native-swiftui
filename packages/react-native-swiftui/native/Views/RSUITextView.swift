@@ -1,10 +1,8 @@
 
 import SwiftUI
 
-open class RSUITextView: RSUIView {
-  public typealias RenderReturnType = ForEach
-
-  public override class var viewName: String { "Paragraph" }
+final class RSUITextView: RSUIView {
+  static var name: String { "Paragraph" }
 
   func ellipsizeModeToTruncationMode(_ ellipsizeMode: String?) -> Text.TruncationMode {
     // TODO: Add support for "clip".
@@ -57,33 +55,31 @@ open class RSUITextView: RSUIView {
     }
   }
 
-  public override func render() -> AnyView {
+  func render(props: RSUIProps) -> some View {
     let numberOfLines = props.int("numberOfLines", -1)
     let ellipsizeMode = props.string("ellipsizeMode")
     let attributedString = shadowNodeState.dictionary("attributedString") ?? [:]
     let fragments = attributedString["fragments"] as! Array<Dictionary<String, Any>>
     let textAlign = props.alignment("textAlign", .leading).horizontal
 
-    return AnyView(
-      AlignHorizontally(alignment: textAlign) {
-        ForEach((0..<fragments.count)) { [self] fragmentIndex in
-          let fragment = fragments[fragmentIndex]
-          let text = fragment["string"] as! String
-          let attributes = fragment["textAttributes"] as! Dictionary<String, Any>
+    return AlignHorizontally(alignment: textAlign) {
+      ForEach((0..<fragments.count)) { [self] fragmentIndex in
+        let fragment = fragments[fragmentIndex]
+        let text = fragment["string"] as! String
+        let attributes = fragment["textAttributes"] as! Dictionary<String, Any>
 
-          Text(text)
-            .font(
-              .system(
-                size: attributes["fontSize"] as! CGFloat,
-                weight: toFontWeight(attributes["fontWeight"] as? String)
-              )
+        Text(text)
+          .font(
+            .system(
+              size: attributes["fontSize"] as! CGFloat,
+              weight: toFontWeight(attributes["fontWeight"] as? String)
             )
-            .if(attributes["fontStyle"] as? String == "italic") { $0.italic() }
-            .lineLimit(numberOfLines >= 0 ? numberOfLines : nil)
-            .truncationMode(ellipsizeModeToTruncationMode(ellipsizeMode))
-            .multilineTextAlignment(horizontalAlignmentToTextAlignment(textAlign))
-        }
+          )
+          .if(attributes["fontStyle"] as? String == "italic") { $0.italic() }
+          .lineLimit(numberOfLines >= 0 ? numberOfLines : nil)
+          .truncationMode(ellipsizeModeToTruncationMode(ellipsizeMode))
+          .multilineTextAlignment(horizontalAlignmentToTextAlignment(textAlign))
       }
-    )
+    }
   }
 }

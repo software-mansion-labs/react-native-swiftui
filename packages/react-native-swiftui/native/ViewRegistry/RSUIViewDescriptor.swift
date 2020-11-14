@@ -3,21 +3,21 @@
 public class RSUIViewDescriptor: NSObject, ObservableObject {
   let tag: ViewTag
   let name: ViewName
-  let viewType: RSUIView.Type
+  let viewType: RSUIAnyView.Type
   let viewRegistry: RSUIViewRegistry
 
   lazy var state = RSUIState()
-  lazy var view: RSUIView = viewType.init(self)
+  lazy var view: RSUIAnyView = viewType.create(self)
 
   @objc
-  public var props: RSUIViewProps {
+  public var props: RSUIProps {
     willSet {
       view.propsWillChange(newProps: newValue)
     }
   }
 
   @objc
-  public let shadowNodeState: RSUIViewProps
+  public let shadowNodeState: RSUIProps
 
   @objc
   public let eventEmitter: RSUIEventEmitter
@@ -32,13 +32,13 @@ public class RSUIViewDescriptor: NSObject, ObservableObject {
   @Published
   var revision: UInt = 0
 
-  init(tag: ViewTag, name: ViewName, viewType: RSUIView.Type, viewRegistry: RSUIViewRegistry) {
+  init(tag: ViewTag, name: ViewName, viewType: RSUIAnyView.Type, viewRegistry: RSUIViewRegistry) {
     self.tag = tag
     self.name = name
     self.viewType = viewType
     self.viewRegistry = viewRegistry
-    self.props = RSUIViewProps()
-    self.shadowNodeState = RSUIViewProps()
+    self.props = RSUIProps()
+    self.shadowNodeState = RSUIProps()
     self.eventEmitter = RSUIEventEmitter()
     super.init()
   }

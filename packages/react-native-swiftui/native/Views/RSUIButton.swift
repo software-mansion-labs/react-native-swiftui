@@ -10,8 +10,8 @@ struct RSUIButtonStyle: ButtonStyle {
   }
 }
 
-open class RSUIButton: RSUIView {
-  public override class var viewName: String { "RSUIButton" }
+final class RSUIButton: RSUIView {
+  static var name: String { "RSUIButton" }
 
   var isPressed = false
 
@@ -27,12 +27,10 @@ open class RSUIButton: RSUIView {
     }
   }
 
-  public override func render() -> AnyView {
-    return AnyView(
-      Button(action: pressAction, label: {
-        Children()
-      })
-      .buttonStyle(RSUIButtonStyle(onPressChange: onPressChange))
-    )
+  func render(props: RSUIProps) -> some View {
+    Button(action: pressAction, label: {
+      Children(self)
+    })
+    .buttonStyle(RSUIButtonStyle(onPressChange: onPressChange))
   }
 }

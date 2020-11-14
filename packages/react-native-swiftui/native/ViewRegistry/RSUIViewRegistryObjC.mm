@@ -6,9 +6,4 @@
 
 @implementation RSUIViewRegistryObjC
 
-//- (void)update:(NSInteger)tag withNewProps:(const Props::Shared &)newProps
-//{
-//  [[RSUIViewProps alloc] init];
-//}
-
 @end

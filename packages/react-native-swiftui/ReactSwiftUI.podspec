@@ -14,10 +14,8 @@ Pod::Spec.new do |s|
   s.source_files         = 'native/**/*.{m,mm,h,cpp,swift}'
   s.preserve_paths       = 'native/**/*.{m,mm,h,cpp,swift}'
   s.private_header_files = [
-    'native/Surface/RSUI{Surface,SurfacePresenter}.h',
-    'native/Core/RSUI{Scheduler,Conversions,MainRunLoopEventBeat,PlatformRunLoopObserver,RuntimeEventBeat}.h',
-    'native/ComponentDescriptors/**',
-    'native/Mounting/**'
+    'native/{ComponentDescriptors,Mounting,Scheduler,Shims,Surface}/**',
+    'native/Utils/RSUIConversions.h'
   ]
   s.pod_target_xcconfig  = {
     'DEFINES_MODULE' => 'YES',
@@ -26,9 +24,5 @@ Pod::Spec.new do |s|
     s.xcconfig               = { "HEADER_SEARCH_PATHS" => "\"$(PODS_ROOT)/boost-for-react-native\" \"$(PODS_ROOT)/glog\" \"$(PODS_ROOT)/Folly\"",
                                "OTHER_CFLAGS" => "$(inherited) -DRN_FABRIC_ENABLED" + " " + folly_flags }
 
-  # s.osx.exclude_files     =  "native/Surface/**"
-
   s.dependency 'React-Fabric'
-  # s.dependency 'React-RCTFabric'
-  # s.dependency 'Folly'
 end

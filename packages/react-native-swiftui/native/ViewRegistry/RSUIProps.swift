@@ -2,7 +2,7 @@
 import SwiftUI
 
 @objc
-public class RSUIViewProps: RSUIDynamicObject {
+public class RSUIProps: RSUIDynamicObject {
 
   public func get<T>(_ key: String?, fallback: T) -> T? {
     return rawValue(key) as? T
@@ -24,8 +24,8 @@ public class RSUIViewProps: RSUIDynamicObject {
     return rawValue(key) as? [T] ?? fallback
   }
 
-  public func map<T>(_ key: String, _ transform: (RSUIViewProps) -> T) -> [T]? {
-    return deepArray(key)?.map { transform(RSUIViewProps(dynamicObject: $0)) }
+  public func map<T>(_ key: String, _ transform: (RSUIProps) -> T) -> [T]? {
+    return deepArray(key)?.map { transform(RSUIProps(dynamicObject: $0)) }
   }
 
   public func color(_ key: String? = nil, _ fallback: Color = Color.clear) -> Color {

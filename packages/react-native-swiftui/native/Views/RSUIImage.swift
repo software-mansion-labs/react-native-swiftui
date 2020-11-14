@@ -22,12 +22,12 @@ class ImageLoader {
   }
 }
 
-open class RSUIImage: RSUIView {
-  public override class var viewName: String { "RSUIImage" }
+final class RSUIImage: RSUIView {
+  static var name: String { "RSUIImage" }
 
   let loader = ImageLoader()
 
-  public override func propsWillChange(newProps: RSUIViewProps) {
+  func propsWillChange(newProps: RSUIProps) {
     let sources = newProps.array("source", [])
     let firstSource = sources.first as? [String: Any]
 
@@ -52,7 +52,7 @@ open class RSUIImage: RSUIView {
     #endif
   }
 
-  public override func render() -> AnyView {
+  func render(props: RSUIProps) -> some View {
     if let image: UIImage = state["image"] {
       return AnyView(
         renderBaseImage(image)

@@ -1,8 +1,8 @@
 
 import SwiftUI
 
-open class RSUIAnimation: RSUIView {
-  public override class var viewName: String { "RSUIAnimation" }
+final class RSUIAnimation: RSUIView {
+  static var name: String { "RSUIAnimation" }
 
   func createBaseAnimation(type: String, duration: Double) -> Animation {
     switch type {
@@ -28,10 +28,7 @@ open class RSUIAnimation: RSUIView {
     return animation
   }
 
-  public override func render() -> AnyView {
-    return AnyView(
-      Children()
-        .animation(createAnimation())
-    )
+  func render(props: RSUIProps) -> some View {
+    return Children(self).animation(createAnimation())
   }
 }

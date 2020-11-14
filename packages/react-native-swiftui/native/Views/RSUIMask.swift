@@ -1,20 +1,15 @@
 
 import SwiftUI
 
-open class RSUIMask: RSUIView {
-  public override class var viewName: String { "RSUIMask" }
+final class RSUIMask: RSUIView {
+  static var name: String { "RSUIMask" }
 
-  public override func render() -> AnyView {
-    let children = descriptor.getChildren()
+  func render(props: RSUIProps) -> some View {
+    var children = descriptor.getChildren()
+    let mask = children.count >= 2 ? children.removeFirst() : nil
 
-    if children.count < 2 {
-      return AnyView(EmptyView())
-    }
-
-    return AnyView(
-      ForEach(children[1..<children.count]) { $0 }
-        .frame(width: layoutMetrics.width, height: layoutMetrics.height)
-        .mask(children.first)
-    )
+    return ForEach(children) { $0 }
+      .frame(width: layoutMetrics.width, height: layoutMetrics.height)
+      .if(mask != nil, { $0.mask(mask) })
   }
 }
