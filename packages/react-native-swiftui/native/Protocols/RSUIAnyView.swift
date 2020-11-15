@@ -18,8 +18,6 @@ public typealias RSUIViewTraits = [RSUIViewTrait]
 public protocol RSUIAnyView: class {
   static var name: String { get }
 
-  static func create(_ descriptor: RSUIViewDescriptor) -> Self
-
   static func traits() -> RSUIViewTraits
 
   var descriptor: RSUIViewDescriptor { get }
@@ -45,23 +43,22 @@ public protocol RSUIAnyView: class {
   func renderAny(props: RSUIProps) -> AnyView
 }
 
-var viewToDescriptorRegistry: [ObjectIdentifier: RSUIViewDescriptor] = [:]
-
 /**
  * Adds stubs to the protocol so concrete classes don't have to reimplement them if not needed.
  */
 extension RSUIAnyView {
-  static func create<T>(_ descriptor: RSUIViewDescriptor) -> T where T: RSUIAnyView {
-    let a = T.init()
-    viewToDescriptorRegistry[ObjectIdentifier(a)] = descriptor
-    return a
-  }
-
   static func traits() -> RSUIViewTraits {
     return [.Layoutable, .Styleable]
   }
 
-  var descriptor: RSUIViewDescriptor { viewToDescriptorRegistry[ObjectIdentifier(self)]! }
+  // Protocol extensions cannot have stored properties, so we do a small hack here
+  // so that view classes don't have to specify the property nor the initializer.
+  // We also don't want the view to keep any strong references to the descriptor - it'd result in a cycle.
+  var descriptor: RSUIViewDescriptor {
+    // Forcing non-optional type — if there is no descriptor for the view then
+    // something went really wrong as the descriptor is an owner of the view.
+    return RSUIViewRegistry.descriptorForView(self)!
+  }
 
   // MARK: Computed properties for easier access to descriptor properties
 

@@ -101,10 +101,34 @@ public class RSUIViewRegistry: RSUIViewRegistryObjC, ObservableObject {
     return viewDescriptor(forTag: key)
   }
 
+  // MARK: View to descriptor registry
+
+  private static var viewIdToDescriptorRegistry: [ObjectIdentifier: WeakRef<RSUIViewDescriptor>] = [:]
+
+  static func descriptorForView(_ view: RSUIAnyView) -> RSUIViewDescriptor? {
+    return viewIdToDescriptorRegistry[ObjectIdentifier(view)]?.value
+  }
+
+  static func registerView(_ view: RSUIAnyView, forDescriptor descriptor: RSUIViewDescriptor) {
+    viewIdToDescriptorRegistry[ObjectIdentifier(view)] = WeakRef(descriptor)
+  }
+
+  static func unregisterView(_ view: RSUIAnyView) {
+    viewIdToDescriptorRegistry.removeValue(forKey: ObjectIdentifier(view))
+  }
+
   // MARK: internal
 
   internal func register<ViewType: RSUIAnyView>(viewType: ViewType.Type, name: String? = nil) {
     let name = name ?? viewType.name
     viewTypes[name] = viewType.self
+  }
+}
+
+fileprivate class WeakRef<T: AnyObject> {
+  private(set) weak var value: T?
+
+  init(_ value: T) {
+    self.value = value
   }
 }

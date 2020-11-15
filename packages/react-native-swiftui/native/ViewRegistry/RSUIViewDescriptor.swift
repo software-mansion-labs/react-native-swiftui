@@ -7,7 +7,12 @@ public class RSUIViewDescriptor: NSObject, ObservableObject {
   let viewRegistry: RSUIViewRegistry
 
   lazy var state = RSUIState()
-  lazy var view: RSUIAnyView = viewType.create(self)
+  lazy var view: RSUIAnyView = {
+    let view = viewType.init()
+    // Hack that allows RSUIAnyView extension to get the descriptor.
+    RSUIViewRegistry.registerView(view, forDescriptor: self)
+    return view
+  }()
 
   @objc
   public var props: RSUIProps {
@@ -41,6 +46,12 @@ public class RSUIViewDescriptor: NSObject, ObservableObject {
     self.shadowNodeState = RSUIProps()
     self.eventEmitter = RSUIEventEmitter()
     super.init()
+  }
+
+  deinit {
+    // Once the descriptor is gonna be deallocated,
+    // we must also unregister its view so it no longer has access to the descriptor.
+    RSUIViewRegistry.unregisterView(self.view)
   }
 
   func createView() -> RSUIViewWrapper {
