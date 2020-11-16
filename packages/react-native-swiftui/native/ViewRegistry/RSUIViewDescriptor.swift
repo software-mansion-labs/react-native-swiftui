@@ -3,16 +3,10 @@
 public class RSUIViewDescriptor: NSObject, ObservableObject {
   let tag: ViewTag
   let name: ViewName
-  let viewType: RSUIAnyView.Type
   let viewRegistry: RSUIViewRegistry
+  let view: RSUIAnyView
 
   lazy var state = RSUIState()
-  lazy var view: RSUIAnyView = {
-    let view = viewType.init()
-    // Hack that allows RSUIAnyView extension to get the descriptor.
-    RSUIViewRegistry.registerView(view, forDescriptor: self)
-    return view
-  }()
 
   @objc
   public var props: RSUIProps {
@@ -40,12 +34,15 @@ public class RSUIViewDescriptor: NSObject, ObservableObject {
   init(tag: ViewTag, name: ViewName, viewType: RSUIAnyView.Type, viewRegistry: RSUIViewRegistry) {
     self.tag = tag
     self.name = name
-    self.viewType = viewType
     self.viewRegistry = viewRegistry
+    self.view = viewType.init()
     self.props = RSUIProps()
     self.shadowNodeState = RSUIProps()
     self.eventEmitter = RSUIEventEmitter()
     super.init()
+
+    // Hack that allows RSUIAnyView extension to get the descriptor.
+    RSUIViewRegistry.registerView(view, forDescriptor: self)
   }
 
   deinit {
@@ -59,7 +56,8 @@ public class RSUIViewDescriptor: NSObject, ObservableObject {
   }
 
   func traits() -> RSUIViewTraits {
-    return viewType.traits()
+    let ViewType = type(of: view)
+    return ViewType.traits()
   }
 
   // MARK: Children management
