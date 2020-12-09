@@ -240,7 +240,7 @@ static NSURL *serverRootWithHostPort(NSString *hostPort)
   // When we support only iOS 8 and above, use queryItems for a better API.
   NSString *query = [NSString stringWithFormat:@"platform=ios&dev=%@&minify=%@&modulesOnly=%@&runModule=%@%@",
                                                enableDev ? @"true" : @"false",
-                                               enableMinification ? @"true" : @"false",
+                                               enableMinification ? @"true" : @"true",
                                                modulesOnly ? @"true" : @"false",
                                                runModule ? @"true" : @"false",
                                                runtimeBytecodeVersion];
