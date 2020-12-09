@@ -16,7 +16,7 @@ final class RSUILinearGradient: RSUIView {
       )
     }
 
-    let locations = props.map("locations", { $0.cgFloat() }) ?? colors.enumerated().map({ CGFloat($0.offset) / CGFloat(colors.count) })
+    let locations = props.map("locations", { $0.cgFloat() }) ?? colors.enumerated().map({ CGFloat($0.offset) / CGFloat(colors.count - 1) })
     let gradient = Gradient(
       stops: (0..<colors.count).map { Gradient.Stop(color: colors[$0], location: locations[$0]) }
     )
