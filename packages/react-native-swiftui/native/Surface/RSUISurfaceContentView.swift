@@ -20,7 +20,7 @@ public class RSUISurfaceContentView: BaseView {
   @objc
   public init(viewRegistry: RSUIViewRegistry, surfaceTag: ViewTag) {
     super.init(frame: .zero)
-    self.surfaceDescriptor = viewRegistry.create(surfaceTag, name: "RootView")
+    self.surfaceDescriptor = viewRegistry[surfaceTag] ?? viewRegistry.create(surfaceTag, name: "RootView")
   }
 
   required init?(coder: NSCoder) {

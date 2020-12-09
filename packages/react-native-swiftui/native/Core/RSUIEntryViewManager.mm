@@ -37,13 +37,15 @@ std::shared_ptr<facebook::react::TurboModule> RSUITurboModuleProvider(const std:
 @end
 
 @implementation RSUIEntryViewManagerObjC {
+  NSString *_bundlePath;
   RCTBridge *_bridge;
   RCTTurboModuleManager *_turboModuleManager;
 }
 
-- (instancetype)initWithModuleName:(NSString *)moduleName
+- (instancetype)initWithModuleName:(NSString *)moduleName bundlePath:(NSString *)bundlePath
 {
   if (self = [super init]) {
+    _bundlePath = bundlePath;
     _bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:nil];
     _appContext = [[RSUIAppContext alloc] initWithBridge:_bridge moduleName:moduleName initialProperties:@{}];
     [_appContext.surface start];
@@ -61,7 +63,7 @@ std::shared_ptr<facebook::react::TurboModule> RSUITurboModuleProvider(const std:
 - (NSURL *)sourceURLForBridge:(__unused RCTBridge *)bridge
 {
   NSString *bundlePrefix = [[[NSBundle mainBundle] infoDictionary] valueForKey:@"RN_BUNDLE_PREFIX"];
-  NSString *bundleRoot = [NSString stringWithFormat:@"%@packages/rn-tester/js/RNTesterApp.ios", bundlePrefix];
+  NSString *bundleRoot = [NSString stringWithFormat:@"%@%@", bundlePrefix, _bundlePath];
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:bundleRoot
                                                         fallbackResource:nil];
 }

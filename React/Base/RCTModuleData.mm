@@ -342,7 +342,7 @@ RCT_NOT_IMPLEMENTED(-(instancetype)init);
       RCT_PROFILE_BEGIN_EVENT(RCTProfileTagAlways, @"[RCTModuleData instance] main thread setup", nil);
 
       if (!RCTIsMainQueue()) {
-        RCTLogWarn(@"RCTBridge required dispatch_sync to load %@. This may lead to deadlocks", _moduleClass);
+//        RCTLogWarn(@"RCTBridge required dispatch_sync to load %@. This may lead to deadlocks", _moduleClass);
       }
 
       RCTUnsafeExecuteOnMainQueueSync(^{

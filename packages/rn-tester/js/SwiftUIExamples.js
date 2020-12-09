@@ -70,7 +70,7 @@ class SwiftUIExamples extends React.PureComponent {
 
   render() {
     return (
-      <ScrollView style={styles.scrollView} axes="both" showsIndicators={true} ref={this.scrollRef}>
+      <ScrollView style={styles.scrollView} showsIndicators={true} ref={this.scrollRef}>
         <ExampleSection header="View">
           <View style={{ width: 100, height: 70, backgroundColor: '#43AA8B' }}>
             <Text style={{ textAlign: 'center' }}>100x70</Text>

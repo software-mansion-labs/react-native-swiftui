@@ -7,7 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, nonnull, strong) RSUIAppContext *appContext;
 
-- (instancetype)initWithModuleName:(NSString *)moduleName;
+- (instancetype)initWithModuleName:(NSString *)moduleName bundlePath:(NSString *)bundlePath;
 
 - (NSInteger)surfaceTag;
 
