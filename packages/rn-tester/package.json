@@ -19,7 +19,6 @@
   },
   "devDependencies": {
     "connect": "^3.6.5",
-    "detox": "15.4.4",
     "flow-node": "^2.132.0",
     "ws": "^6.1.4"
   }
