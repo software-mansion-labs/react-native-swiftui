@@ -3,20 +3,20 @@ import { AppRegistry, StyleSheet, Text, View } from 'react-native';
 
 import { Shadow, Image, LinearGradient } from 'react-native-swiftui';
 
-class RNTesterWidget extends React.PureComponent {
+export default class RNTesterWidget extends React.PureComponent {
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'stretch' }}>
+      <View style={{ flex: 1, alignItems: 'stretch' }} {...this.props}>
         <View style={StyleSheet.absoluteFill}>
           <LinearGradient
             colors={['#E9D758', '#FF8552']}
             from="topLeft"
             to="bottomRight" />
         </View>
-        <View style={{ marginTop: 25, paddingHorizontal: 15 }}>
+        <View style={{ marginTop: 20, paddingHorizontal: 15 }}>
           <Shadow radius={3} offsetX={3} offsetY={3} color="black">
             <Text style={{ color: 'black', fontSize: 15, fontWeight: 'bold', textAlign: 'center' }}>
-              Hello iOS widgets!
+              SwiftUI Widget
             </Text>
           </Shadow>
         </View>

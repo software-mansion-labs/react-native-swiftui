@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TextInput, StyleSheet, Switch } from 'react-native';
 
 import { Button, Shadow, Mask, Rect, Circle, ScrollView, Image, Animation, Blur, LinearGradient } from 'react-native-swiftui';
+import Widget from './Widget';
 
 const colors = ['black', '#188FA7', '#769FB6', '#D5D6AA', '#8B635C', '#7CE577', '#7BC950', '#F19A3E'];
 
@@ -92,24 +93,6 @@ class SwiftUIExamples extends React.PureComponent {
           </View>
         </ExampleSection>
 
-        <ExampleSection header="Animation">
-          <Animation type="easeInOut" duration={0.5} style={{ width: 400, height: 60, justifyContent: 'center' }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: 200 + 200 * Math.random(),
-                height: 30 + 30 * Math.random(),
-                backgroundColor: colors[this.state.colorIndex],
-                borderWidth: 1,
-                borderColor: 'black',
-              }}>
-              <Text>View with animated changes</Text>
-            </View>
-          </Animation>
-        </ExampleSection>
-
         <ExampleSection header="Text" direction="column">
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10 }}>
             <Text style={{ width: 120, backgroundColor: '#F4BFDB' }} numberOfLines={6}>
@@ -142,6 +125,24 @@ class SwiftUIExamples extends React.PureComponent {
             <Text style={{ width: 170, color: 'black' }}>ellipsizeMode = tail:</Text>
             <Text style={{ width: 250, color: 'black', fontStyle: 'italic' }} numberOfLines={1} ellipsizeMode="tail">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Text>
           </View>
+        </ExampleSection>
+
+        <ExampleSection header="Animation">
+          <Animation type="easeInOut" duration={0.5} style={{ width: 400, height: 60, justifyContent: 'center' }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: 200 + 200 * Math.random(),
+                height: 30 + 30 * Math.random(),
+                backgroundColor: colors[this.state.colorIndex],
+                borderWidth: 1,
+                borderColor: 'black',
+              }}>
+              <Text>View with animated changes</Text>
+            </View>
+          </Animation>
         </ExampleSection>
 
         <ExampleSection header="Button">
@@ -302,6 +303,10 @@ class SwiftUIExamples extends React.PureComponent {
               <Text style={{ textAlign: 'center' }}>Gradient in the circle</Text>
             </Circle>
           </View>
+        </ExampleSection>
+
+        <ExampleSection header="iOS Widget">
+          <Widget style={{ width: 170, height: 170 }} />
         </ExampleSection>
 
         <View style={{ height: 100 }} />
