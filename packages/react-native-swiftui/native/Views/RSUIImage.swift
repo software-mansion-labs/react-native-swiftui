@@ -23,8 +23,6 @@ class ImageLoader {
 }
 
 final class RSUIImage: RSUIView {
-  static var name: String { "RSUIImage" }
-
   let loader = ImageLoader()
 
   func propsWillChange(newProps: RSUIProps) {

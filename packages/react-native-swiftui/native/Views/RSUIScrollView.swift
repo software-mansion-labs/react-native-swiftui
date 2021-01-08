@@ -2,8 +2,6 @@
 import SwiftUI
 
 final class RSUIScrollView: RSUIView {
-  static var name: String { "RSUIScrollView" }
-
   // MARK: Commands
 
   var commands: [String: RSUICommand] {

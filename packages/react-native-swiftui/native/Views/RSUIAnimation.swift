@@ -2,8 +2,6 @@
 import SwiftUI
 
 final class RSUIAnimation: RSUIView {
-  static var name: String { "RSUIAnimation" }
-
   func createBaseAnimation(type: String, duration: Double) -> Animation {
     switch type {
     case "easeIn":

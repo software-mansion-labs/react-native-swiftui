@@ -2,8 +2,6 @@
 import SwiftUI
 
 final class RSUICircle: RSUIView {
-  static var name: String { "RSUICircle" }
-
   static func traits() -> RSUIViewTraits { [] }
 
   func render(props: RSUIProps) -> some View {

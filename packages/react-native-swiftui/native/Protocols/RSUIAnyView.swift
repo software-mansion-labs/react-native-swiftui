@@ -16,6 +16,11 @@ public typealias RSUIViewTraits = [RSUIViewTrait]
  *
  */
 public protocol RSUIAnyView: class {
+  /**
+   * Name of this view type that is used by the view registry as an identifier.
+   * It's also used as an export name on JavaScript side.
+   * Defaults to the class name (see extension below).
+   */
   static var name: String { get }
 
   static func traits() -> RSUIViewTraits
@@ -38,7 +43,7 @@ public protocol RSUIAnyView: class {
   func viewWillDestroy()
 
   /**
-   * Should return a result of ` (see `RSUIView` protocol) wrapped with `AnyView`.
+   * Should return a result of `render(props:)` (see `RSUIView` protocol) wrapped with `AnyView`.
    */
   func renderAny(props: RSUIProps) -> AnyView
 }
@@ -47,6 +52,10 @@ public protocol RSUIAnyView: class {
  * Adds stubs to the protocol so concrete classes don't have to reimplement them if not needed.
  */
 extension RSUIAnyView {
+  static var name: String {
+    return String(describing: self)
+  }
+
   static func traits() -> RSUIViewTraits {
     return [.Layoutable, .Styleable]
   }

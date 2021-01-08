@@ -2,8 +2,6 @@
 import SwiftUI
 
 final class RSUIShadow: RSUIView {
-  static var name: String { "RSUIShadow" }
-
   static func traits() -> RSUIViewTraits { [.Layoutable] }
 
   func render(props: RSUIProps) -> some View {

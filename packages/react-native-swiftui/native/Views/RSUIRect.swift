@@ -2,8 +2,6 @@
 import SwiftUI
 
 final class RSUIRect: RSUIView {
-  static var name: String { "RSUIRect" }
-
   static func traits() -> RSUIViewTraits { [] }
 
   func render(props: RSUIProps) -> some View {

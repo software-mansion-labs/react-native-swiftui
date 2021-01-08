@@ -11,8 +11,6 @@ struct RSUIButtonStyle: ButtonStyle {
 }
 
 final class RSUIButton: RSUIView {
-  static var name: String { "RSUIButton" }
-
   var isPressed = false
 
   func pressAction() {

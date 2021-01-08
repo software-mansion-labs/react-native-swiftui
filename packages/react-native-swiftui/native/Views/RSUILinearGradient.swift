@@ -2,8 +2,6 @@
 import SwiftUI
 
 final class RSUILinearGradient: RSUIView {
-  static var name: String { "RSUILinearGradient" }
-
   // Linear gradient is not layoutable and not styleable — it fills in the entire parent's frame.
   static func traits() -> RSUIViewTraits { [] }
 
